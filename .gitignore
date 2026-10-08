@@ -42,3 +42,7 @@
 
 # Raw dumps from this bridge (light names, room layout): useful locally, nobody else needs them.
 /data/
+
+# Editor state
+/.idea/
+.DS_Store
