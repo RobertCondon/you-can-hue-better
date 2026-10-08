@@ -18,7 +18,7 @@ Applied with judgement where a rule meets something it doesn't fit: migrations a
 only lose their comments; generated framework config keeps its shape; the API field names the
 bridge sends are named once as constants and reused.
 
-Status: `[ ]` not started, `[~]` done and waiting for review, `[x]` reviewed, committed and pushed.
+Status: `[ ]` not started, `[~]` done and waiting for review, `[x]` reviewed, committed and pushed, `[-]` skipped.
 
 ## Chunk 1: Hue bridge API wrapper
 
@@ -371,44 +371,51 @@ floor's zoom buttons, which the old file's rule order had stretched down the who
 
 ## Chunk 13: Configuration and deployment
 
-- [ ] `config/routes.rb`
-- [ ] `config/application.rb`
-- [ ] `config/environments/production.rb`
-- [ ] `config/database.yml`
-- [ ] `config/cable.yml`
-- [ ] `config/importmap.rb`
-- [ ] `config/boot.rb`
-- [ ] `config/environment.rb`
-- [ ] `config/ci.rb`
-- [ ] `config/bundler-audit.yml`
-- [ ] `config/hue.example.json`
-- [ ] `Gemfile`
-- [ ] `Dockerfile`
-- [ ] `compose.yaml`
-- [ ] `bin/docker-entrypoint`
-- [ ] `bin/ci`
-- [ ] `.dockerignore`
-- [ ] `.gitignore`
-- [ ] `db/seeds.rb`
+The Docker image was rebuilt and run against the bridge: healthy, every page served, listener live.
+
+- [x] `config/routes.rb` (grouped by area)
+- [x] `config/application.rb`
+- [x] `config/environments/production.rb`
+- [x] `config/environments/development.rb`, `test.rb` (generator comments removed)
+- [x] `config/database.yml`
+- [x] `config/cable.yml`
+- [x] `config/importmap.rb`
+- [x] `config/boot.rb`
+- [x] `config/environment.rb`
+- [x] `config/puma.rb` (the unused job runner removed)
+- [x] `config/ci.rb` (the seed step removed with the empty seeds file)
+- [x] `config/bundler-audit.yml` (the generator's placeholder CVE removed)
+- [x] `config/hue.example.json` (no change needed)
+- [x] `config/initializers/filter_parameter_logging.rb` (the bridge's client key and username are filtered from logs)
+- [x] `config/initializers/content_security_policy.rb`, `inflections.rb`, `assets.rb` (removed: comments only, or Rails' default)
+- [x] `Gemfile`, `Gemfile.lock` (unused `solid_cache`, `solid_queue`, `capybara`, `selenium-webdriver` removed)
+- [x] `Dockerfile`
+- [x] `compose.yaml`
+- [x] `bin/docker-entrypoint`
+- [x] `bin/ci` (no change needed)
+- [x] `.dockerignore`
+- [x] `.gitignore`
+- [x] `db/seeds.rb` (removed: comments only)
+- [x] `app/services/hue/event_stream.rb`, `test/services/hue/listener_test.rb` (the two style-checker offences)
 
 ## Chunk 14: Migrations
 
-Comments removed only; the migrations have already run and stay as written.
+Skipped at Rob's request: the migrations have already run and stay as written.
 
-- [ ] `db/migrate/20261006090839_create_activities.rb`
-- [ ] `db/migrate/20261006094534_create_hue_mirror_tables.rb`
-- [ ] `db/migrate/20261006094535_create_remote_control_tables.rb`
-- [ ] `db/migrate/20261006100247_add_heartbeat_to_hue_listener_states.rb`
-- [ ] `db/migrate/20261006104306_create_hue_extensions_groups.rb`
-- [ ] `db/migrate/20261006105207_add_nicknames_to_hue_extensions.rb`
-- [ ] `db/migrate/20261006130852_add_scene_detail_to_hue_scenes.rb`
-- [ ] `db/migrate/20261006131813_create_light_placements.rb`
-- [ ] `db/migrate/20261006133032_create_floor_objects.rb`
-- [ ] `db/migrate/20261006134151_add_rotation_to_floor_objects.rb`
-- [ ] `db/migrate/20261007105910_create_floor_nets.rb`
-- [ ] `db/migrate/20261007110659_create_undo_actions.rb`
-- [ ] `db/migrate/20261007222826_add_visibility_to_extensions.rb`
-- [ ] `db/migrate/20261008020737_create_bridge_pairings.rb`
+- [-] `db/migrate/20261006090839_create_activities.rb`
+- [-] `db/migrate/20261006094534_create_hue_mirror_tables.rb`
+- [-] `db/migrate/20261006094535_create_remote_control_tables.rb`
+- [-] `db/migrate/20261006100247_add_heartbeat_to_hue_listener_states.rb`
+- [-] `db/migrate/20261006104306_create_hue_extensions_groups.rb`
+- [-] `db/migrate/20261006105207_add_nicknames_to_hue_extensions.rb`
+- [-] `db/migrate/20261006130852_add_scene_detail_to_hue_scenes.rb`
+- [-] `db/migrate/20261006131813_create_light_placements.rb`
+- [-] `db/migrate/20261006133032_create_floor_objects.rb`
+- [-] `db/migrate/20261006134151_add_rotation_to_floor_objects.rb`
+- [-] `db/migrate/20261007105910_create_floor_nets.rb`
+- [-] `db/migrate/20261007110659_create_undo_actions.rb`
+- [-] `db/migrate/20261007222826_add_visibility_to_extensions.rb`
+- [-] `db/migrate/20261008020737_create_bridge_pairings.rb`
 
 ## Chunk 15: Docs
 

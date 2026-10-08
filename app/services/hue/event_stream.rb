@@ -13,7 +13,7 @@ module Hue
       @read_timeout = read_timeout
     end
 
-    def each_batch(on_keepalive: -> {})
+    def each_batch(on_keepalive: -> { })
       parser = Parser.new
       http.start do |connection|
         connection.request(stream_request) do |response|

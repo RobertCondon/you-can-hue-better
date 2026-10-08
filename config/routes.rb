@@ -1,16 +1,34 @@
 Rails.application.routes.draw do
   root "dashboard#show"
-  get "dev" => "dashboard#dev"
+  get "dev", to: "dashboard#dev"
+  get "up", to: "rails/health#show", as: :rails_health_check
+  resource :setup, only: [ :show, :create ], controller: "setup"
 
   resources :lights, only: :update do
-    get :panel, on: :member
-    get :pin, on: :member
+    member do
+      get :panel
+      get :pin
+    end
     resource :names, only: :update, controller: "light_names"
   end
-  resources :rooms,  only: :update do
+
+  resources :rooms, only: :update do
     patch :order, on: :collection
     resource :names, only: :update, controller: "room_names"
   end
+
+  resources :scenes, only: [ :index, :show ] do
+    member do
+      post :activate
+      post :play
+      get :floor_state
+    end
+  end
+
+  post "undos/:id", to: "undos#create", as: :undo
+  patch "visibility/lights/:id", to: "visibility#light", as: :light_visibility
+  patch "visibility/rooms/:id", to: "visibility#room", as: :room_visibility
+
   resource :floor, only: [ :show, :update ] do
     resources :objects, only: :create, controller: "floor_objects"
     resources :nets, only: :create, controller: "floor_nets"
@@ -18,15 +36,4 @@ Rails.application.routes.draw do
   end
   resources :floor_objects, only: [ :update, :destroy ]
   resources :floor_nets, only: [ :update, :destroy ]
-  post "undos/:id" => "undos#create", as: :undo
-  resource :setup, only: [ :show, :create ], controller: "setup"
-  patch "visibility/lights/:id" => "visibility#light", as: :light_visibility
-  patch "visibility/rooms/:id"  => "visibility#room",  as: :room_visibility
-  resources :scenes, only: [ :index, :show ] do
-    post :activate, on: :member
-    post :play, on: :member
-    get :floor_state, on: :member
-  end
-
-  get "up" => "rails/health#show", as: :rails_health_check
 end

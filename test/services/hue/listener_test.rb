@@ -5,7 +5,7 @@ class Hue::ListenerTest < ActiveSupport::TestCase
   include Turbo::Broadcastable::TestHelper
 
   SILENT_LOGGER = Logger.new(nil)
-  NO_WAIT = ->(_seconds) {}
+  NO_WAIT = ->(_seconds) { }
 
   setup { sync_mirror! }
 

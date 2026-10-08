@@ -1,10 +1,8 @@
-# Secrets never go in the image: they come in as environment variables.
 /config/master.key
 /config/hue.json
 /.env*
 !/.env.example
 
-# Local state and noise.
 /.git/
 /log/*
 /tmp/*
@@ -16,7 +14,6 @@
 /coverage/
 .DS_Store
 
-# Not needed to run the app.
 /data/
 /design/
 /docs/
