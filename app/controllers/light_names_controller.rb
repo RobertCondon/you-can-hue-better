@@ -6,7 +6,7 @@ class LightNamesController < ApplicationController
     p = params.require(:light).permit(:name, :nickname)
 
     if p.key?(:name) && (name = p[:name].to_s.strip) != light.name
-      Activity.record(target_kind: "light", target_id: light.id, target_name: light.name, action: "rename to #{name}", payload: { name: }) do
+      ActivityRecorder.record(target_kind: "light", target_id: light.id, target_name: light.name, action: "rename to #{name}", payload: { name: }) do
         Hue.client.lights.rename(light.id, name)
         Hue.client.devices.rename(light.device_id, name)
       end

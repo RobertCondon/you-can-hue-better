@@ -29,9 +29,9 @@ class ScenesController < RoomsController
   def recall(action, label)
     scene = Hue::Scene.recallable.find(params[:id])
     room  = scene.group
-    undo  = UndoAction.capture("#{scene.display_name} #{label == "play" ? "played" : "set"} in #{room.display_name}", scene.actions.pluck(:light_id))
+    undo  = Undo::Capture.call("#{scene.display_name} #{label == "play" ? "played" : "set"} in #{room.display_name}", scene.actions.pluck(:light_id))
 
-    response = Activity.record(target_kind: "scene", target_id: scene.id, target_name: "#{scene.name} in #{room.name}", action: label) do
+    response = ActivityRecorder.record(target_kind: "scene", target_id: scene.id, target_name: "#{scene.name} in #{room.name}", action: label) do
       Hue.client.scenes.recall(scene.id, action:)
     end
 

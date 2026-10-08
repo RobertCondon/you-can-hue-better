@@ -5,7 +5,7 @@ class RoomNamesController < ApplicationController
     p = params.require(:room).permit(:name, :nickname)
 
     if p.key?(:name) && (name = p[:name].to_s.strip) != group.name
-      Activity.record(target_kind: group.kind, target_id: group.id, target_name: group.name, action: "rename to #{name}", payload: { name: }) do
+      ActivityRecorder.record(target_kind: group.kind, target_id: group.id, target_name: group.name, action: "rename to #{name}", payload: { name: }) do
         Hue.client.groups_of_type(group.kind).rename(group.id, name)
       end
       group.update!(name:)

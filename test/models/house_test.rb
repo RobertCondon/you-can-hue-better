@@ -17,13 +17,14 @@ class HouseTest < ActiveSupport::TestCase
     sync_mirror!
     assert_equal %w[Study Evening], House.load.rooms.map(&:name), "Study has two lights, Evening one"
 
-    big = Hue::Group.create!(id: "r2", kind: "room", name: "Attic", grouped_light_id: "g9")
-    Hue::GroupLight.create!(group: big, light_id: "l1"); Hue::GroupLight.create!(group: big, light_id: "l2")
+    attic = Hue::Group.create!(id: "r2", kind: Hue::Group::ROOM, name: "Attic", grouped_light_id: "g9")
+    Hue::GroupLight.create!(group: attic, light_id: "l1")
+    Hue::GroupLight.create!(group: attic, light_id: "l2")
     assert_equal %w[Attic Study Evening], House.load.rooms.map(&:name), "same size and same on count: alphabetical"
 
     Hue::Light.find("l2").update!(on: true)
     assert_equal %w[Attic Study Evening], House.load.rooms.map(&:name)
-    Hue::GroupLight.where(group: big, light_id: "l2").delete_all
+    Hue::GroupLight.where(group: attic, light_id: "l2").delete_all
     assert_equal %w[Study Attic Evening], House.load.rooms.map(&:name), "Study now has more lights than Attic"
   end
 
@@ -43,14 +44,14 @@ class HouseTest < ActiveSupport::TestCase
 
   test "does not touch the bridge when the listener is live" do
     sync_mirror!
-    Hue.client = Object.new.tap { |c| c.define_singleton_method(:lights) { raise "should not be called" } }
+    Hue.client = Object.new.tap { |untouchable| untouchable.define_singleton_method(:lights) { raise "should not be called" } }
     assert_equal 2, House.load.lights.size
   end
 
   test "renders stale data if the bridge is down but the mirror has it, and raises if it is empty" do
     sync_mirror!
     Hue::ListenerState.current.disconnected!
-    Hue.client = Object.new.tap { |c| c.define_singleton_method(:devices) { raise Hue::Error, "down" } }
+    Hue.client = Object.new.tap { |unreachable| unreachable.define_singleton_method(:devices) { raise Hue::Error, "down" } }
     assert_equal 2, House.load.lights.size
 
     Hue::Light.destroy_all

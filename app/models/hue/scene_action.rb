@@ -1,6 +1,5 @@
 module Hue
   class SceneAction < Record
-    FALLBACK_HEX = "#ffd9a0"
     MINIMUM_DOT_STRENGTH = 0.3
     FULL_BRIGHTNESS = 100.0
 
@@ -19,14 +18,14 @@ module Hue
       return Color.xy_to_hex(xy[:x], xy[:y]) if xy
       return Color.mirek_to_hex(mirek) if mirek
 
-      FALLBACK_HEX
+      Color::WARM_WHITE_HEX
     end
 
     def dot_hex
-      return House::Light::OFF_TILE unless on
+      return House::LightTile::OFF_HEX unless on
 
       dot_strength = MINIMUM_DOT_STRENGTH + (1 - MINIMUM_DOT_STRENGTH) * (brightness.to_f / FULL_BRIGHTNESS)
-      Color.mix(House::Light::OFF_TILE, hex, dot_strength)
+      Color.mix(House::LightTile::OFF_HEX, hex, dot_strength)
     end
 
     def hue_angle = Color.hue_angle(hex)

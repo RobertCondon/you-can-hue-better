@@ -6,15 +6,15 @@ class DashboardController < ApplicationController
 
   # The developer view: everything, plus the activity and press logs.
   def dev
-    load_house(everything: true)
+    load_house(include_hidden: true)
     @activities = Activity.recent
     @presses = ControlEvent.includes(control: :device).recent.limit(8)
   end
 
   private
 
-  def load_house(everything: false)
-    @house = House.load(everything:)
+  def load_house(include_hidden: false)
+    @house = House.load(include_hidden:)
     @state = Hue::ListenerState.current
   rescue Hue::Error => e
     @error = e.message

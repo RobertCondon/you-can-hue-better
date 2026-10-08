@@ -15,7 +15,7 @@ class LightsController < ApplicationController
     light = Hue::Light.find(params[:id])
     body, action = command_for(light)
 
-    response = Activity.record(target_kind: "light", target_id: light.id, target_name: light.name, action:, payload: body) do
+    response = ActivityRecorder.record(target_kind: "light", target_id: light.id, target_name: light.name, action:, payload: body) do
       Hue.client.lights.update(light.id, body)
     end
     notice = unreachable_message(light.name) if response.unreachable_lights?

@@ -142,16 +142,29 @@ and `visibility_controller.rb`.
 
 The read model the pages are drawn from, the command log, and Undo.
 
-- [ ] `app/models/house.rb`
-- [ ] `app/models/house/light.rb`
-- [ ] `app/models/house/room.rb`
-- [ ] `app/models/house/scene.rb`
-- [ ] `app/models/activity.rb`
-- [ ] `app/models/undo_action.rb`
-- [ ] `test/models/house_test.rb`
-- [ ] `test/models/house_light_test.rb`
-- [ ] `test/models/house_light_icon_test.rb`
-- [ ] `test/models/house_light_reachable_test.rb`
+- [x] `app/models/house.rb` (now just rooms, lights and lookups; `everything:` renamed `include_hidden:`; unused `everything?` removed)
+- [x] `app/models/house/loader.rb` (new: refresh, query, hide, order)
+- [x] `app/models/house/room_builder.rb` (new)
+- [x] `app/models/house/room_order.rb` (new)
+- [x] `app/models/house/light.rb` (unused `from_api` removed)
+- [x] `app/models/house/light_tile.rb` (new: tile colours and inks, from the light)
+- [x] `app/models/house/light_icon.rb` (new, from the light)
+- [x] `app/models/house/room.rb`
+- [x] `app/models/house/scene.rb` (unused `from_api` removed)
+- [x] `app/models/activity.rb`
+- [x] `app/services/activity_recorder.rb` (new, from the activity model)
+- [x] `app/models/undo_action.rb`
+- [x] `app/services/undo/light_state.rb`, `capture.rb`, `restore.rb` (new, from the undo model)
+- [x] `config/locales/en.yml` (light levels and room summaries)
+- [x] `test/models/house_test.rb`
+- [x] `test/models/house_light_test.rb` (now also holds the icon and reachability tests)
+- [x] `test/models/house_light_icon_test.rb` (removed, merged)
+- [x] `test/models/house_light_reachable_test.rb` (removed, merged)
+- [x] `test/services/activity_recorder_test.rb` (new)
+
+Touched only to follow the new API, reviewed fully in their own chunk: every controller that logs
+activity or captures undo, `dashboard_controller.rb`, `house_broadcast/change_broadcast.rb`,
+`hue/scene_action.rb`, `hue/color.rb` (the shared warm white), and `tiles_and_undo_test.rb`.
 
 ## Chunk 5: Remote controls and the bridge's old rules
 

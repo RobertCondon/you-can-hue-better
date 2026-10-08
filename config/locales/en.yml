@@ -13,3 +13,12 @@ en:
     control:
       button_label: "%{device} button %{number}"
       ring_label: "%{device} ring"
+  house:
+    light:
+      not_responding: "Not responding"
+      "off": "Off"
+      level: "%{level}%"
+    room:
+      all_off: "All off"
+      all_on: "All on"
+      some_on: "%{on} of %{total} on"

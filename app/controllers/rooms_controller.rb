@@ -2,9 +2,9 @@ class RoomsController < ApplicationController
   def update
     room = Hue::Group.find(params[:id])
     on = ActiveModel::Type::Boolean.new.cast(params.require(:room)[:on])
-    undo = UndoAction.capture("#{room.display_name} turned #{on ? "on" : "off"}", room.lights.pluck(:id))
+    undo = Undo::Capture.call("#{room.display_name} turned #{on ? "on" : "off"}", room.lights.pluck(:id))
 
-    response = Activity.record(target_kind: room.kind, target_id: room.id, target_name: room.name, action: on ? "on" : "off", payload: { on: { on: } }) do
+    response = ActivityRecorder.record(target_kind: room.kind, target_id: room.id, target_name: room.name, action: on ? "on" : "off", payload: { on: { on: } }) do
       Hue.client.grouped_lights.update(room.grouped_light_id, { on: { on: } })
     end
 

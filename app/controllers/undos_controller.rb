@@ -2,9 +2,8 @@
 class UndosController < RoomsController
   def create
     undo = UndoAction.fresh.find(params[:id])
-    Activity.record(target_kind: "undo", target_id: undo.id.to_s, target_name: undo.description, action: "undo #{undo.light_count} lights") do
-      undo.apply!
-      Hue::CommandResult.delivered
+    ActivityRecorder.record(target_kind: "undo", target_id: undo.id.to_s, target_name: undo.description, action: "undo #{undo.light_count} lights") do
+      Undo::Restore.new(undo).run
     end
     undo.destroy
     settle

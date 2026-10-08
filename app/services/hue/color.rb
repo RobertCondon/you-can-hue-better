@@ -1,5 +1,7 @@
 module Hue
   module Color
+    WARM_WHITE_HEX = "#ffd9a0"
+
     module_function
 
     def hex_to_xy(hex) = Cie.xy_from_linear_rgb(Srgb.linear_channels_from_hex(hex))

@@ -16,7 +16,7 @@ module HouseBroadcast
 
     private
 
-    def house = @house ||= House.load(refresh: false, everything: true)
+    def house = @house ||= House.load(refresh: false, include_hidden: true)
 
     def broadcast_rooms
       house.rooms.each do |room|

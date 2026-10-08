@@ -6,8 +6,8 @@ class FloorPaintsController < ApplicationController
     lights = Hue::Light.where(id: ids).index_by(&:id)
     raise Hue::Error, "Nothing to paint" if lights.empty?
 
-    undo = UndoAction.capture("Painted #{lights.size} #{"light".pluralize(lights.size)}", lights.keys)
-    result = Activity.record(target_kind: "floor", target_id: "paint", target_name: "Paint", action: "paint #{lights.size}", payload: strokes) do
+    undo = Undo::Capture.call("Painted #{lights.size} #{"light".pluralize(lights.size)}", lights.keys)
+    result = ActivityRecorder.record(target_kind: "floor", target_id: "paint", target_name: "Paint", action: "paint #{lights.size}", payload: strokes) do
       Hue::CommandResult.combine(strokes.filter_map do |stroke|
         light = lights[stroke["light_id"]] or next
         Hue.client.lights.update(light.id, command_for(stroke))
