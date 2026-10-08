@@ -3,6 +3,8 @@ require "test_helper"
 class FloorObjectsControllerTest < ActionDispatch::IntegrationTest
   setup { sync_mirror! }
 
+  def add_object(kind) = FloorObjects::Creation.call(group_id: Floor.home.id, kind:)
+
   test "adding a wall returns its element, centred with a default size" do
     post floor_objects_path, params: { kind: "wall" }
     assert_response :created
@@ -19,7 +21,7 @@ class FloorObjectsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "moving and resizing saves, clamped" do
-    box = FloorObject.add!(group_id: Floor.home.id, kind: "box")
+    box = add_object("box")
     patch floor_object_path(box), params: { x: "80", y: "-3", w: "250", h: "10", rotation: "-30", label: " Sofa " }
     assert_response :no_content
     box.reload
@@ -27,7 +29,7 @@ class FloorObjectsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "the floor renders its objects and the light canvas" do
-    FloorObject.add!(group_id: Floor.home.id, kind: "circle").update!(label: "Table")
+    add_object("circle").update!(label: "Table")
     get floor_path
     assert_select ".floor canvas.floor__light"
     assert_select ".floor__object--circle .floor__label", "Table"
@@ -35,14 +37,14 @@ class FloorObjectsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "a scene's floor shows the house's objects but no editing controls" do
-    FloorObject.add!(group_id: Floor.home.id, kind: "wall")
+    add_object("wall")
     get scene_path("s1")
     assert_select ".floor__object--wall", 1
     assert_select ".floor__object .floor__handle", 0
   end
 
   test "rounds have no rotate handle" do
-    FloorObject.add!(group_id: Floor.home.id, kind: "circle")
+    add_object("circle")
     get floor_path
     assert_select ".floor__object--circle .floor__rotate", 0
   end
@@ -56,14 +58,14 @@ class FloorObjectsControllerTest < ActionDispatch::IntegrationTest
   test "a scene's floor state is what each light would look like" do
     get floor_state_scene_path("s1"), as: :json
     assert_response :success
-    states = response.parsed_body.index_by { _1["light_id"] }
+    states = response.parsed_body.index_by { |state| state["light_id"] }
     assert_equal [ true, 0.38 ], [ states["l1"]["on"], states["l1"]["bri"] ]
     assert_match(/\A#[0-9a-f]{6}\z/, states["l2"]["hex"])
     assert_empty hue.writes, "previewing never touches the bridge"
   end
 
   test "removing" do
-    box = FloorObject.add!(group_id: Floor.home.id, kind: "box")
+    box = add_object("box")
     delete floor_object_path(box)
     assert_response :no_content
     refute FloorObject.exists?(box.id)

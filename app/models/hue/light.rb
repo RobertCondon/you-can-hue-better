@@ -1,6 +1,7 @@
 module Hue
   class Light < Record
     BRIGHTNESS_RANGE = 0..100
+    MIREK_RANGE = 153..500
 
     belongs_to :device
     has_many :group_lights, dependent: :destroy

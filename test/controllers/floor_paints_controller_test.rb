@@ -19,16 +19,22 @@ class FloorPaintsControllerTest < ActionDispatch::IntegrationTest
     post floor_paint_path, params: { strokes: strokes.to_json }, as: :turbo_stream
     assert_response :success
 
-    sent = hue.writes.select { _1[0] == :light }.to_h { [ _1[1], _1[2] ] }
+    sent = hue.writes.select { |write| write.first == :light }.to_h { |_kind, light_id, changes| [ light_id, changes ] }
     assert_equal({ on: { on: true }, color: { xy: Hue::Color.hex_to_xy("#ff0000") } }, sent["l1"])
     assert_equal({ on: { on: true }, color_temperature: { mirek: 370 } }, sent["l2"])
 
     undo = UndoAction.last
     assert_equal "Painted 2 lights", undo.description
-    assert_equal %w[l1 l2], undo.states.map { _1["light_id"] }.sort
+    assert_equal %w[l1 l2], undo.light_states.map(&:light_id).sort
     assert_select "turbo-stream[action=replace][target=floor_light_l1]"
     assert_select "turbo-stream[action=update][target=flash] .flash--undo form[action='#{undo_path(undo)}']"
     assert_equal "paint 2", Activity.last.action
+  end
+
+  test "a white is kept within the range bulbs accept, and one light reads in the singular" do
+    post floor_paint_path, params: { strokes: [ { light_id: "l1", mirek: 900 } ].to_json }, as: :turbo_stream
+    assert_equal({ on: { on: true }, color_temperature: { mirek: 500 } }, hue.writes.last.last)
+    assert_equal "Painted 1 light", UndoAction.last.description
   end
 
   test "unknown lights are ignored and an empty paint is refused" do

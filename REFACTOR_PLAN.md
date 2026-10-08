@@ -192,18 +192,29 @@ now uses the binding's rotation gesture constants.
 
 Placements, walls and furniture, nets and the outline, paint, and their endpoints.
 
-- [ ] `app/models/floor.rb`
-- [ ] `app/models/floor_net.rb`
-- [ ] `app/models/floor_object.rb`
-- [ ] `app/models/light_placement.rb`
-- [ ] `app/controllers/floors_controller.rb`
-- [ ] `app/controllers/floor_nets_controller.rb`
-- [ ] `app/controllers/floor_objects_controller.rb`
-- [ ] `app/controllers/floor_paints_controller.rb`
-- [ ] `test/controllers/floors_controller_test.rb`
-- [ ] `test/controllers/floor_nets_controller_test.rb`
-- [ ] `test/controllers/floor_objects_controller_test.rb`
-- [ ] `test/controllers/floor_paints_controller_test.rb`
+- [x] `app/models/floor.rb`
+- [x] `app/models/floor/spot_layout.rb` (new: placed spots and the waiting row, from the floor)
+- [x] `app/models/floor_net.rb`
+- [x] `app/models/floor_object.rb` (`add!` and `place!` moved out; unknown kinds raise their own error)
+- [x] `app/models/light_placement.rb` (`map_for` renamed `positions_on`)
+- [x] `app/services/floor_coordinates.rb` (new: the one rule for clamping and rounding floor percentages)
+- [x] `app/services/floor_polygon.rb` (new: a net's centre and bounds)
+- [x] `app/services/floor_nets/points_param.rb`, `drawing.rb` (new: reading points, one outline per house)
+- [x] `app/services/floor_objects/creation.rb`, `placement.rb` (new, from the floor object)
+- [x] `app/services/floor_paint.rb` (new, from the paint controller)
+- [x] `app/controllers/floors_controller.rb`
+- [x] `app/controllers/floor_nets_controller.rb`
+- [x] `app/controllers/floor_objects_controller.rb`
+- [x] `app/controllers/floor_paints_controller.rb`
+- [x] `config/locales/en.yml` (floor and paint text; duplicate blocks merged)
+- [x] `test/controllers/floors_controller_test.rb`
+- [x] `test/controllers/floor_nets_controller_test.rb` (no change needed)
+- [x] `test/controllers/floor_objects_controller_test.rb`
+- [x] `test/controllers/floor_paints_controller_test.rb`
+- [x] `test/models/floor_net_test.rb` (new)
+
+Touched only to follow the new API, reviewed fully in their own chunk: `hue/light.rb` (the white
+range bulbs accept) and `hue_extensions/group.rb` (setting the floor's shape).
 
 ## Chunk 7: Lights, rooms and scenes controllers
 

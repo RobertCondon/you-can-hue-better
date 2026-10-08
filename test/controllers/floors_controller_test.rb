@@ -15,13 +15,15 @@ class FloorsControllerTest < ActionDispatch::IntegrationTest
   test "dropping a light saves its spot on the house floor, clamped" do
     patch floor_path, params: { light_id: "l1", x: "33.333", y: "120" }
     assert_response :no_content
-    p = LightPlacement.find_by!(light_id: "l1")
-    assert_equal [ Floor.home.id, 33.33, 100.0 ], [ p.group_id, p.x.to_f, p.y.to_f ]
+    placement = LightPlacement.find_by!(light_id: "l1")
+    assert_equal [ Floor.home.id, 33.33, 100.0 ], [ placement.group_id, placement.x.to_f, placement.y.to_f ]
     get floor_path
     assert_select "#floor_light_l1[style*='--x: 33.33']:not(.is-unplaced)"
   end
 
-  test "the shape is saved on the home group's extension" do
+  test "the shape is saved on the home group's extension, within its range" do
+    patch floor_path, params: { aspect: "9" }
+    assert_equal 2.5, HueExtensions::Group.find(Floor.home.id).floor_aspect.to_f
     patch floor_path, params: { aspect: "1.6" }
     assert_equal 1.6, HueExtensions::Group.find(Floor.home.id).floor_aspect.to_f
     get floor_path
@@ -71,7 +73,10 @@ class FloorLightPanelTest < ActionDispatch::IntegrationTest
 end
 
 class FloorUnreachableTest < ActionDispatch::IntegrationTest
-  setup { sync_mirror!; Hue::Device.find("d1").update!(reachable: false) }
+  setup do
+    sync_mirror!
+    Hue::Device.find("d1").update!(reachable: false)
+  end
 
   test "an unreachable bulb is drawn off and marked, in the rows, on the floor, and in its panel" do
     get root_path
@@ -81,7 +86,7 @@ class FloorUnreachableTest < ActionDispatch::IntegrationTest
     get panel_light_path("l1")
     assert_select ".light-panel__notice", /Not responding.*on at 80%/
     get floor_state_scene_path("s1"), as: :json
-    assert_equal 0, response.parsed_body.find { _1["light_id"] == "l1" }["bri"], "a scene preview can't light a bulb with no power"
+    assert_equal 0, response.parsed_body.find { |state| state["light_id"] == "l1" }["bri"], "a scene preview can't light a bulb with no power"
   end
 end
 

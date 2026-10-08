@@ -1,14 +1,15 @@
-# Walls and furniture on the house floor, edited in place from Edit floor.
 class FloorObjectsController < ApplicationController
+  PLACEMENT_FIELDS = %i[x y w h rotation label].freeze
+
+  rescue_from FloorObject::UnknownKind, with: -> { head :unprocessable_entity }
+
   def create
-    object = FloorObject.add!(group_id: Floor.home.id, kind: params[:kind].to_s)
-    render partial: "floors/object", locals: { object:, editable: true }, layout: false, status: :created
-  rescue ArgumentError
-    head :unprocessable_entity
+    floor_object = FloorObjects::Creation.call(group_id: Floor.home.id, kind: params[:kind].to_s)
+    render partial: "floors/object", locals: { object: floor_object, editable: true }, layout: false, status: :created
   end
 
   def update
-    FloorObject.find(params[:id]).place!(params.permit(:x, :y, :w, :h, :rotation, :label).to_h.symbolize_keys)
+    FloorObjects::Placement.new(FloorObject.find(params[:id])).apply(params.permit(*PLACEMENT_FIELDS).to_h.symbolize_keys)
     head :no_content
   end
 

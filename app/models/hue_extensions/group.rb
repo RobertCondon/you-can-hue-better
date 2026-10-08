@@ -12,6 +12,10 @@ module HueExtensions
       find_or_initialize_by(id:).update!(hidden: cast_boolean(hidden))
     end
 
+    def self.set_floor_aspect!(id, aspect)
+      find_or_initialize_by(id:).update!(floor_aspect: aspect.to_f.clamp(FLOOR_ASPECT_RANGE))
+    end
+
     def self.set_order!(group_ids)
       transaction do
         where.not(id: group_ids).update_all(position: nil)

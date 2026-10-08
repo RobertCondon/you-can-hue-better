@@ -2,25 +2,25 @@ en:
   setup:
     show:
       source:
-        environment: "from the environment"
-        paired: "paired here"
-        file: "from config/hue.json"
-        none: "not connected"
+        environment: from the environment
+        paired: paired here
+        file: from config/hue.json
+        none: not connected
     create:
-      connected: "Connected to the bridge at %{address}."
-      connected_without_sync: "Connected to the bridge at %{address}, but the first sync failed: %{reason}"
+      connected: Connected to the bridge at %{address}.
+      connected_without_sync: 'Connected to the bridge at %{address}, but the first sync failed: %{reason}'
   hue:
     control:
       button_label: "%{device} button %{number}"
       ring_label: "%{device} ring"
   house:
     light:
-      not_responding: "Not responding"
-      "off": "Off"
+      not_responding: Not responding
+      'off': 'Off'
       level: "%{level}%"
     room:
-      all_off: "All off"
-      all_on: "All on"
+      all_off: All off
+      all_on: All on
       some_on: "%{on} of %{total} on"
   activerecord:
     errors:
@@ -28,5 +28,20 @@ en:
         control_binding:
           attributes:
             target:
-              must_be_light: "must be a light for this action"
-              must_be_group: "must be a room or zone for this action"
+              must_be_light: must be a light for this action
+              must_be_group: must be a room or zone for this action
+        floor_net:
+          attributes:
+            points:
+              too_few: needs at least %{count} points
+  floor:
+    net:
+      house_label: House
+    paint:
+      nothing_to_paint: Nothing to paint
+      description:
+        one: Painted %{count} light
+        other: Painted %{count} lights
+  floor_paints:
+    create:
+      a_painted_light: A painted light
