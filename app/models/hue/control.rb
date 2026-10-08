@@ -1,7 +1,9 @@
 module Hue
   # A button or the rotary ring on a switch. Bindings hang off these.
   class Control < Record
-    KINDS = %w[button rotary].freeze
+    BUTTON = "button"
+    ROTARY = "rotary"
+    KINDS = [ BUTTON, ROTARY ].freeze
 
     belongs_to :device
     has_many :bindings, class_name: "::ControlBinding", dependent: :destroy

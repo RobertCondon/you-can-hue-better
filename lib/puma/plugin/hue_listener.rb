@@ -1,22 +1,23 @@
 require "puma/plugin"
 
-# Owns the Hue listener thread. Lives outside app/ so it is never reloaded in development; the
-# thread it starts resolves app classes fresh on every event.
-# Disable with HUE_LISTENER=0.
 module HueListenerThread
+  THREAD_NAME = "hue-listener"
+  STOP_TIMEOUT_SECONDS = 10
+
   module_function
 
   def start
     return if running?
-    @stop = false
-    @thread = Thread.new { ::Hue::Listener.new(stop: -> { @stop }).run }
-    @thread.name = "hue-listener"
+
+    @stop_requested = false
+    @thread = Thread.new { ::Hue::Listener.new(stop: -> { @stop_requested }).run }
+    @thread.name = THREAD_NAME
     @thread.report_on_exception = true
   end
 
   def stop
-    @stop = true
-    @thread&.join(10)
+    @stop_requested = true
+    @thread&.join(STOP_TIMEOUT_SECONDS)
     @thread = nil
   end
 

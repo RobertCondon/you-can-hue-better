@@ -1,6 +1,8 @@
 module Hue
   class Scene < Record
-    KINDS = %w[scene smart_scene].freeze
+    SCENE = "scene"
+    SMART_SCENE = "smart_scene"
+    KINDS = [ SCENE, SMART_SCENE ].freeze
 
     belongs_to :group
     has_many :actions, class_name: "Hue::SceneAction", dependent: :delete_all

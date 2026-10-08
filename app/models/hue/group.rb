@@ -1,6 +1,9 @@
 module Hue
   class Group < Record
-    KINDS = %w[room zone home].freeze
+    ROOM = "room"
+    ZONE = "zone"
+    HOME = "home"
+    KINDS = [ ROOM, ZONE, HOME ].freeze
 
     has_many :group_lights, dependent: :destroy
     has_many :lights, through: :group_lights

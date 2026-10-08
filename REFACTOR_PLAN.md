@@ -78,18 +78,33 @@ undos and floor paints controllers.
 
 Full sync, applying live events, the listener thread, and pushing changes to open pages.
 
-- [ ] `app/services/hue/sync.rb`
-- [ ] `app/services/hue/mirror.rb`
-- [ ] `app/services/hue/listener.rb`
-- [ ] `app/services/house_broadcast.rb`
-- [ ] `lib/puma/plugin/hue_listener.rb`
-- [ ] `lib/tasks/hue.rake`
-- [ ] `test/services/hue/sync_test.rb`
-- [ ] `test/services/hue/mirror_test.rb`
-- [ ] `test/services/hue/listener_test.rb`
-- [ ] `test/services/house_broadcast_test.rb`
-- [ ] `test/controllers/live_update_test.rb`
-- [ ] `test/support/fake_bridge.rb` (fixture data)
+- [x] `app/services/hue/payloads/` resource, light, grouped light, group, device, scene, button, relative rotary, zigbee connectivity, device power (new: each bridge JSON field named once)
+- [x] `app/services/hue/sync.rb`
+- [x] `app/services/hue/sync/bridge_snapshot.rb` (new)
+- [x] `app/services/hue/sync/step.rb` and device, light, group, membership, scene, control steps (new, from the sync)
+- [x] `app/services/hue/mirror.rb`
+- [x] `app/services/hue/mirror/event.rb` (new)
+- [x] `app/services/hue/mirror/changes.rb` (new, replaces the Changes struct)
+- [x] `app/services/hue/mirror/applier.rb` and light, grouped light, button, rotary, scene, connectivity, power appliers (new, from the mirror)
+- [x] `app/services/hue/mirror/press_recorder.rb` (new)
+- [x] `app/services/hue/listener.rb`
+- [x] `app/services/hue/listener/backoff.rb` (new)
+- [x] `app/services/hue/listener/batch_handler.rb` (new, from the listener)
+- [x] `app/services/house_broadcast.rb`
+- [x] `app/services/house_broadcast/targets.rb` (new: the page element ids live updates aim at)
+- [x] `app/services/house_broadcast/change_broadcast.rb` (new, from the broadcaster)
+- [x] `app/services/legacy_rules_import/report.rb` (new, from the rake task)
+- [x] `lib/puma/plugin/hue_listener.rb`
+- [x] `lib/tasks/hue.rake`
+- [x] `test/services/hue/sync_test.rb`
+- [x] `test/services/hue/mirror_test.rb`
+- [x] `test/services/hue/listener_test.rb`
+- [x] `test/services/house_broadcast_test.rb`
+- [x] `test/controllers/live_update_test.rb`
+- [x] `test/support/fake_bridge.rb` (fixture data)
+
+Touched only to follow the new API, reviewed fully in their own chunk: named kind constants added
+to `hue/group.rb`, `hue/scene.rb` and `hue/control.rb`.
 
 ## Chunk 3: Mirror and extension models
 

@@ -1,80 +1,76 @@
 module Hue
-  # Keeps the mirror fresh. Runs in one background thread (see lib/puma/plugin/hue_listener.rb):
-  # full sync on connect, then apply every event the bridge streams, heartbeat so the dashboard knows
-  # the mirror is live, broadcast changes to open pages, reconnect with backoff when the stream drops.
-  #
-  # Presses from switches are logged (control_events) but not acted on. The bridge's own rules
-  # still drive the switches and the dial.
-  #
-  # Dev-mode note: this object outlives code reloads, so every constant below is looked up from the
-  # top level (::Hue::X) at call time rather than through this class's lexical scope, and any error
-  # is rescued so the thread survives.
   class Listener
-    def initialize(stop: -> { false }, logger: Rails.logger, sleeper: ->(s) { sleep s })
+    SETUP_POLL_SECONDS = 3
+    LOG_PREFIX = "hue-listener:"
+
+    def initialize(stop: -> { false }, logger: Rails.logger, sleeper: ->(seconds) { sleep seconds })
       @stop = stop
       @logger = logger
       @sleeper = sleeper
+      @backoff = ::Hue::Listener::Backoff.new
+      @waiting_for_setup = false
     end
 
     def run
-      backoff = 1
-      waiting = false
-      until @stop.call
-        begin
-          unless with_app { ::Hue.configured? }
-            @logger.info "hue-listener: no bridge yet; waiting for the setup page" unless waiting
-            waiting = true
-            @sleeper.call(3)
-            next
-          end
-          if waiting
-            with_app { ::Hue.reset_client! }
-            waiting = false
-          end
-          with_app do
-            ::Hue::Sync.run
-            ::Hue::ListenerState.current.beat!
-            ::HouseBroadcast.status
-          end
-          @logger.info "hue-listener: connected, mirror synced"
-          backoff = 1
-          ::Hue::EventStream.new.each_batch(on_keepalive: -> { with_app { ::Hue::ListenerState.current.beat! } }) do |batch|
-            with_app { handle(batch) }
-            break if @stop.call
-          end
-        rescue Net::ReadTimeout
-          @logger.info "hue-listener: quiet for a while, reconnecting"
-        rescue StandardError => e
-          @logger.warn "hue-listener: #{e.class}: #{e.message}; retrying in #{backoff}s"
-          with_app { ::Hue::ListenerState.current.disconnected!; ::HouseBroadcast.status } rescue nil
-          @sleeper.call(backoff)
-          backoff = [ backoff * 2, 30 ].min
-        end
-      end
-      with_app { ::Hue::ListenerState.current.disconnected!; ::HouseBroadcast.status } rescue nil
-      @logger.info "hue-listener: stopped"
-    end
-
-    def handle(batch)
-      changes = ::Hue::Mirror::Changes.none
-      batch.each do |event|
-        changes.merge!(::Hue::Mirror.apply(event["data"], event_id: event["id"], occurred_at: event["creationtime"], kind: event["type"]))
-      end
-      if changes.structural
-        @logger.info "hue-listener: structural change, full sync"
-        ::Hue::Sync.run
-        ::HouseBroadcast.everything
-      else
-        ::HouseBroadcast.changes(changes)
-      end
-      last = batch.last
-      ::Hue::ListenerState.current.beat!(event_id: last["id"], event_at: last["creationtime"])
+      run_once until @stop.call
+      mark_disconnected
+      log "stopped"
     end
 
     private
 
-    # Runs a block with the app's reloader and executor: dev code reloading stays correct and the
-    # thread's database connection is returned afterwards.
-    def with_app(&) = Rails.application.reloader.wrap(&)
+    def run_once
+      bridge_configured? ? connect_and_stream : wait_for_setup
+    rescue Net::ReadTimeout
+      log "quiet for a while, reconnecting"
+    rescue StandardError => error
+      log "#{error.class}: #{error.message}; retrying in #{@backoff.seconds}s", level: :warn
+      mark_disconnected
+      @sleeper.call(@backoff.seconds)
+      @backoff.increase
+    end
+
+    def bridge_configured? = within_reloadable_app { ::Hue.configured? }
+
+    def wait_for_setup
+      log "no bridge yet; waiting for the setup page" unless @waiting_for_setup
+      @waiting_for_setup = true
+      @sleeper.call(SETUP_POLL_SECONDS)
+    end
+
+    def connect_and_stream
+      synchronise
+      log "connected, mirror synced"
+      @backoff.reset
+      ::Hue::EventStream.new.each_batch(on_keepalive: -> { heartbeat }) do |batch|
+        within_reloadable_app { ::Hue::Listener::BatchHandler.new(logger: @logger).handle(batch) }
+        break if @stop.call
+      end
+    end
+
+    def synchronise
+      within_reloadable_app do
+        ::Hue.reset_client! if @waiting_for_setup
+        @waiting_for_setup = false
+        ::Hue::Sync.run
+        ::Hue::ListenerState.current.beat!
+        ::HouseBroadcast.listener_status
+      end
+    end
+
+    def heartbeat = within_reloadable_app { ::Hue::ListenerState.current.beat! }
+
+    def mark_disconnected
+      within_reloadable_app do
+        ::Hue::ListenerState.current.disconnected!
+        ::HouseBroadcast.listener_status
+      end
+    rescue StandardError
+      nil
+    end
+
+    def log(message, level: :info) = @logger.public_send(level, "#{LOG_PREFIX} #{message}")
+
+    def within_reloadable_app(&) = Rails.application.reloader.wrap(&)
   end
 end

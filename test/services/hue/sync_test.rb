@@ -40,9 +40,9 @@ class Hue::SyncTest < ActiveSupport::TestCase
 
   test "light rows convert to the view snapshot" do
     Hue::Sync.run
-    snap = Hue::Light.find("l1").to_snapshot
-    assert_equal House::Light, snap.class
-    assert_equal "Desk lamp", snap.name
-    assert_in_delta 0.4529, snap.xy[:x], 0.0001
+    snapshot = Hue::Light.find("l1").to_snapshot
+    assert_equal House::Light, snapshot.class
+    assert_equal "Desk lamp", snapshot.name
+    assert_in_delta 0.4529, snapshot.xy[:x], 0.0001
   end
 end

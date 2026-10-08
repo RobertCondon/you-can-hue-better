@@ -1,21 +1,26 @@
 require "test_helper"
 
 class Hue::MirrorTest < ActiveSupport::TestCase
+  PRESS_TIME = "2026-10-06T10:00:00Z"
+
   setup { sync_mirror! }
+
+  def bridge_event(event_id, kind: Hue::Mirror::Event::UPDATE) = Hue::Mirror::Event.new(id: event_id, occurred_at: PRESS_TIME, kind:)
 
   test "a partial light event touches only the fields it carries" do
     changes = Hue::Mirror.apply([ { "type" => "light", "id" => "l1", "dimming" => { "brightness" => 12.5 } } ])
-    l = Hue::Light.find("l1")
-    assert_equal 12.5, l.brightness.to_f
-    assert l.on, "on was not in the event, so it is untouched"
-    assert_in_delta 0.4529, l.color_x.to_f, 0.0001
+    light = Hue::Light.find("l1")
+    assert_equal 12.5, light.brightness.to_f
+    assert light.on, "on was not in the event, so it is untouched"
+    assert_in_delta 0.4529, light.color_x.to_f, 0.0001
     assert_equal [ "l1" ], changes.light_ids
-    assert_equal 12.5, l.raw.dig("dimming", "brightness")
+    assert_equal 12.5, light.raw.dig("dimming", "brightness")
   end
 
   test "an unchanged event reports no change" do
     changes = Hue::Mirror.apply([ { "type" => "light", "id" => "l1", "on" => { "on" => true } } ])
     assert_empty changes.light_ids
+    refute changes.any?
   end
 
   test "grouped_light events update the group aggregates" do
@@ -25,24 +30,24 @@ class Hue::MirrorTest < ActiveSupport::TestCase
   end
 
   test "a button event is logged once, even when the bridge replays it" do
-    event = { "type" => "button", "id" => "b1", "button" => { "button_report" => { "event" => "short_release", "updated" => "2026-10-06T10:00:00Z" } } }
-    first  = Hue::Mirror.apply([ event ], event_id: "evt-1", occurred_at: "2026-10-06T10:00:00Z")
-    second = Hue::Mirror.apply([ event ], event_id: "evt-1", occurred_at: "2026-10-06T10:00:00Z")
+    press = { "type" => "button", "id" => "b1", "button" => { "button_report" => { "event" => "short_release", "updated" => PRESS_TIME } } }
+    first = Hue::Mirror.apply([ press ], event: bridge_event("evt-1"))
+    replay = Hue::Mirror.apply([ press ], event: bridge_event("evt-1"))
     assert_equal 1, first.presses.size
-    assert_empty second.presses
+    assert_empty replay.presses
     assert_equal 1, ControlEvent.count
-    e = ControlEvent.first
-    assert_equal [ "b1", "short_release" ], [ e.control_id, e.gesture ]
+    control_event = ControlEvent.first
+    assert_equal [ "b1", "short_release" ], [ control_event.control_id, control_event.gesture ]
     assert_equal "short_release", Hue::Control.find("b1").last_event
-    assert_nil e.control_binding, "presses are logged, not acted on"
+    assert_nil control_event.control_binding, "presses are logged, not acted on"
   end
 
   test "a rotary event records direction and steps" do
-    event = { "type" => "relative_rotary", "id" => "rot", "relative_rotary" => { "rotary_report" => { "action" => "repeat", "updated" => "2026-10-06T10:00:00Z",
-              "rotation" => { "direction" => "counter_clock_wise", "steps" => 30, "duration" => 400 } } } }
-    Hue::Mirror.apply([ event ], event_id: "evt-2", occurred_at: "2026-10-06T10:00:00Z")
-    e = ControlEvent.last
-    assert_equal [ "rotate_ccw", 30, 400 ], [ e.gesture, e.rotation_steps, e.duration_ms ]
+    turn = { "type" => "relative_rotary", "id" => "rot", "relative_rotary" => { "rotary_report" => { "action" => "repeat", "updated" => PRESS_TIME,
+             "rotation" => { "direction" => "counter_clock_wise", "steps" => 30, "duration" => 400 } } } }
+    Hue::Mirror.apply([ turn ], event: bridge_event("evt-2"))
+    control_event = ControlEvent.last
+    assert_equal [ "rotate_ccw", 30, 400 ], [ control_event.gesture, control_event.rotation_steps, control_event.duration_ms ]
   end
 
   test "connectivity changes flip the device and flag its lights" do
@@ -52,8 +57,8 @@ class Hue::MirrorTest < ActiveSupport::TestCase
   end
 
   test "structural events ask for a full sync" do
-    assert Hue::Mirror.apply([ { "type" => "scene", "id" => "new" } ]).structural
-    assert Hue::Mirror.apply([ { "type" => "light", "id" => "unknown-light", "on" => { "on" => true } } ]).structural
+    assert Hue::Mirror.apply([ { "type" => "room", "id" => "new" } ]).full_sync_needed?
+    assert Hue::Mirror.apply([ { "type" => "light", "id" => "unknown-light", "on" => { "on" => true } } ]).full_sync_needed?
   end
 
   test "refresh catches the mirror up from a GET" do
@@ -67,26 +72,28 @@ end
 class Hue::MirrorSceneTest < ActiveSupport::TestCase
   setup { sync_mirror! }
 
+  def event_of_kind(kind) = Hue::Mirror::Event.new(id: "e1", occurred_at: "2026-10-07T10:00:00Z", kind:)
+
   test "a recall only changes the scene's status, with no full sync" do
-    event = { "type" => "scene", "id" => "s1", "status" => { "active" => "dynamic_palette", "last_recall" => "2026-10-07T10:00:00Z" } }
-    changes = Hue::Mirror.apply([ event ], event_id: "e1", occurred_at: "2026-10-07T10:00:00Z", kind: "update")
-    refute changes.structural
+    recall = { "type" => "scene", "id" => "s1", "status" => { "active" => "dynamic_palette", "last_recall" => "2026-10-07T10:00:00Z" } }
+    changes = Hue::Mirror.apply([ recall ], event: event_of_kind("update"))
+    refute changes.full_sync_needed?
     assert_equal [ "s1" ], changes.scene_ids
-    s = Hue::Scene.find("s1")
-    assert s.playing?
-    assert_equal 2, s.actions.count, "actions untouched"
+    scene = Hue::Scene.find("s1")
+    assert scene.playing?
+    assert_equal 2, scene.actions.count, "actions untouched"
   end
 
   test "an edit to the scene's actions rebuilds its rows" do
-    event = { "type" => "scene", "id" => "s1", "actions" => [ { "target" => { "rid" => "l1", "rtype" => "light" }, "action" => { "on" => { "on" => true }, "dimming" => { "brightness" => 90.0 }, "color_temperature" => { "mirek" => 200 } } } ] }
-    Hue::Mirror.apply([ event ], kind: "update")
-    s = Hue::Scene.find("s1")
-    assert_equal 1, s.actions.count
-    assert_equal [ 90.0, 200 ], [ s.actions.first.brightness.to_f, s.actions.first.mirek ]
+    edit = { "type" => "scene", "id" => "s1", "actions" => [ { "target" => { "rid" => "l1", "rtype" => "light" }, "action" => { "on" => { "on" => true }, "dimming" => { "brightness" => 90.0 }, "color_temperature" => { "mirek" => 200 } } } ] }
+    Hue::Mirror.apply([ edit ])
+    scene = Hue::Scene.find("s1")
+    assert_equal 1, scene.actions.count
+    assert_equal [ 90.0, 200 ], [ scene.actions.first.brightness.to_f, scene.actions.first.mirek ]
   end
 
   test "a new or removed scene still asks for a full sync" do
-    assert Hue::Mirror.apply([ { "type" => "scene", "id" => "new" } ], kind: "add").structural
-    assert Hue::Mirror.apply([ { "type" => "scene", "id" => "s1" } ], kind: "delete").structural
+    assert Hue::Mirror.apply([ { "type" => "scene", "id" => "new" } ], event: event_of_kind("add")).full_sync_needed?
+    assert Hue::Mirror.apply([ { "type" => "scene", "id" => "s1" } ], event: event_of_kind("delete")).full_sync_needed?
   end
 end
