@@ -4,9 +4,7 @@ class RoomNamesController < ApplicationController
   def update
     group = Hue::Group.find(params[:room_id])
     fields = params.require(:room).permit(*NAME_FIELDS)
-    if fields.key?(:name)
-      BridgeRename.new(group, activity_kind: group.kind).rename_to(fields[:name]) { |name| Hue.client.groups_of_type(group.kind).rename(group.id, name) }
-    end
+    HouseCommands::RenameRoom.call(group, fields[:name]) if fields.key?(:name)
     HueExtensions::Group.set_nickname!(group.id, fields[:nickname]) if fields.key?(:nickname)
     render_renamed(House.load(refresh: false).room(group.id))
   end

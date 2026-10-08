@@ -1,8 +1,6 @@
 class ApplicationController < ActionController::Base
   include ToastStreams
 
-  BRIDGE_SETTLE_SECONDS = 0.3
-
   allow_browser versions: :modern
   stale_when_importmap_changes
 
@@ -13,10 +11,6 @@ class ApplicationController < ActionController::Base
 
   def require_bridge
     redirect_to setup_path unless Hue.configured?
-  end
-
-  def wait_for_bridge_to_settle
-    sleep(BRIDGE_SETTLE_SECONDS) unless Rails.env.test?
   end
 
   def show_bridge_error(error)

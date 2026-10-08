@@ -3,12 +3,12 @@ require "test_helper"
 class FloorObjectsControllerTest < ActionDispatch::IntegrationTest
   setup { sync_mirror! }
 
-  def add_object(kind) = FloorObjects::Creation.call(group_id: Floor.home.id, kind:)
+  def add_object(kind) = Floor::Item.create_centred!(group_id: Floor.home.id, kind:)
 
   test "adding a wall returns its element, centred with a default size" do
     post floor_objects_path, params: { kind: "wall" }
     assert_response :created
-    wall = FloorObject.last
+    wall = Floor::Item.last
     assert_equal [ "wall", Floor.home.id, 35.0, 48.5, 30.0, 3.0 ], [ wall.kind, wall.group_id, wall.x.to_f, wall.y.to_f, wall.w.to_f, wall.h.to_f ]
     assert_select ".floor__object--wall[data-kind=wall][data-url='#{floor_object_path(wall)}'] .floor__handle"
     assert_select ".floor__object--wall .floor__rotate", 1
@@ -68,6 +68,6 @@ class FloorObjectsControllerTest < ActionDispatch::IntegrationTest
     box = add_object("box")
     delete floor_object_path(box)
     assert_response :no_content
-    refute FloorObject.exists?(box.id)
+    refute Floor::Item.exists?(box.id)
   end
 end

@@ -25,7 +25,7 @@ module HouseBroadcast
     def light_pin(light) = "light_pin_#{light.id}"
     def floor_lamp(light) = "floor_light_#{light.id}"
     def floor_net(net) = "floor_net_#{net.id}"
-    def floor_object(floor_object) = "floor_object_#{floor_object.id}"
+    def floor_item(item) = "floor_object_#{item.id}"
     def scene_card(scene) = "scene_card_#{scene.id}"
     def visibility_room(room) = "visibility_room_#{room.id}"
     def visibility_light(light) = "visibility_light_#{light.id}"

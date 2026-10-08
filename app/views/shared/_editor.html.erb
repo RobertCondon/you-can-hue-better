@@ -4,7 +4,7 @@
     <% if bridge_names %>
       <label class="editor__field">
         <span><%= t(".name") %></span>
-        <input type="text" maxlength="<%= Hue::Resources::Renamable::MAX_NAME_LENGTH %>" required data-editor-target="name">
+        <input type="text" maxlength="<%= Hue::Api::Limits::NAME_LENGTH %>" required data-editor-target="name">
         <small><%= t(".name_hint") %></small>
       </label>
     <% end %>

@@ -29,12 +29,19 @@ class Hue::SceneTest < ActiveSupport::TestCase
   end
 
   test "an action renders like a light" do
-    snapshot = relax.actions.find_by(light_id: "l1").to_snapshot
+    snapshot = House::LightBuilder.from_scene_action(relax.actions.find_by(light_id: "l1"))
     assert_equal House::Light, snapshot.class
     assert_equal "xy", snapshot.color_mode
     assert_equal "38%", snapshot.brightness_label
-    assert_equal "Not responding", relax.actions.find_by(light_id: "l2").to_snapshot.brightness_label, "Corner lamp's device has a connectivity issue"
+    assert_equal "Not responding", House::LightBuilder.from_scene_action(relax.actions.find_by(light_id: "l2")).brightness_label, "Corner lamp's device has a connectivity issue"
     assert_match(/\A#[0-9a-f]{6}\z/, snapshot.tile_hex)
+  end
+
+  test "every list of a room's scenes shares one order: arranged first, then by name" do
+    assert_equal %w[s2 s1], Hue::Scene.by_room.fetch("r1").map(&:id)
+    HueExtensions::Scene.create!(id: "s1", position: 0)
+    assert_equal %w[s1 s2], Hue::Scene.by_room.fetch("r1").map(&:id)
+    assert_equal %w[s1 s2], House.load(refresh: false).room("r1").scenes.map(&:id)
   end
 
   test "stock siblings share an image id" do

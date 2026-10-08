@@ -1,7 +1,7 @@
 module Hue
   class Mirror
     class ButtonApplier < Applier
-      PAYLOAD_CLASS = Payloads::Button
+      PAYLOAD_CLASS = Api::Payloads::Button
 
       def apply
         return unless payload.reported?

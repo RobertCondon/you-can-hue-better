@@ -1,8 +1,5 @@
 module Hue
   class Light < Record
-    BRIGHTNESS_RANGE = 0..100
-    MIREK_RANGE = 153..500
-
     belongs_to :device
     has_many :group_lights, dependent: :destroy
     has_many :groups, through: :group_lights
@@ -10,7 +7,7 @@ module Hue
     has_one :extension, class_name: "::HueExtensions::Light", foreign_key: :id, inverse_of: :hue_light, dependent: :destroy
 
     validates :name, presence: true
-    validates :brightness, numericality: { in: BRIGHTNESS_RANGE }
+    validates :brightness, numericality: { in: Api::Limits::BRIGHTNESS }
 
     delegate :reachable?, to: :device
 
@@ -19,6 +16,12 @@ module Hue
 
     def xy = color_x && { x: color_x.to_f, y: color_y.to_f }
 
-    def to_snapshot = LightSnapshot.from_light(self)
+    def white? = mirek.present? && Api::Payloads::Light.new(raw).mirek_valid?
+
+    def current_change
+      return Api::LightChange.power(false) unless on
+
+      Api::LightChange.new(on: true, brightness: (brightness.to_f if brightness.to_f.positive?), xy: (xy unless white?), mirek: (mirek if white?))
+    end
   end
 end

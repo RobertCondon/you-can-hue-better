@@ -1,7 +1,7 @@
 module Hue
   class Mirror
     class SceneApplier < Applier
-      PAYLOAD_CLASS = Payloads::Scene
+      PAYLOAD_CLASS = Api::Payloads::Scene
 
       def apply
         return changes.full_sync_needed! unless event.update?

@@ -27,7 +27,7 @@
 
   <%= form_with url: light_path(light.id), method: :patch, class: "light-panel__row" do |form| %>
     <label for="panel_bri_<%= light.id %>"><%= t(".brightness") %></label>
-    <input type="range" id="panel_bri_<%= light.id %>" name="light[brightness]" min="<%= LightCommand::LOWEST_BRIGHTNESS %>" max="<%= LightCommand::HIGHEST_BRIGHTNESS %>"
+    <input type="range" id="panel_bri_<%= light.id %>" name="light[brightness]" min="<%= Hue::Api::Limits::LIT_BRIGHTNESS.min %>" max="<%= Hue::Api::Limits::LIT_BRIGHTNESS.max %>"
            value="<%= light.on? ? light.brightness.round : House::Light::UNLIT_LEVEL %>"
            data-action="input->light#preview change->light#submit">
     <output data-level for="panel_bri_<%= light.id %>"><%= light.brightness_label %></output>

@@ -4,13 +4,13 @@ class ActivityRecorderTest < ActiveSupport::TestCase
   def record(&command) = ActivityRecorder.record(target_kind: "light", target_id: "l1", target_name: "Desk lamp", action: "on", &command)
 
   test "logs a delivered command as ok and returns its result" do
-    result = record { Hue::CommandResult.delivered }
+    result = record { Hue::Api::CommandResult.delivered }
     refute result.unreachable_lights?
     assert Activity.last.ok?
   end
 
   test "logs an unpowered bulb as not responding" do
-    record { Hue::CommandResult.new(unreachable_lights: true) }
+    record { Hue::Api::CommandResult.new(unreachable_lights: true) }
     assert Activity.last.unreachable?
   end
 

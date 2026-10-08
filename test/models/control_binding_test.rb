@@ -2,7 +2,7 @@ require "test_helper"
 
 class ControlBindingTest < ActiveSupport::TestCase
   setup do
-    Hue::Sync.run
+    Hue::Mirror::Sync.call
     @button = Hue::Control.find("b1")
     @zone = Hue::Group.find("z1")
   end
@@ -28,14 +28,14 @@ class ControlBindingTest < ActiveSupport::TestCase
   end
 end
 
-class ControlBindings::SceneCycleTest < ActiveSupport::TestCase
-  setup { Hue::Sync.run }
+class CycleStateTest < ActiveSupport::TestCase
+  setup { Hue::Mirror::Sync.call }
 
   test "walks the steps, wraps, and restarts after the idle window" do
     cycle_binding = ControlBinding.create!(control: Hue::Control.find("b1"), gesture: ControlBinding::SHORT_RELEASE,
       action: ControlBinding::CYCLE_SCENES, target: Hue::Group.find("z1"), settings: { ControlBinding::CYCLE_WINDOW_SETTING => 10 })
     cycle_binding.replace_steps!([ Hue::Scene.find("s1"), Hue::Scene.find("s2"), CustomScene.create!(name: "Mine") ])
-    cycle = ControlBindings::SceneCycle.new(cycle_binding.create_cycle_state!)
+    cycle = cycle_binding.create_cycle_state!
     start = Time.current
 
     assert_equal "Relax", cycle.advance!(at: start).scene.name
@@ -47,11 +47,11 @@ class ControlBindings::SceneCycleTest < ActiveSupport::TestCase
   end
 end
 
-class CustomSceneCaptureTest < ActiveSupport::TestCase
-  setup { Hue::Sync.run }
+class CustomSceneTest < ActiveSupport::TestCase
+  setup { Hue::Mirror::Sync.call }
 
   test "a custom scene captures the current mirror state" do
-    scene = CustomSceneCapture.call(name: "Now", lights: Hue::Light.all, group: Hue::Group.find("r1"))
+    scene = CustomScene.capture!(name: "Now", lights: Hue::Light.all, group: Hue::Group.find("r1"))
     assert_equal 2, scene.states.count
     assert_equal 80.0, scene.states.find_by(light_id: "l1").brightness.to_f
     assert scene.fits_one_group?

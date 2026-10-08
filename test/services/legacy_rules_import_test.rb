@@ -1,7 +1,7 @@
 require "test_helper"
 
 class LegacyRulesImportTest < ActiveSupport::TestCase
-  setup { Hue::Sync.run }
+  setup { Hue::Mirror::Sync.call }
 
   def rules = {
     "1" => rule([ cond("/sensors/18/state/buttonevent", "eq", "1000"), cond("/sensors/22/state/status", "eq", "0") ],
@@ -24,7 +24,7 @@ class LegacyRulesImportTest < ActiveSupport::TestCase
   }
 
   test "imports cycles, toggles, holds and rotary bands" do
-    result = LegacyRulesImport.run(rules)
+    result = LegacyRulesImport.call(rules)
     assert_empty result.skipped
     first_button = Hue::Control.find("b1")
     second_button = Hue::Control.find("b2")
@@ -55,14 +55,14 @@ class LegacyRulesImportTest < ActiveSupport::TestCase
 
   test "a press on a button the mirror doesn't know is skipped with the reason" do
     unknown_button = { "99" => rule([ cond("/sensors/404/state/buttonevent", "eq", "1000") ], [ act("/groups/85/action", { "on" => false }) ]) }
-    result = LegacyRulesImport.run(unknown_button)
+    result = LegacyRulesImport.call(unknown_button)
     assert_empty result.bindings
     assert_equal [ LegacyRulesImport::Outcome::Skip.new(rule_ids: [ "99" ], reason: "no control for /sensors/404 button 1") ], result.skipped
   end
 
   test "running twice updates rather than duplicates" do
-    LegacyRulesImport.run(rules)
-    LegacyRulesImport.run(rules)
+    LegacyRulesImport.call(rules)
+    LegacyRulesImport.call(rules)
     assert_equal 6, ControlBinding.count
     assert_equal 2, ControlBinding.find_by!(gesture: "short_release", control_id: "b1").steps.count
   end

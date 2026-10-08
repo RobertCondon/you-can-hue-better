@@ -9,7 +9,7 @@ class SetupControllerTest < ActionDispatch::IntegrationTest
   def bridge_replies(pairing_reply)
     Hue.json_http = FakeJsonHttp.new do |url|
       case url
-      when Hue::BridgeDiscovery::DISCOVERY_URL then DISCOVERED
+      when Hue::Pairing::BridgeDiscovery::DISCOVERY_URL then DISCOVERED
       when /config\z/ then { "bridgeid" => "BRIDGE1" }
       else pairing_reply
       end

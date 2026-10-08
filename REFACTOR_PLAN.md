@@ -425,3 +425,17 @@ Skipped at Rob's request: the migrations have already run and stay as written.
 - [x] `docs/SCENES_PLAN.md` (marked as the plan the scenes and floor were built from, with what is built)
 - [x] `design/README.md` and the preview pages (the stylesheet rebuild and the renamed colour tokens)
 - [x] `lib/tasks/design.rake` (new: rebuilds the design previews' stylesheet from the split files)
+
+## Chunk 16: Joining the double-ups
+
+Done in one commit at Rob's request, from the review's pitches A to I.
+
+- [x] A. One light-change value: `Hue::Api::LightChange` and `Hue::Api::Limits` replace four hand-built payloads and three copies of the ranges
+- [x] B. One command pipeline: `HouseCommands::Command` with LightUpdate, RoomSwitch, SceneRecall, UndoReplay, Paint, RenameLight, RenameRoom
+- [x] C. One floor namespace: `Floor::Coordinates`, `Polygon`, `Net`, `Item`, `Placement`, `ScenePreview` in `app/models/floor/`
+- [x] D. Dependencies point one way: `House::LightBuilder` and `House::Glow`; the browser reads colours and limits from Ruby
+- [x] E. Scene scopes: `Hue::Scene.for_cards`, `.arrange`, `.by_room`, one order everywhere
+- [x] F. Streams built once: `HouseBroadcast::Streams` for replies and broadcasts
+- [x] G. `Hue` split into `Api`, `Pairing` and `Mirror`
+- [x] H. Single-action objects answer `.call`
+- [x] I. One-method modules folded into their models (`Floor::Net.draw!`, `Floor::Item.create_centred!`, `UndoAction.capture!`, `CustomScene.capture!`, `CycleState#advance!`)

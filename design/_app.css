@@ -1,3 +1,4 @@
+:root { --off-tile: #2b3040; --warm-white: #ffd9a0; --dark-ink: #15181f; --light-ink: #f3f1ec }
 :root {
   --page: #1c2130;
   --surface: #242a3b;
@@ -9,11 +10,7 @@
   --danger-line: #5a3a3c;
   --live: #7ed68a;
   --live-glow: #7ed68a88;
-  --off-tile: #2b3040;
   --off-ring: #434a60;
-  --dark-ink: #15181f;
-  --light-ink: #f3f1ec;
-  --warm-white: #ffd9a0;
   --floor-ground: #151823;
   --floor-control: rgba(21, 24, 35, 0.85);
   --wall: #3b4154;

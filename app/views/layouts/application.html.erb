@@ -10,6 +10,8 @@
       <link rel="preconnect" href="<%= font_host %>" crossorigin>
     <% end %>
     <link href="<%= ApplicationHelper::FONT_STYLESHEET %>" rel="stylesheet">
+    <meta name="light-constants" content="<%= light_constants.to_json %>">
+    <style><%= light_colour_tokens %></style>
     <%= stylesheet_link_tag(*ApplicationHelper::STYLESHEETS, "data-turbo-track": "reload") %>
     <%= javascript_importmap_tags %>
   </head>

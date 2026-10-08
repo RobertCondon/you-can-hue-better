@@ -1,7 +1,7 @@
 module Hue
   class Mirror
     class LightApplier < Applier
-      PAYLOAD_CLASS = Payloads::Light
+      PAYLOAD_CLASS = Api::Payloads::Light
 
       def apply
         light = Light.find_by(id: payload.id) or return changes.full_sync_needed!

@@ -1,7 +1,7 @@
 module Hue
   class Mirror
     class GroupedLightApplier < Applier
-      PAYLOAD_CLASS = Payloads::GroupedLight
+      PAYLOAD_CLASS = Api::Payloads::GroupedLight
 
       def apply
         group = Group.find_by(grouped_light_id: payload.id) or return

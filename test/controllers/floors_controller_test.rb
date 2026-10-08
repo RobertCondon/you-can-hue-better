@@ -15,7 +15,7 @@ class FloorsControllerTest < ActionDispatch::IntegrationTest
   test "dropping a light saves its spot on the house floor, clamped" do
     patch floor_path, params: { light_id: "l1", x: "33.333", y: "120" }
     assert_response :no_content
-    placement = LightPlacement.find_by!(light_id: "l1")
+    placement = Floor::Placement.find_by!(light_id: "l1")
     assert_equal [ Floor.home.id, 33.33, 100.0 ], [ placement.group_id, placement.x.to_f, placement.y.to_f ]
     get floor_path
     assert_select "#floor_light_l1[style*='--x: 33.33']:not(.is-unplaced)"

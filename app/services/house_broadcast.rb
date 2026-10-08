@@ -8,25 +8,14 @@ module HouseBroadcast
 
   def everything
     house = House.load(refresh: false)
-    house.rooms.each { |room| replace(Targets.room(room), "rooms/room", room:) }
-    update(Targets::HOUSE_SUMMARY, "dashboard/summary", house:)
+    send_streams([ *Streams.rooms(house), Streams.summary(house) ])
   end
 
-  def listener_status
-    update(Targets::LISTENER_STATUS, "dashboard/status", state: Hue::ListenerState.current)
-  end
+  def listener_status = send_streams([ Streams.listener_status ])
 
-  def scene_cards(scene_ids)
-    Hue::Scene.recallable.where(id: scene_ids.uniq).includes(:extension, :group, actions: { light: :extension }).each do |scene|
-      replace(Targets.scene_card(scene), "scenes/card", scene:)
+  def send_streams(streams)
+    streams.each do |stream|
+      Turbo::StreamsChannel.public_send(:"broadcast_#{stream.action}_to", STREAM, target: stream.target, partial: stream.partial, locals: stream.locals)
     end
   end
-
-  def recent_presses
-    update(Targets::RECENT_PRESSES, "dashboard/presses", presses: ControlEvent.includes(control: :device).recent.limit(RECENT_PRESS_COUNT))
-  end
-
-  def replace(target, partial, locals) = Turbo::StreamsChannel.broadcast_replace_to(STREAM, target:, partial:, locals:)
-
-  def update(target, partial, locals) = Turbo::StreamsChannel.broadcast_update_to(STREAM, target:, partial:, locals:)
 end

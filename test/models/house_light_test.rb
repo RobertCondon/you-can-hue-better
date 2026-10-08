@@ -6,16 +6,16 @@ class House::LightTest < ActiveSupport::TestCase
   test "an off light paints the off tile" do
     sync_mirror!
     Hue::Device.find("d2").update!(reachable: true)
-    corner_lamp = Hue::Light.find("l2").to_snapshot
-    assert_equal House::LightTile::OFF_HEX, corner_lamp.tile_hex
+    corner_lamp = House::LightBuilder.from_mirror(Hue::Light.find("l2"))
+    assert_equal House::Glow::OFF_HEX, corner_lamp.tile_hex
     assert_equal "Off", corner_lamp.brightness_label
   end
 
   test "an on light paints its colour dimmed by brightness" do
     sync_mirror!
-    desk_lamp = Hue::Light.find("l1").to_snapshot
+    desk_lamp = House::LightBuilder.from_mirror(Hue::Light.find("l1"))
     assert_equal "80%", desk_lamp.brightness_label
-    refute_equal House::LightTile::OFF_HEX, desk_lamp.tile_hex
+    refute_equal House::Glow::OFF_HEX, desk_lamp.tile_hex
     assert_equal House::LightTile::DARK_INK, desk_lamp.tile_text_hex, "amber at 80% is light enough for dark text"
   end
 
@@ -52,7 +52,7 @@ class House::LightTest < ActiveSupport::TestCase
     assert desk_lamp.on?, "the bridge still says on"
     refute desk_lamp.lit?
     assert_equal "Not responding", desk_lamp.brightness_label
-    assert_equal House::LightTile::OFF_HEX, desk_lamp.tile_hex
+    assert_equal House::Glow::OFF_HEX, desk_lamp.tile_hex
     assert_equal 0, house.on_count
     assert_equal "All off", house.room("r1").summary
   end

@@ -16,7 +16,7 @@ module ActiveSupport
       configure_bridge_through_environment
       Hue::Config.file_path = MISSING_CONFIG_FILE
       @fake_bridge = FakeBridge.new
-      Hue.client = Hue::Client.new(Hue::Config.load, connection: @fake_bridge)
+      Hue.client = Hue::Api::Client.new(Hue::Config.load, connection: @fake_bridge)
     end
 
     teardown do
@@ -39,7 +39,7 @@ module ActiveSupport
     end
 
     def sync_mirror!
-      Hue::Sync.run
+      Hue::Mirror::Sync.call
       Hue::ListenerState.current.beat!
     end
   end

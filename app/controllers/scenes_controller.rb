@@ -1,33 +1,32 @@
 class ScenesController < ApplicationController
-  include HouseSectionStreams
+  include HouseStreams
 
   def index
     @rooms = House.load(refresh: false).rooms
-    @scenes_by_room = ScenesByRoom.call
+    @scenes_by_room = Hue::Scene.by_room
   end
 
   def show
-    @scene = Hue::Scene.recallable.includes(:extension, :group, actions: { light: :extension }).find(params[:id])
+    @scene = Hue::Scene.for_cards.find(params[:id])
     house = House.load(refresh: false)
     @room = house.room(@scene.group_id)
     @floor = Floor.for_scene(house, @scene)
-    @lights = @scene.actions.map(&:to_snapshot).sort_by(&:display_name)
+    @lights = @scene.actions.map { |action| House::LightBuilder.from_scene_action(action) }.sort_by(&:display_name)
   end
 
   def floor_state
-    render json: ScenePreview.light_states(Hue::Scene.recallable.includes(actions: { light: :device }).find(params[:id]))
+    render json: Floor::ScenePreview.light_states(Hue::Scene.for_cards.find(params[:id]))
   end
 
-  def activate = recall(Hue::SceneRecall::STATIC_LOOK)
+  def activate = recall(Hue::Api::SceneRecall::STATIC_LOOK)
 
-  def play = recall(Hue::SceneRecall::PLAY_PALETTE)
+  def play = recall(Hue::Api::SceneRecall::PLAY_PALETTE)
 
   private
 
   def recall(mode)
     scene = Hue::Scene.recallable.find(params[:id])
-    outcome = HouseCommands::SceneRecall.new(scene, mode).run
-    wait_for_bridge_to_settle
+    outcome = HouseCommands::SceneRecall.call(scene, mode)
     render_house_sections(toast: outcome_toast(outcome, t("rooms.update.a_light_in", room: scene.group.name)), scene_ids: [ scene.id ])
   end
 end

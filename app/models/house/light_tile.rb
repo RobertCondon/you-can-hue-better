@@ -1,11 +1,8 @@
 class House
   class LightTile
-    OFF_HEX = "#2b3040"
     DARK_INK = "#15181f"
     LIGHT_INK = "#f3f1ec"
-    MINIMUM_COLOUR_STRENGTH = 0.3
     TINT_STRENGTH = 0.18
-    FULL_BRIGHTNESS = 100.0
     DARK_INK_FROM_LUMINANCE = 0.35
     NAME_COVERED_FROM_FILL = 35
     LEVEL_COVERED_FROM_FILL = 82
@@ -14,14 +11,9 @@ class House
       @light = light
     end
 
-    def tile_hex
-      return OFF_HEX unless @light.lit?
+    def tile_hex = @light.lit? ? Glow.hex(@light.hex, @light.brightness) : Glow::OFF_HEX
 
-      colour_strength = MINIMUM_COLOUR_STRENGTH + (1 - MINIMUM_COLOUR_STRENGTH) * (@light.brightness / FULL_BRIGHTNESS)
-      Hue::Color.mix(OFF_HEX, @light.hex, colour_strength)
-    end
-
-    def tint_hex = @light.lit? ? Hue::Color.mix(OFF_HEX, @light.hex, TINT_STRENGTH) : OFF_HEX
+    def tint_hex = @light.lit? ? Hue::Color.mix(Glow::OFF_HEX, @light.hex, TINT_STRENGTH) : Glow::OFF_HEX
 
     def tile_text_hex = Hue::Color.luminance(tile_hex) > DARK_INK_FROM_LUMINANCE ? DARK_INK : LIGHT_INK
 

@@ -16,7 +16,7 @@
       <button type="button" class="floor__netlabel" data-floor-target="netLabel" data-net-id="<%= net.id %>"
               data-group-id="<%= net.group_id %>" style="<%= net_label_style(net) %>" data-action="floor#frameNet"><%= net.display_label %></button>
     <% end %>
-    <%= render partial: "floors/object", collection: floor.objects, as: :object, locals: { editable: } %>
+    <%= render partial: "floors/item", collection: floor.items, as: :item, locals: { editable: } %>
     <%= render partial: "floors/light", collection: floor.spots, as: :spot %>
   </div>
   <div class="floor__zoom" role="group" aria-label="<%= t(".zoom") %>">

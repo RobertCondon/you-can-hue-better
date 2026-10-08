@@ -11,5 +11,7 @@ module ScenesHelper
 
   def sibling_room_names(scene) = scene.siblings.map { |sibling| sibling.group.display_name }
 
+  def scene_dot_hex(action) = action.on ? House::Glow.hex(action.hex, action.brightness) : House::Glow::OFF_HEX
+
   def scene_light_name(action) = action.light.extension&.nickname.presence || action.light.name
 end

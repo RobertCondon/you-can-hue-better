@@ -1,9 +1,7 @@
 import { hsvToRgb, rgbToHsv, rgbToXy, xyToRgb, rgbToHex, clampToGamut, mirekToRgb } from "lib/hue_color"
+import { lightConstants } from "lib/light_constants"
 
 export const WHEEL_SIZE = 220
-export const WARMEST_MIREK = 500
-export const COOLEST_MIREK = 153
-const MIREK_SPAN = WARMEST_MIREK - COOLEST_MIREK
 const RADIANS_TO_DEGREES = 180 / Math.PI
 const FULL_TURN_DEGREES = 360
 const FULL_VALUE = 1
@@ -16,6 +14,11 @@ const WHITE_GRADIENT_STEPS = 10
 const CENTRE_PERCENT = 50
 const RADIUS_PERCENT = 50
 const colourWheels = new Map()
+
+function mirekRange() {
+  const { warmestMirek, coolestMirek } = lightConstants()
+  return { warmestMirek, span: warmestMirek - coolestMirek }
+}
 
 function hueAndSaturationAt(offsetX, offsetY) {
   let hueDegrees = Math.atan2(offsetY, offsetX) * RADIANS_TO_DEGREES
@@ -30,7 +33,8 @@ export function colourAt(offsetX, offsetY, gamut) {
 
 export function mirekAt(offsetX) {
   const warmToCool = Math.min(1, Math.max(0, (offsetX + 1) / 2))
-  return Math.round(WARMEST_MIREK - warmToCool * MIREK_SPAN)
+  const { warmestMirek, span } = mirekRange()
+  return Math.round(warmestMirek - warmToCool * span)
 }
 
 export const whiteHex = mirek => rgbToHex(mirekToRgb(mirek))
@@ -66,10 +70,10 @@ export function drawWhiteRange(canvas) {
   context.beginPath()
   context.arc(radius, radius, radius, 0, Math.PI * 2)
   context.clip()
-  const gradient = context.createLinearGradient(0, 0, WHEEL_SIZE, 0)
+  const gradient = context.createLinearGradient(0, 0, WHEEL_SIZE, 0), { warmestMirek, span } = mirekRange()
   for (let step = 0; step <= WHITE_GRADIENT_STEPS; step++) {
     const position = step / WHITE_GRADIENT_STEPS
-    gradient.addColorStop(position, whiteHex(WARMEST_MIREK - position * MIREK_SPAN))
+    gradient.addColorStop(position, whiteHex(warmestMirek - position * span))
   }
   context.fillStyle = gradient
   context.fillRect(0, 0, WHEEL_SIZE, WHEEL_SIZE)
@@ -77,7 +81,8 @@ export function drawWhiteRange(canvas) {
 }
 
 export function whiteMarkerPosition(mirek) {
-  return { left: `${100 * (WARMEST_MIREK - mirek) / MIREK_SPAN}%`, top: `${CENTRE_PERCENT}%` }
+  const { warmestMirek, span } = mirekRange()
+  return { left: `${100 * (warmestMirek - mirek) / span}%`, top: `${CENTRE_PERCENT}%` }
 }
 
 export function colourMarkerPosition(chromaticity) {

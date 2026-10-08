@@ -10,9 +10,9 @@ module Hue
     has_many :scenes, dependent: :destroy
     has_many :custom_scenes, class_name: "::CustomScene", dependent: :nullify
     has_one :extension, class_name: "::HueExtensions::Group", foreign_key: :id, inverse_of: :hue_group, dependent: :destroy
-    has_many :placements, class_name: "::LightPlacement", dependent: :delete_all
-    has_many :floor_objects, class_name: "::FloorObject", dependent: :delete_all
-    has_many :floor_nets, class_name: "::FloorNet", dependent: :delete_all
+    has_many :floor_placements, class_name: "::Floor::Placement", dependent: :delete_all
+    has_many :floor_items, class_name: "::Floor::Item", dependent: :delete_all
+    has_many :floor_nets, class_name: "::Floor::Net", dependent: :delete_all
 
     validates :name, presence: true
     validates :kind, inclusion: { in: KINDS }

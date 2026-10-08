@@ -1,10 +1,9 @@
 class RoomsController < ApplicationController
-  include HouseSectionStreams
+  include HouseStreams
 
   def update
     group = Hue::Group.find(params[:id])
-    outcome = HouseCommands::RoomSwitch.new(group, on: ActiveModel::Type::Boolean.new.cast(params.require(:room)[:on])).run
-    wait_for_bridge_to_settle
+    outcome = HouseCommands::RoomSwitch.call(group, on: ActiveModel::Type::Boolean.new.cast(params.require(:room)[:on]))
     render_house_sections(toast: outcome_toast(outcome, t(".a_light_in", room: group.name)))
   end
 

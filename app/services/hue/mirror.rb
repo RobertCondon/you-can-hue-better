@@ -2,15 +2,15 @@ module Hue
   class Mirror
     TYPE_FIELD = "type"
     APPLIERS = {
-      ResourceType::LIGHT => LightApplier,
-      ResourceType::GROUPED_LIGHT => GroupedLightApplier,
-      ResourceType::BUTTON => ButtonApplier,
-      ResourceType::RELATIVE_ROTARY => RotaryApplier,
-      ResourceType::ZIGBEE_CONNECTIVITY => ConnectivityApplier,
-      ResourceType::DEVICE_POWER => PowerApplier,
-      ResourceType::SCENE => SceneApplier
+      Api::ResourceType::LIGHT => LightApplier,
+      Api::ResourceType::GROUPED_LIGHT => GroupedLightApplier,
+      Api::ResourceType::BUTTON => ButtonApplier,
+      Api::ResourceType::RELATIVE_ROTARY => RotaryApplier,
+      Api::ResourceType::ZIGBEE_CONNECTIVITY => ConnectivityApplier,
+      Api::ResourceType::DEVICE_POWER => PowerApplier,
+      Api::ResourceType::SCENE => SceneApplier
     }.freeze
-    STRUCTURAL_TYPES = [ ResourceType::DEVICE, ResourceType::ROOM, ResourceType::ZONE, ResourceType::SMART_SCENE ].freeze
+    STRUCTURAL_TYPES = [ Api::ResourceType::DEVICE, Api::ResourceType::ROOM, Api::ResourceType::ZONE, Api::ResourceType::SMART_SCENE ].freeze
 
     def self.apply(resources, event: Event.local, changes: Changes.new)
       resources.each { |resource| apply_resource(resource, event:, changes:) }

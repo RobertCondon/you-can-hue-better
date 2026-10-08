@@ -1,7 +1,7 @@
 module Hue
   class Mirror
     class PowerApplier < Applier
-      PAYLOAD_CLASS = Payloads::DevicePower
+      PAYLOAD_CLASS = Api::Payloads::DevicePower
 
       def apply
         device = Device.find_by(id: payload.owner_id) or return

@@ -1,7 +1,7 @@
 module Hue
   class Mirror
     class ConnectivityApplier < Applier
-      PAYLOAD_CLASS = Payloads::ZigbeeConnectivity
+      PAYLOAD_CLASS = Api::Payloads::ZigbeeConnectivity
 
       def apply
         device = Device.find_by(id: payload.owner_id) or return

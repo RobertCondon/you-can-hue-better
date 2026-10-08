@@ -1,7 +1,7 @@
 module Hue
   class Mirror
     class RotaryApplier < Applier
-      PAYLOAD_CLASS = Payloads::RelativeRotary
+      PAYLOAD_CLASS = Api::Payloads::RelativeRotary
 
       def apply
         return unless payload.reported?

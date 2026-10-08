@@ -1,6 +1,9 @@
 require "test_helper"
+require "turbo/broadcastable/test_helper"
 
 class NamesControllerTest < ActionDispatch::IntegrationTest
+  include Turbo::Broadcastable::TestHelper
+
   setup { sync_mirror! }
 
   test "a light nickname shows as the name with the real name underneath" do
@@ -27,6 +30,13 @@ class NamesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Lamp", Hue::Light.find("l1").name
     assert_equal "Lamp", Hue::Device.find("d1").name
     assert_equal "rename to Lamp", Activity.last.action
+  end
+
+  test "a bridge rename reaches every open page, not just this one" do
+    broadcasts = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) do
+      patch light_names_path("l1"), params: { light: { name: "Reading lamp" } }, as: :turbo_stream
+    end
+    assert_includes broadcasts.map { |stream| stream["target"] }, "light_r1_l1"
   end
 
   test "an unchanged name is not sent to the bridge" do

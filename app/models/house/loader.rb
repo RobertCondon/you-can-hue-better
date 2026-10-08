@@ -10,7 +10,7 @@ class House
     def load
       refresh_mirror if @refresh
       rooms = mirror_groups.map { |group| RoomBuilder.new(group).build }
-      lights = mirror_lights.map(&:to_snapshot)
+      lights = mirror_lights.map { |light| LightBuilder.from_mirror(light) }
       rooms, lights = without_hidden(rooms, lights) unless @include_hidden
       House.new(rooms: RoomOrder.sort(rooms), lights:)
     end
@@ -18,12 +18,12 @@ class House
     private
 
     def refresh_mirror
-      Hue::Sync.run
+      Hue::Mirror::Sync.call
     rescue Hue::Error
       raise if Hue::Light.none?
     end
 
-    def mirror_groups = Hue::Group.where(kind: ROOM_KINDS).includes(:scenes, :extension, lights: [ :extension, :device ])
+    def mirror_groups = Hue::Group.where(kind: ROOM_KINDS).includes(:extension, scenes: :extension, lights: [ :extension, :device ])
 
     def mirror_lights = Hue::Light.includes(:extension, :device)
 

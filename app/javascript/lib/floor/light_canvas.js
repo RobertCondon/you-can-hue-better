@@ -1,7 +1,7 @@
 import { drawFloorLight } from "lib/floor_light"
 import { styleNumber } from "lib/floor/element_style"
+import { lightConstants } from "lib/light_constants"
 
-const DEFAULT_HUE = "#ffd9a0"
 const OFF_CLASS = "is-off"
 const MUTED_CLASS = "is-muted"
 const WALL = "wall"
@@ -36,7 +36,7 @@ export class FloorLightCanvas {
       .filter(lamp => !lamp.classList.contains(OFF_CLASS) && !lamp.classList.contains(MUTED_CLASS))
       .map(lamp => ({
         x: styleNumber(lamp, "--x"), y: styleNumber(lamp, "--y") / aspect,
-        hex: lamp.style.getPropertyValue("--hue").trim() || DEFAULT_HUE, bri: styleNumber(lamp, "--bri")
+        hex: lamp.style.getPropertyValue("--hue").trim() || lightConstants().warmWhite, bri: styleNumber(lamp, "--bri")
       }))
   }
 

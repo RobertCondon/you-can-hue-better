@@ -24,7 +24,7 @@
     <p class="muted setup__hint"><%= t(@discovered_bridges.any? ? ".found" : ".not_found") %></p>
     <ol class="setup__steps">
       <li><%= t(".press_button") %></li>
-      <li><%= t(".then_connect", seconds: Hue::LinkButtonPairing::PAIRING_WINDOW_SECONDS) %></li>
+      <li><%= t(".then_connect", seconds: Hue::Pairing::LinkButtonPairing::PAIRING_WINDOW_SECONDS) %></li>
     </ol>
     <button type="submit" class="btn btn--primary setup__go"><%= t(".connect") %></button>
   <% end %>

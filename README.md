@@ -45,29 +45,36 @@ status, renaming on the bridge itself, and a visibility list: hide rooms or ligh
 
 The bridge is the source of truth. The app keeps a mirror of it and never guesses.
 
-- **Talking to the bridge** (`app/services/hue/`): `Hue::Client` exposes one resource class per bridge
-  resource (`client.lights.update`, `client.scenes.recall`, …) over a persistent connection.
-  `Hue::Payloads` name every field of the bridge's JSON once. Pairing is `BridgeDiscovery`,
-  `LinkButtonPairing` and `BridgeConnector`. `Hue::Color` converts between hex and the CIE xy colours
-  the bridge uses.
-- **The mirror** (`app/models/hue/`, tables `hue_*`): a cache of bridge state. `Hue::Sync` rebuilds it
-  in steps, one per table. `Hue::Listener`, a thread a Puma plugin starts with the server, applies the
-  bridge's event stream through `Hue::Mirror` (one applier per resource type), logs switch presses, and
-  reconnects with backoff. Set `HUE_LISTENER=0` to start the server without it.
+- **Talking to the bridge** (`app/services/hue/api/`): `Hue::Api::Client` exposes one resource class per
+  bridge resource (`client.lights.update`, `client.scenes.recall`, …) over a persistent connection.
+  `Hue::Api::Payloads` read every field of the bridge's JSON, and `Hue::Api::LightChange` writes the one
+  thing the app sends most: what a light should do. `Hue::Api::Limits` holds the bridge's ranges.
+  `Hue::Pairing` finds the bridge and gets a key. `Hue::Color` converts between hex and CIE xy.
+- **The mirror** (`app/models/hue/`, tables `hue_*`; `app/services/hue/mirror/`): a cache of bridge
+  state. `Hue::Mirror::Sync` rebuilds it in steps, one per table. `Hue::Mirror::Listener`, a thread a
+  Puma plugin starts with the server, applies the bridge's event stream through `Hue::Mirror` (one
+  applier per resource type), logs switch presses, and reconnects with backoff. Set `HUE_LISTENER=0` to
+  start the server without it. Nothing under `Hue` knows about the pages.
 - **App-owned data**: `hue_extensions_*` tables share an id with the mirror row they extend (nicknames,
   room order, visibility, icons). Floor placements, objects and outlines, undo states, the command log,
   remote-control bindings and the stored pairing have their own tables. `docs/DB_DESIGN.md` explains the
   schema.
 - **What the pages render** (`app/models/house.rb`, `app/models/house/`): immutable snapshots built from
-  the mirror, with hidden rooms and lights left out outside `/dev`.
-- **Commands** (`app/services/house_commands/`, `light_command.rb`, `floor_paint.rb`): each change is
-  logged by `ActivityRecorder`, and multi-light ones capture undo first (`app/services/undo/`).
+  the mirror, with hidden rooms and lights left out outside `/dev`. `House::Glow` is the one formula for
+  how a light's colour and brightness tint a tile, a scene dot and a lamp on the floor.
+- **The floor** (`app/models/floor.rb`, `app/models/floor/`): the plan, its coordinates and geometry, and
+  its three tables (`Floor::Placement`, `Floor::Item` for walls and furniture, `Floor::Net` for outlines).
+- **Commands** (`app/services/house_commands/`): everything that changes the house is one command
+  answering `.call`. `HouseCommands::Command` runs the same steps for each: save Undo when several lights
+  change (`UndoAction`), log it (`ActivityRecorder`), send it, catch the mirror up, and broadcast.
+  Controllers pick a command and render.
 - **Live pages**: every change, from this app, the Hue app or a wall switch, reaches open pages as
-  Turbo Streams. `HouseBroadcast::Targets` names the elements they replace, and the views build their
-  ids from it. An update aimed at something under the pointer waits until it is released
+  Turbo Streams. `HouseBroadcast::Streams` builds each update once, for both a controller's reply and
+  the broadcast, and `HouseBroadcast::Targets` names the elements they replace. An update aimed at something under the pointer waits until it is released
   (`app/javascript/lib/busy.js`).
 - **Front end**: Stimulus controllers in `app/javascript/controllers/`, with shared maths and helpers in
-  `app/javascript/lib/` (colour, the floor's camera, geometry and light). The floor's controller wires
+  `app/javascript/lib/` (colour, the floor's camera, geometry and light). Colours and limits the
+  browser shares with Ruby arrive from Ruby in the page head (`lib/light_constants.js`). The floor's controller wires
   the page to the classes in `lib/floor/`, one per job. Stylesheets are one file per part of the page,
   with shared values in `tokens.css`. Every piece of visible text is in `config/locales/en.yml`.
 - **Remote controls**: `ControlBinding` and friends describe what each switch button and the dial ring

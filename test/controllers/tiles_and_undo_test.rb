@@ -22,7 +22,7 @@ class UndoTest < ActionDispatch::IntegrationTest
     undo = UndoAction.last
     assert_equal "Study turned off", undo.description
     assert_equal 2, undo.light_count
-    assert_equal [ true, 80.0 ], [ undo.light_states.find { |state| state.light_id == "l1" }.on, undo.light_states.find { |state| state.light_id == "l1" }.brightness ]
+    assert_equal [ true, 80.0 ], undo.light_states.find { |state| state.light_id == "l1" }.change.then { |change| [ change.on, change.brightness ] }
     assert_select "turbo-stream[action=update][target=flash] .flash--undo form[action='#{undo_path(undo)}'] button", "Undo"
 
     hue.writes.clear
@@ -44,14 +44,14 @@ class UndoTest < ActionDispatch::IntegrationTest
 
   test "a white light is restored as a temperature, not a colour" do
     Hue::Light.find("l1").update!(raw: Hue::Light.find("l1").raw.deep_merge("color_temperature" => { "mirek_valid" => true }), mirek: 366)
-    undo = Undo::Capture.call("test", %w[l1])
-    Undo::Restore.new(undo).run
+    undo = UndoAction.capture!("test", %w[l1])
+    HouseCommands::UndoReplay.call(undo)
     assert_equal({ on: { on: true }, dimming: { brightness: 80.0 }, color_temperature: { mirek: 366 } }, hue.writes.last[2])
   end
 
   test "old undo rows are swept" do
     UndoAction.create!(description: "old", states: [], created_at: 2.hours.ago)
-    Undo::Capture.call("new", %w[l1])
+    UndoAction.capture!("new", %w[l1])
     assert_equal [ "new" ], UndoAction.pluck(:description)
   end
 end

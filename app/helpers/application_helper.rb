@@ -12,4 +12,17 @@ module ApplicationHelper
   def clock_time(time) = l(time.in_time_zone, format: :clock)
 
   def css_variables(variables) = variables.map { |name, value| "--#{name.to_s.dasherize}: #{value}" }.join("; ")
+
+  def light_colour_tokens
+    colours = { off_tile: House::Glow::OFF_HEX, warm_white: Hue::Color::WARM_WHITE_HEX, dark_ink: House::LightTile::DARK_INK, light_ink: House::LightTile::LIGHT_INK }
+    ":root { #{css_variables(colours)} }"
+  end
+
+  def light_constants
+    {
+      offTile: House::Glow::OFF_HEX, warmWhite: Hue::Color::WARM_WHITE_HEX, glowMinimum: House::Glow::MINIMUM_STRENGTH,
+      lowestLevel: Hue::Api::Limits::LIT_BRIGHTNESS.min, highestLevel: Hue::Api::Limits::LIT_BRIGHTNESS.max,
+      coolestMirek: Hue::Api::Limits::MIREK.min, warmestMirek: Hue::Api::Limits::MIREK.max
+    }
+  end
 end

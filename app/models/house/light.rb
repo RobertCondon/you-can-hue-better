@@ -3,10 +3,7 @@ class House
     GAMUT_C = { red: { x: 0.6915, y: 0.3083 }, green: { x: 0.17, y: 0.7 }, blue: { x: 0.1532, y: 0.0475 } }.freeze
     TEMPERATURE_MODE = "ct"
     COLOUR_MODE = "xy"
-    LOWEST_LIT_LEVEL = 1
-    HIGHEST_LEVEL = 100
     UNLIT_LEVEL = 0
-    FULL_BRIGHTNESS = 100.0
     GLOW_DECIMAL_PLACES = 2
 
     delegate :tile_hex, :tint_hex, :tile_text_hex, :fill_pct, :name_ink, :level_ink, to: :tile
@@ -34,7 +31,7 @@ class House
 
     def hex = color? ? Hue::Color.xy_to_hex(xy[:x], xy[:y]) : Hue::Color::WARM_WHITE_HEX
 
-    def level = lit? ? brightness.round.clamp(LOWEST_LIT_LEVEL, HIGHEST_LEVEL) : UNLIT_LEVEL
+    def level = lit? ? brightness.round.clamp(Hue::Api::Limits::LIT_BRIGHTNESS) : UNLIT_LEVEL
 
     def brightness_label
       return I18n.t("house.light.not_responding") unless responding?
@@ -43,7 +40,7 @@ class House
       I18n.t("house.light.level", level:)
     end
 
-    def glow = lit? ? (brightness / FULL_BRIGHTNESS).round(GLOW_DECIMAL_PLACES) : UNLIT_LEVEL
+    def glow = lit? ? (brightness / Glow::FULL_BRIGHTNESS).round(GLOW_DECIMAL_PLACES) : UNLIT_LEVEL
 
     def tile = LightTile.new(self)
   end

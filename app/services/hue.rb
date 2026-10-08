@@ -1,6 +1,6 @@
 module Hue
   def self.client
-    @client ||= Client.new
+    @client ||= Api::Client.new
   end
 
   def self.client=(replacement_client)
@@ -13,7 +13,7 @@ module Hue
   end
 
   def self.json_http
-    @json_http ||= JsonHttp.new
+    @json_http ||= Api::JsonHttp.new
   end
 
   def self.json_http=(replacement_json_http)
@@ -21,4 +21,6 @@ module Hue
   end
 
   def self.configured? = Config.load.configured?
+
+  def self.wait_for_bridge = sleep(Rails.configuration.x.hue.settle_seconds)
 end

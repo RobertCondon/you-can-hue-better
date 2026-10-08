@@ -1,7 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 import { hold, release } from "lib/busy"
 import { patchAndRenderStreams } from "lib/requests"
-import { previewLevel, LOWEST_LEVEL, HIGHEST_LEVEL } from "lib/light_preview"
+import { previewLevel } from "lib/light_preview"
+import { lightConstants } from "lib/light_constants"
 
 const DRAG_THRESHOLD = 8
 const PRIMARY_BUTTON = 0
@@ -58,7 +59,7 @@ export default class extends Controller {
   }
 
   levelAt(clientX) {
-    const bounds = this.element.getBoundingClientRect()
-    return Math.min(HIGHEST_LEVEL, Math.max(LOWEST_LEVEL, Math.round((clientX - bounds.left) / bounds.width * HIGHEST_LEVEL)))
+    const bounds = this.element.getBoundingClientRect(), { lowestLevel, highestLevel } = lightConstants()
+    return Math.min(highestLevel, Math.max(lowestLevel, Math.round((clientX - bounds.left) / bounds.width * highestLevel)))
   }
 }

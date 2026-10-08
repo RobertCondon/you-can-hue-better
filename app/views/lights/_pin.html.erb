@@ -4,7 +4,7 @@
      data-action="pointerdown->pinned#swipeStart pointermove->pinned#swipeMove pointerup->pinned#swipeEnd pointercancel->pinned#swipeEnd click->pinned#guard:capture">
   <div class="pin__bar">
     <%= form_with url: light_path(light.id), method: :patch, class: "pin__toggle" do |form| %>
-      <button type="submit" name="light[on]" value="<%= LightCommand::TOGGLE %>" class="pin__icon" aria-pressed="<%= light.lit? %>" aria-label="<%= light_power_label(light) %>">
+      <button type="submit" name="light[on]" value="<%= HouseCommands::LightUpdate::TOGGLE %>" class="pin__icon" aria-pressed="<%= light.lit? %>" aria-label="<%= light_power_label(light) %>">
         <span class="tile__dot"><%= render "lights/icon", icon: light.icon %></span>
       </button>
     <% end %>
@@ -14,7 +14,7 @@
     </button>
     <%= form_with url: light_path(light.id), method: :patch, class: "pin__dim" do |form| %>
       <label class="sr-only" for="pin_bri_<%= light.id %>"><%= t(".brightness_of", light: light.display_name) %></label>
-      <input type="range" id="pin_bri_<%= light.id %>" name="light[brightness]" min="<%= LightCommand::LOWEST_BRIGHTNESS %>" max="<%= LightCommand::HIGHEST_BRIGHTNESS %>"
+      <input type="range" id="pin_bri_<%= light.id %>" name="light[brightness]" min="<%= Hue::Api::Limits::LIT_BRIGHTNESS.min %>" max="<%= Hue::Api::Limits::LIT_BRIGHTNESS.max %>"
              value="<%= slider_level(light) %>" data-action="input->light#preview change->light#submit">
     <% end %>
     <button type="button" class="pin__swatch" data-action="pinned#expand" aria-label="<%= t(".colour_of", light: light.display_name) %>"></button>

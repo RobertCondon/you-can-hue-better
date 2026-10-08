@@ -44,18 +44,13 @@ en:
             target:
               must_be_light: must be a light for this action
               must_be_group: must be a room or zone for this action
-        floor_net:
+        floor/net:
           attributes:
             points:
               too_few: needs at least %{count} points
   floor:
     net:
       house_label: House
-    paint:
-      nothing_to_paint: Nothing to paint
-      description:
-        one: Painted %{count} light
-        other: Painted %{count} lights
   floor_paints:
     create:
       a_painted_light: A painted light
@@ -79,9 +74,14 @@ en:
   undos:
     create:
       undone: 'Undone: %{description}'
-  light_command:
-    nothing_to_change: Nothing to change
   house_commands:
+    light_update:
+      nothing_to_change: Nothing to change
+    paint:
+      nothing_to_paint: Nothing to paint
+      description:
+        one: Painted %{count} light
+        other: Painted %{count} lights
     room_switch:
       description: "%{room} turned %{state}"
     scene_recall:
@@ -211,7 +211,7 @@ en:
       unplaced:
         one: "%{count} light not placed yet. Edit floor and drag them in from the bottom."
         other: "%{count} lights not placed yet. Edit floor and drag them in from the bottom."
-      objects:
+      items:
         wall: Wall
         box: Box
         circle: Round
@@ -246,7 +246,7 @@ en:
       fit: Fit the house
     light:
       not_in_scene: not in this scene
-    object:
+    item:
       resize: Resize
       rotate: Rotate
     script:

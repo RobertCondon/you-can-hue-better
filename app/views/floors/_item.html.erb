@@ -1,0 +1,13 @@
+<div class="floor__object floor__object--<%= item.kind %>" id="<%= targets.floor_item(item) %>"
+     data-floor-target="object" data-id="<%= item.id %>" data-kind="<%= item.kind %>" data-url="<%= floor_object_path(item) %>"
+     style="<%= item_style(item) %>"
+     <% if editable %>tabindex="0" aria-label="<%= item.label.presence || item.kind %>"
+     data-action="pointerdown->floor#objectDown pointermove->floor#objectMove pointerup->floor#objectUp pointercancel->floor#objectUp keydown->floor#objectKey"<% end %>>
+  <% if item.label.present? %><span class="floor__label"><%= item.label %></span><% end %>
+  <% if editable %>
+    <button type="button" class="floor__handle" aria-label="<%= t(".resize") %>" tabindex="-1" data-action="pointerdown->floor#resizeDown pointermove->floor#objectMove pointerup->floor#objectUp pointercancel->floor#objectUp"></button>
+    <% unless item.circle? %>
+      <button type="button" class="floor__rotate" aria-label="<%= t(".rotate") %>" tabindex="-1" data-action="pointerdown->floor#rotateDown pointermove->floor#objectMove pointerup->floor#objectUp pointercancel->floor#objectUp"></button>
+    <% end %>
+  <% end %>
+</div>

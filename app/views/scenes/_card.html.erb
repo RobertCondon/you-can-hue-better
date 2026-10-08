@@ -7,7 +7,7 @@
     </span>
     <span class="dots" aria-label="<%= t(".lights", count: scene.actions.size) %>">
       <% scene.actions.sort_by(&:hue_angle).each do |action| %>
-        <span class="dot" style="<%= css_variables(c: action.dot_hex) %>" title="<%= scene_light_name(action) %>"></span>
+        <span class="dot" style="<%= css_variables(c: scene_dot_hex(action)) %>" title="<%= scene_light_name(action) %>"></span>
       <% end %>
     </span>
     <% if (other_rooms = sibling_room_names(scene)).any? %>

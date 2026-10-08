@@ -1,12 +1,12 @@
 class LegacyRulesImport
-  def self.run(raw_rules) = new(raw_rules).run
+  def self.call(raw_rules) = new(raw_rules).call
 
   def initialize(raw_rules)
     @rules = raw_rules.map { |rule_id, raw_rule| Rule.new(rule_id, raw_rule) }
     @outcome = Outcome.new
   end
 
-  def run
+  def call
     import_buttons
     import_rotaries
     @outcome.result

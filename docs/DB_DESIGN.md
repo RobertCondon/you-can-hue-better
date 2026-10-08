@@ -4,7 +4,7 @@ Written 2026-10-06, updated 2026-10-09. Companion to HUE_NOTES.md. Everything he
 against the real bridge.
 
 **Status:** the mirror, extension and app tables below all exist. The pages read from the mirror and
-`Hue::Listener` keeps it fresh from the event stream. Presses are logged to `control_events` but **not
+`Hue::Mirror::Listener` keeps it fresh from the event stream. Presses are logged to `control_events` but **not
 acted on**: the bridge's own rules still drive the switches and the dial, and nothing reads
 `control_bindings` yet. The dispatcher that would act on them is not built.
 
@@ -208,7 +208,7 @@ undo_actions                      the lights' states before a multi-light action
 light_placements                  where each light sits on the house floor (percent of the floor)
   group_id, light_id, x, y
 
-floor_objects                     walls and furniture on the house floor
+floor_objects                     walls and furniture on the house floor (model Floor::Item)
   group_id, kind (wall | box | circle), x, y, w, h, rotation, label
 
 floor_nets                        room outlines and the house outline (group_id null)

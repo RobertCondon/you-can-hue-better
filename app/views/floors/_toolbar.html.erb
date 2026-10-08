@@ -4,11 +4,11 @@
   </p>
   <div class="floor-head__tools">
     <span class="floor__tools" data-floor-target="tools" hidden>
-      <% FloorObject::KINDS.each do |kind| %>
-        <button type="button" class="tool" data-action="floor#addObject" data-floor-kind-param="<%= kind %>"><span class="tool__swatch tool__swatch--<%= kind %>"></span><%= t(".objects.#{kind}") %></button>
+      <% Floor::Item::KINDS.each do |kind| %>
+        <button type="button" class="tool" data-action="floor#addObject" data-floor-kind-param="<%= kind %>"><span class="tool__swatch tool__swatch--<%= kind %>"></span><%= t(".items.#{kind}") %></button>
       <% end %>
-      <% [ FloorNet::ROOM, FloorNet::OUTLINE ].each do |net_kind| %>
-        <button type="button" class="tool tool--draw" data-action="floor#startTool" data-floor-tool-param="<%= net_kind %>" data-floor-target="toolButton" aria-pressed="false"><span class="tool__swatch tool__swatch--<%= net_kind == FloorNet::ROOM ? "net" : net_kind %>"></span><%= t(".nets.#{net_kind}") %></button>
+      <% [ Floor::Net::ROOM, Floor::Net::OUTLINE ].each do |net_kind| %>
+        <button type="button" class="tool tool--draw" data-action="floor#startTool" data-floor-tool-param="<%= net_kind %>" data-floor-target="toolButton" aria-pressed="false"><span class="tool__swatch tool__swatch--<%= net_kind == Floor::Net::ROOM ? "net" : net_kind %>"></span><%= t(".nets.#{net_kind}") %></button>
       <% end %>
       <label class="tool tool--select">
         <span class="muted"><%= t(".shape") %></span>

@@ -22,11 +22,11 @@ class Floor
 
     def waiting_position(light)
       slot = waiting_lights.index(light)
-      waiting_x = ((slot + SLOT_CENTRE) / waiting_lights.size * FULL_WIDTH).round(FloorCoordinates::DECIMAL_PLACES)
+      waiting_x = ((slot + SLOT_CENTRE) / waiting_lights.size * FULL_WIDTH).round(Coordinates::DECIMAL_PLACES)
       [ waiting_x, WAITING_ROW_HEIGHTS[slot % WAITING_ROW_HEIGHTS.size] ]
     end
 
-    def placements = @placements ||= LightPlacement.positions_on(@home_id)
+    def placements = @placements ||= Placement.positions_on(@home_id)
 
     def waiting_lights = @waiting_lights ||= @lights.reject { |light| placements.key?(light.id) }
 

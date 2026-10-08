@@ -10,7 +10,7 @@ module HueListenerThread
     return if running?
 
     @stop_requested = false
-    @thread = Thread.new { ::Hue::Listener.new(stop: -> { @stop_requested }).run }
+    @thread = Thread.new { ::Hue::Mirror::Listener.new(stop: -> { @stop_requested }).run }
     @thread.name = THREAD_NAME
     @thread.report_on_exception = true
   end
