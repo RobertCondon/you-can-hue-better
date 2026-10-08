@@ -14,11 +14,6 @@ module Hue
       def self.lit(**fields) = new(on: true, **fields)
       def self.cie(value) = value.to_f.clamp(Limits::CIE).round(Color::Cie::XY_DECIMAL_PLACES)
 
-      def self.from_h(stored)
-        fields = stored.to_h.symbolize_keys.slice(*members)
-        new(**fields, xy: fields[:xy]&.symbolize_keys)
-      end
-
       def initialize(on:, brightness: nil, xy: nil, mirek: nil) = super
 
       def to_payload

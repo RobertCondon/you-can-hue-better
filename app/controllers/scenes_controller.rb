@@ -26,7 +26,7 @@ class ScenesController < ApplicationController
 
   def recall(mode)
     scene = Hue::Scene.recallable.find(params[:id])
-    outcome = HouseCommands::SceneRecall.call(scene, mode)
-    render_house_sections(toast: outcome_toast(outcome, t("rooms.update.a_light_in", room: scene.group.name)), scene_ids: [ scene.id ])
+    result = HouseCommands::SceneRecall.call(scene, mode)
+    render_house_sections(toast: result_toast(result, t("rooms.update.a_light_in", room: scene.group.name)), scene_ids: [ scene.id ])
   end
 end

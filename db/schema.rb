@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_08_020737) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_08_133006) do
   create_table "activities", force: :cascade do |t|
     t.string "target_kind"
     t.string "target_id"
@@ -277,13 +277,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_020737) do
     t.index ["group_id", "light_id"], name: "index_light_placements_on_group_id_and_light_id", unique: true
     t.index ["group_id"], name: "index_light_placements_on_group_id"
     t.index ["light_id"], name: "index_light_placements_on_light_id"
-  end
-
-  create_table "undo_actions", force: :cascade do |t|
-    t.string "description", null: false
-    t.json "states", default: [], null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "activities", "control_events"

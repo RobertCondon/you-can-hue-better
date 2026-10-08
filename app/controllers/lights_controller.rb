@@ -9,8 +9,8 @@ class LightsController < ApplicationController
 
   def update
     light = Hue::Light.find(params[:id])
-    outcome = HouseCommands::LightUpdate.call(light, params.require(:light).permit(*COMMAND_FIELDS))
-    render_light_update(light, warning: (unreachable_message(light.name) if outcome.unreachable_lights?))
+    result = HouseCommands::LightUpdate.call(light, params.require(:light).permit(*COMMAND_FIELDS))
+    render_light_update(light, warning: (unreachable_message(light.name) if result.unreachable_lights?))
   end
 
   private

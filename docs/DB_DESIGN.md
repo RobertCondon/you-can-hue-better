@@ -201,10 +201,6 @@ activities                        one row per command sent to the bridge
   source            string       dashboard | remote | schedule | api
   control_event_id  integer FK null
 
-undo_actions                      the lights' states before a multi-light action, kept an hour
-  description       string
-  states            json
-
 light_placements                  where each light sits on the house floor (percent of the floor)
   group_id, light_id, x, y
 

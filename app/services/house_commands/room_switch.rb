@@ -7,13 +7,6 @@ module HouseCommands
 
     private
 
-    def undoable? = true
-    def undo_light_ids = @group.lights.pluck(:id)
-
-    def undo_description
-      I18n.t("house_commands.room_switch.description", room: @group.display_name, state: @change.description)
-    end
-
     def activity
       { target_kind: @group.kind, target_id: @group.id, target_name: @group.name, action: @change.description, payload: @change.to_payload }
     end

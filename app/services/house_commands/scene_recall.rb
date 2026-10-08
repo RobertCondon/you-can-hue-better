@@ -10,13 +10,6 @@ module HouseCommands
 
     private
 
-    def undoable? = true
-    def undo_light_ids = @scene.actions.pluck(:light_id)
-
-    def undo_description
-      I18n.t("house_commands.scene_recall.#{activity_action}", scene: @scene.display_name, room: @scene.group.display_name)
-    end
-
     def activity
       target_name = I18n.t("house_commands.scene_recall.target", scene: @scene.name, room: @scene.group.name)
       { target_kind: ACTIVITY_KIND, target_id: @scene.id, target_name:, action: activity_action }

@@ -71,22 +71,12 @@ en:
       rename: Rename
       move_up: Move %{room} up
       move_down: Move %{room} down
-  undos:
-    create:
-      undone: 'Undone: %{description}'
   house_commands:
     light_update:
       nothing_to_change: Nothing to change
     paint:
       nothing_to_paint: Nothing to paint
-      description:
-        one: Painted %{count} light
-        other: Painted %{count} lights
-    room_switch:
-      description: "%{room} turned %{state}"
     scene_recall:
-      scene: "%{scene} set in %{room}"
-      play: "%{scene} played in %{room}"
       target: "%{scene} in %{room}"
   time:
     formats:
@@ -95,8 +85,6 @@ en:
     application:
       default_title: Lights
   shared:
-    undo:
-      undo: Undo
     editor:
       name: Name
       name_hint: Changes it on the bridge, for every app and switch.

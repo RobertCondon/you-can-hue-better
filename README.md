@@ -35,8 +35,6 @@ bulbs, and Set the one you like. Tap a lamp for its controls. Edit floor (deskto
 walls and furniture, and draws room outlines by clicking around a room and closing the loop. Paint
 picks a colour and sweeps it across lamps or whole rooms, then applies it in one go.
 
-Anything that changes several lights at once (a room, a scene, paint) offers Undo for an hour.
-
 **Dev** (`/dev`) is the same Lights view plus the command log, the switch-press log, the listener's
 status, renaming on the bridge itself, and a visibility list: hide rooms or lights everywhere outside
 `/dev`, take a light off the floor plan, or override its icon.
@@ -56,7 +54,7 @@ The bridge is the source of truth. The app keeps a mirror of it and never guesse
   applier per resource type), logs switch presses, and reconnects with backoff. Set `HUE_LISTENER=0` to
   start the server without it. Nothing under `Hue` knows about the pages.
 - **App-owned data**: `hue_extensions_*` tables share an id with the mirror row they extend (nicknames,
-  room order, visibility, icons). Floor placements, objects and outlines, undo states, the command log,
+  room order, visibility, icons). Floor placements, objects and outlines, the command log,
   remote-control bindings and the stored pairing have their own tables. `docs/DB_DESIGN.md` explains the
   schema.
 - **What the pages render** (`app/models/house.rb`, `app/models/house/`): immutable snapshots built from
@@ -65,8 +63,8 @@ The bridge is the source of truth. The app keeps a mirror of it and never guesse
 - **The floor** (`app/models/floor.rb`, `app/models/floor/`): the plan, its coordinates and geometry, and
   its three tables (`Floor::Placement`, `Floor::Item` for walls and furniture, `Floor::Net` for outlines).
 - **Commands** (`app/services/house_commands/`): everything that changes the house is one command
-  answering `.call`. `HouseCommands::Command` runs the same steps for each: save Undo when several lights
-  change (`UndoAction`), log it (`ActivityRecorder`), send it, catch the mirror up, and broadcast.
+  answering `.call`. `HouseCommands::Command` runs the same steps for each: log it (`ActivityRecorder`), send it,
+  catch the mirror up, and broadcast.
   Controllers pick a command and render.
 - **Live pages**: every change, from this app, the Hue app or a wall switch, reaches open pages as
   Turbo Streams. `HouseBroadcast::Streams` builds each update once, for both a controller's reply and

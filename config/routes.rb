@@ -25,7 +25,6 @@ Rails.application.routes.draw do
     end
   end
 
-  post "undos/:id", to: "undos#create", as: :undo
   patch "visibility/lights/:id", to: "visibility#light", as: :light_visibility
   patch "visibility/rooms/:id", to: "visibility#room", as: :room_visibility
 

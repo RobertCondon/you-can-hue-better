@@ -28,10 +28,6 @@ module HouseCommands
 
     private
 
-    def undoable? = true
-    def undo_light_ids = painted_light_ids
-    def undo_description = I18n.t("house_commands.paint.description", count: painted_light_ids.size)
-
     def activity
       { target_kind: ACTIVITY_KIND, target_id: ACTIVITY_ID, target_name: ACTIVITY_NAME,
         action: "#{ACTIVITY_ID} #{painted_light_ids.size}", payload: @strokes.map(&:to_h) }

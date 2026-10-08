@@ -15,13 +15,5 @@ module Hue
     def off? = !on
 
     def xy = color_x && { x: color_x.to_f, y: color_y.to_f }
-
-    def white? = mirek.present? && Api::Payloads::Light.new(raw).mirek_valid?
-
-    def current_change
-      return Api::LightChange.power(false) unless on
-
-      Api::LightChange.new(on: true, brightness: (brightness.to_f if brightness.to_f.positive?), xy: (xy unless white?), mirek: (mirek if white?))
-    end
   end
 end

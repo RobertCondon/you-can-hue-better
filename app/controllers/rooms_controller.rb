@@ -3,8 +3,8 @@ class RoomsController < ApplicationController
 
   def update
     group = Hue::Group.find(params[:id])
-    outcome = HouseCommands::RoomSwitch.call(group, on: ActiveModel::Type::Boolean.new.cast(params.require(:room)[:on]))
-    render_house_sections(toast: outcome_toast(outcome, t(".a_light_in", room: group.name)))
+    result = HouseCommands::RoomSwitch.call(group, on: ActiveModel::Type::Boolean.new.cast(params.require(:room)[:on]))
+    render_house_sections(toast: result_toast(result, t(".a_light_in", room: group.name)))
   end
 
   def order

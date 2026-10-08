@@ -3,15 +3,12 @@ module HouseCommands
     def self.call(...) = new(...).call
 
     def call
-      undo = UndoAction.capture!(undo_description, undo_light_ids) if undoable?
       result = ActivityRecorder.record(**activity) { send_to_bridge }
       HouseBroadcast.changes(catch_up_mirror)
-      Outcome.new(result:, undo:)
+      result
     end
 
     private
-
-    def undoable? = false
 
     def catch_up_mirror
       Hue.wait_for_bridge
