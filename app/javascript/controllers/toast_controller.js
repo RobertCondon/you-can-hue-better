@@ -1,9 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 
-// A message that gets out of the way: click to dismiss, or it goes by itself.
+const VISIBLE_FOR_MILLISECONDS = 7000
+
 export default class extends Controller {
   connect() {
-    this.timer = setTimeout(() => this.dismiss(), 7000)
+    this.timer = setTimeout(() => this.dismiss(), VISIBLE_FOR_MILLISECONDS)
   }
 
   disconnect() {

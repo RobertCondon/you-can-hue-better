@@ -1,5 +1,5 @@
 <% content_for :title, t(".title") %>
 <%= turbo_stream_from HouseBroadcast::STREAM %>
-<div class="compact" data-controller="rooms editor" data-rooms-url-value="<%= order_rooms_path %>">
+<div class="compact" data-controller="rooms editor" data-rooms-url-value="<%= order_rooms_path %>" data-rooms-edit-label-value="<%= t("dashboard.lights.edit") %>" data-rooms-done-label-value="<%= t("dashboard.lights.done") %>">
   <%= render "dashboard/lights", house: @house, state: @state, dev: false %>
 </div>

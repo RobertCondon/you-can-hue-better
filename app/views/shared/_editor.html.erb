@@ -13,7 +13,7 @@
       <input type="text" maxlength="<%= HueExtensions::Record::MAX_NICKNAME_LENGTH %>" data-editor-target="nickname" placeholder="<%= t(".nickname_placeholder") %>">
       <small><%= t(".nickname_hint") %></small>
     </label>
-    <p id="<%= targets.editor_error %>" class="editor__error" role="alert"></p>
+    <p id="<%= targets.editor_error %>" class="editor__error" role="alert" data-editor-target="error"></p>
     <div class="editor__actions">
       <button type="button" class="btn" data-action="editor#close"><%= t(".cancel") %></button>
       <button type="submit" class="btn btn--primary"><%= t(".save") %></button>

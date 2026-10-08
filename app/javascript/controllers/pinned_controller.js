@@ -1,33 +1,44 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Behaviour of the pinned light's bar: expand or collapse the full panel beneath it, close it,
-// and a sideways swipe to move to the neighbouring light (the page's light-panel controller decides which).
-const SWIPE = 48
+const SWIPE_DISTANCE = 48
+const HORIZONTAL_BIAS = 1.5
+const NEXT = 1
+const PREVIOUS = -1
+const EXPANDED_CLASS = "is-expanded"
+const NOT_SWIPEABLE = "input, .pin__sheet"
+const DOCK_SELECTOR = ".dock"
 
 export default class extends Controller {
-  expand() { this.dock?.classList.toggle("is-expanded") }
+  expand() {
+    this.element.closest(DOCK_SELECTOR)?.classList.toggle(EXPANDED_CLASS)
+  }
 
   close() {
     this.dispatch("close")
   }
 
-  // A swipe may start on the icon or name (they are most of the bar), but not on the slider or in the sheet.
-  swipeStart(e) {
-    if (e.target.closest("input, .pin__sheet")) return
-    this.swipe = { x: e.clientX, y: e.clientY, id: e.pointerId }
+  swipeStart(event) {
+    if (event.target.closest(NOT_SWIPEABLE)) return
+    this.swipeOrigin = { x: event.clientX, y: event.clientY, pointerId: event.pointerId }
   }
-  swipeMove(e) {
-    if (!this.swipe || e.pointerId !== this.swipe.id) return
-    const dx = e.clientX - this.swipe.x, dy = e.clientY - this.swipe.y
-    if (Math.abs(dx) > SWIPE && Math.abs(dx) > Math.abs(dy) * 1.5) {
-      this.swiped = true
-      this.dispatch("swipe", { detail: { dir: dx < 0 ? 1 : -1 } })
-      this.swipe = null
-    }
-  }
-  swipeEnd() { this.swipe = null }
-  // The click that follows a swipe must not fire the button it landed on.
-  guard(e) { if (this.swiped) { this.swiped = false; e.stopPropagation(); e.preventDefault() } }
 
-  get dock() { return this.element.closest(".dock") }
+  swipeMove(event) {
+    if (!this.swipeOrigin || event.pointerId !== this.swipeOrigin.pointerId) return
+    const distanceX = event.clientX - this.swipeOrigin.x, distanceY = event.clientY - this.swipeOrigin.y
+    if (Math.abs(distanceX) <= SWIPE_DISTANCE || Math.abs(distanceX) <= Math.abs(distanceY) * HORIZONTAL_BIAS) return
+    this.swiped = true
+    this.dispatch("swipe", { detail: { direction: distanceX < 0 ? NEXT : PREVIOUS } })
+    this.swipeOrigin = null
+  }
+
+  swipeEnd() {
+    this.swipeOrigin = null
+  }
+
+  guard(event) {
+    if (!this.swiped) return
+    this.swiped = false
+    event.stopPropagation()
+    event.preventDefault()
+  }
 }

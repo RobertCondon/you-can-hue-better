@@ -1,35 +1,42 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Collapses a room. Remembered per device in localStorage, and reapplied whenever the
-// section is re-rendered by a broadcast.
-const KEY = "rooms:collapsed"
+const STORAGE_KEY = "rooms:collapsed"
+const COLLAPSED_CLASS = "is-collapsed"
+const TITLE_SELECTOR = ".room__title"
 
 export default class extends Controller {
   connect() {
-    this.apply(this.collapsedIds().includes(this.id))
+    this.show(this.collapsedRoomIds().includes(this.roomId))
   }
 
   toggle() {
-    const ids = new Set(this.collapsedIds())
-    const collapsed = !ids.has(this.id)
-    collapsed ? ids.add(this.id) : ids.delete(this.id)
-    this.save([...ids])
-    this.apply(collapsed)
+    const collapsedIds = new Set(this.collapsedRoomIds())
+    const collapsed = !collapsedIds.has(this.roomId)
+    collapsed ? collapsedIds.add(this.roomId) : collapsedIds.delete(this.roomId)
+    this.remember([...collapsedIds])
+    this.show(collapsed)
   }
 
-  apply(collapsed) {
-    this.element.classList.toggle("is-collapsed", collapsed)
-    const title = this.element.querySelector(".room__title")
-    if (title) title.setAttribute("aria-expanded", String(!collapsed))
+  show(collapsed) {
+    this.element.classList.toggle(COLLAPSED_CLASS, collapsed)
+    this.element.querySelector(TITLE_SELECTOR)?.setAttribute("aria-expanded", String(!collapsed))
   }
 
-  get id() { return this.element.dataset.roomId }
-
-  collapsedIds() {
-    try { return JSON.parse(localStorage.getItem(KEY) || "[]") } catch { return [] }
+  get roomId() {
+    return this.element.dataset.roomId
   }
 
-  save(ids) {
-    try { localStorage.setItem(KEY, JSON.stringify(ids)) } catch {}
+  collapsedRoomIds() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]")
+    } catch {
+      return []
+    }
+  }
+
+  remember(roomIds) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(roomIds))
+    } catch {}
   }
 }

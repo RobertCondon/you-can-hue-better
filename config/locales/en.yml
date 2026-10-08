@@ -115,6 +115,7 @@ en:
       title: Lights
       dev: dev
       edit: Edit
+      done: Done
     show:
       title: Lights
     dev:

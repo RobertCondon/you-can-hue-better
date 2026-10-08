@@ -1,39 +1,45 @@
 import { Controller } from "@hotwired/stimulus"
+import { patch, formDataFrom } from "lib/requests"
 
-// Edit mode: up/down buttons move a room section, and the full order is saved on the server
-// so every device shares it. The server renders rooms in that order on the next load.
+const EDITING_CLASS = "is-editing"
+const ROOM_SELECTOR = ".room"
+const EARLIER = -1
+const LATER = 1
+
 export default class extends Controller {
   static targets = ["list", "editButton"]
-  static values = { url: String }
+  static values = { url: String, editLabel: String, doneLabel: String }
 
-  // Edit mode reveals reorder buttons and the pencil on each room and light.
   toggleEditing() {
-    const on = !this.element.classList.contains("is-editing")
-    this.element.classList.toggle("is-editing", on)
-    this.editButtonTarget.setAttribute("aria-pressed", String(on))
-    this.editButtonTarget.textContent = on ? "Done" : "Edit"
+    const editing = !this.element.classList.contains(EDITING_CLASS)
+    this.element.classList.toggle(EDITING_CLASS, editing)
+    this.editButtonTarget.setAttribute("aria-pressed", String(editing))
+    this.editButtonTarget.textContent = editing ? this.doneLabelValue : this.editLabelValue
   }
 
-  moveUp(event)   { this.move(event.target.closest(".room"), -1) }
-  moveDown(event) { this.move(event.target.closest(".room"), +1) }
+  moveUp(event) {
+    this.move(event.target.closest(ROOM_SELECTOR), EARLIER)
+  }
 
-  move(section, delta) {
+  moveDown(event) {
+    this.move(event.target.closest(ROOM_SELECTOR), LATER)
+  }
+
+  move(section, direction) {
     const sections = this.sections()
-    const i = sections.indexOf(section), j = i + delta
-    if (j < 0 || j >= sections.length) return
-    const ref = sections[j]
-    delta < 0 ? ref.before(section) : ref.after(section)
-    this.save()
+    const neighbour = sections[sections.indexOf(section) + direction]
+    if (!neighbour) return
+    direction === EARLIER ? neighbour.before(section) : neighbour.after(section)
+    this.saveOrder()
   }
 
-  sections() { return [...this.listTarget.querySelectorAll(":scope > .room")] }
+  sections() {
+    return [...this.listTarget.querySelectorAll(`:scope > ${ROOM_SELECTOR}`)]
+  }
 
-  async save() {
-    const body = new FormData()
-    for (const s of this.sections()) body.append("ids[]", s.dataset.roomId)
-    await fetch(this.urlValue, {
-      method: "PATCH", body,
-      headers: { "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content }
-    })
+  saveOrder() {
+    const body = formDataFrom({})
+    for (const section of this.sections()) body.append("ids[]", section.dataset.roomId)
+    return patch(this.urlValue, body)
   }
 }

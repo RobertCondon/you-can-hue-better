@@ -316,18 +316,27 @@ fields, wall rectangles, shared geometry, and a new saved-camera key).
 
 ## Chunk 10: Stimulus controllers for lights and rooms
 
-- [ ] `app/javascript/controllers/application.js`
-- [ ] `app/javascript/controllers/index.js`
-- [ ] `app/javascript/controllers/autosave_controller.js`
-- [ ] `app/javascript/controllers/color_picker_controller.js`
-- [ ] `app/javascript/controllers/editor_controller.js`
-- [ ] `app/javascript/controllers/light_controller.js`
-- [ ] `app/javascript/controllers/light_panel_controller.js`
-- [ ] `app/javascript/controllers/pinned_controller.js`
-- [ ] `app/javascript/controllers/room_controller.js`
-- [ ] `app/javascript/controllers/rooms_controller.js`
-- [ ] `app/javascript/controllers/tile_controller.js`
-- [ ] `app/javascript/controllers/toast_controller.js`
+Each interaction was exercised in the browser against the bridge: tile drag and toggle, pinning,
+swiping, the colour wheel and white range, collapsing and arranging rooms, the rename dialog and
+dismissing a toast.
+
+- [x] `app/javascript/controllers/application.js`
+- [x] `app/javascript/controllers/index.js`
+- [x] `app/javascript/controllers/autosave_controller.js`
+- [x] `app/javascript/controllers/color_picker_controller.js` (wheel drawing moved out)
+- [x] `app/javascript/controllers/editor_controller.js` (finds its error line by target, not by id)
+- [x] `app/javascript/controllers/light_controller.js`
+- [x] `app/javascript/controllers/light_panel_controller.js`
+- [x] `app/javascript/controllers/pinned_controller.js` (the swipe event's `dir` is now `direction`)
+- [x] `app/javascript/controllers/room_controller.js`
+- [x] `app/javascript/controllers/rooms_controller.js` (Edit and Done labels come from the locale file)
+- [x] `app/javascript/controllers/tile_controller.js`
+- [x] `app/javascript/controllers/toast_controller.js`
+- [x] `app/javascript/lib/requests.js` (new: the CSRF-signed requests four controllers wrote by hand)
+- [x] `app/javascript/lib/light_preview.js` (new: the brightness preview two controllers duplicated, and the colour preview)
+- [x] `app/javascript/lib/color_wheel.js` (new, from the colour picker)
+- [x] `app/views/dashboard/show.html.erb`, `dev.html.erb`, `shared/_editor.html.erb` (labels and the error target)
+- [x] `config/locales/en.yml` (Done)
 
 ## Chunk 11: The floor's Stimulus controller
 
