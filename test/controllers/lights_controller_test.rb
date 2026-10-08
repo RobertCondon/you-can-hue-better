@@ -28,8 +28,8 @@ class LightsControllerTest < ActionDispatch::IntegrationTest
     assert_difference "Activity.count", 1 do
       patch light_path("l1"), params: { light: { on: "false" } }, as: :turbo_stream
     end
-    a = Activity.last
-    assert_equal [ "light", "Desk lamp", "off", "ok" ], [ a.target_kind, a.target_name, a.action, a.result ]
+    activity = Activity.last
+    assert_equal [ "light", "Desk lamp", "off", "ok" ], [ activity.target_kind, activity.target_name, activity.action, activity.result ]
   end
 
   test "bridge errors are shown in the flash and logged" do
@@ -54,8 +54,8 @@ class LightsControllerUnreachableTest < ActionDispatch::IntegrationTest
 
   test "a successful change clears any earlier message" do
     patch light_path("l1"), params: { light: { on: "toggle" } }, as: :turbo_stream
-    assert_select "turbo-stream[action=update][target=flash]" do |el|
-      assert_equal "", el.text.strip
+    assert_select "turbo-stream[action=update][target=flash]" do |flash_stream|
+      assert_equal "", flash_stream.text.strip
     end
   end
 end

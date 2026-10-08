@@ -3,6 +3,8 @@ module HouseBroadcast
     HOUSE_SUMMARY = "house_summary"
     LISTENER_STATUS = "listener_status"
     RECENT_PRESSES = "recent_presses"
+    FLASH = "flash"
+    EDITOR_ERROR = "editor_error"
 
     module_function
 

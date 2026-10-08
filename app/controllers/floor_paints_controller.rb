@@ -2,7 +2,7 @@ class FloorPaintsController < ApplicationController
   def create
     paint = FloorPaint.new(params.require(:strokes))
     paint.apply!
-    settle
+    wait_for_bridge_to_settle
     paint.refresh_mirror!
     house = House.load(refresh: false)
     render turbo_stream: [ *painted_lamp_streams(house, paint), summary_stream(house), outcome_stream(paint) ]
@@ -21,6 +21,6 @@ class FloorPaintsController < ApplicationController
   def summary_stream(house) = turbo_stream.update(HouseBroadcast::Targets::HOUSE_SUMMARY, partial: "dashboard/summary", locals: { house: })
 
   def outcome_stream(paint)
-    paint.result.unreachable_lights? ? flash_stream(unreachable_message(t(".a_painted_light"))) : undo_stream(paint.undo)
+    paint.result.unreachable_lights? ? message_toast(unreachable_message(t(".a_painted_light"))) : undo_toast(paint.undo)
   end
 end

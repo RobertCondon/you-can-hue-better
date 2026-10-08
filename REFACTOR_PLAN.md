@@ -218,25 +218,37 @@ range bulbs accept) and `hue_extensions/group.rb` (setting the floor's shape).
 
 ## Chunk 7: Lights, rooms and scenes controllers
 
-- [ ] `app/controllers/application_controller.rb`
-- [ ] `app/controllers/dashboard_controller.rb`
-- [ ] `app/controllers/lights_controller.rb`
-- [ ] `app/controllers/light_names_controller.rb`
-- [ ] `app/controllers/room_names_controller.rb`
-- [ ] `app/controllers/rooms_controller.rb`
-- [ ] `app/controllers/scenes_controller.rb`
-- [ ] `app/controllers/undos_controller.rb`
-- [ ] `app/controllers/visibility_controller.rb`
-- [ ] `app/helpers/application_helper.rb`
-- [ ] `app/jobs/application_job.rb`
-- [ ] `test/controllers/dashboard_controller_test.rb`
-- [ ] `test/controllers/lights_controller_test.rb`
-- [ ] `test/controllers/names_controller_test.rb`
-- [ ] `test/controllers/pinned_light_test.rb`
-- [ ] `test/controllers/rooms_controller_test.rb`
-- [ ] `test/controllers/scenes_controller_test.rb`
-- [ ] `test/controllers/tiles_and_undo_test.rb`
-- [ ] `test/controllers/visibility_test.rb`
+- [x] `app/controllers/application_controller.rb` (`settle` renamed `wait_for_bridge_to_settle`)
+- [x] `app/controllers/concerns/toast_streams.rb` (new: every toast in one place)
+- [x] `app/controllers/concerns/house_section_streams.rb` (new: replaces `render_rooms` and the inheritance from `RoomsController`)
+- [x] `app/controllers/concerns/light_streams.rb` (new: a light's tiles, room heads, panel and pin)
+- [x] `app/controllers/dashboard_controller.rb`
+- [x] `app/controllers/lights_controller.rb`
+- [x] `app/controllers/light_names_controller.rb`
+- [x] `app/controllers/room_names_controller.rb`
+- [x] `app/controllers/rooms_controller.rb`
+- [x] `app/controllers/scenes_controller.rb` (no longer inherits from `RoomsController`)
+- [x] `app/controllers/undos_controller.rb` (no longer inherits from `RoomsController`)
+- [x] `app/controllers/visibility_controller.rb`
+- [x] `app/services/house_commands/` outcome, undoable, room switch, scene recall, undo replay (new, from the controllers)
+- [x] `app/services/light_command.rb` (new, from the lights controller)
+- [x] `app/services/bridge_rename.rb` (new, shared by the two names controllers)
+- [x] `app/services/scenes_by_room.rb`, `scene_preview.rb` (new, from the scenes controller)
+- [x] `app/helpers/application_helper.rb` (no change needed)
+- [x] `app/jobs/application_job.rb` (generated comments removed)
+- [x] `config/locales/en.yml` (toasts, undo descriptions)
+- [x] `test/controllers/dashboard_controller_test.rb`
+- [x] `test/controllers/lights_controller_test.rb`
+- [x] `test/controllers/names_controller_test.rb` (no change needed)
+- [x] `test/controllers/pinned_light_test.rb` (no change needed)
+- [x] `test/controllers/rooms_controller_test.rb` (no change needed)
+- [x] `test/controllers/scenes_controller_test.rb` (no change needed)
+- [x] `test/controllers/tiles_and_undo_test.rb` (no change needed)
+- [x] `test/controllers/visibility_test.rb` (no change needed)
+- [x] `test/services/light_command_test.rb` (new)
+
+Touched only to follow the new API, reviewed fully in its own chunk: `house_broadcast/targets.rb`
+gains the flash and editor error targets; `floor_paints_controller.rb` uses the new toasts.
 
 ## Chunk 8: Views
 

@@ -45,3 +45,20 @@ en:
   floor_paints:
     create:
       a_painted_light: A painted light
+  toasts:
+    not_responding: "%{light} isn't responding. Check it has power at the switch."
+  rooms:
+    update:
+      a_light_in: A light in %{room}
+  undos:
+    create:
+      undone: 'Undone: %{description}'
+  light_command:
+    nothing_to_change: Nothing to change
+  house_commands:
+    room_switch:
+      description: "%{room} turned %{state}"
+    scene_recall:
+      scene: "%{scene} set in %{room}"
+      play: "%{scene} played in %{room}"
+      target: "%{scene} in %{room}"

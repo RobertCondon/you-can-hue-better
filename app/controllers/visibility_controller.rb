@@ -1,17 +1,23 @@
-# The /dev visibility list: what the everyday views show. Hidden here is hidden everywhere outside /dev.
 class VisibilityController < ApplicationController
+  LIGHT_SETTINGS = %i[hidden on_floor icon].freeze
+  VISIBILITY_ANCHOR = "visibility"
+
   def light
     light = Hue::Light.find(params[:id])
-    p = params.require(:light).permit(:hidden, :on_floor, :icon)
-    HueExtensions::Light.set_visibility!(light.id, p)
-    HouseBroadcast.everything
-    redirect_to dev_path(anchor: "visibility"), status: :see_other
+    HueExtensions::Light.set_visibility!(light.id, params.require(:light).permit(*LIGHT_SETTINGS))
+    refresh_and_return
   end
 
   def room
     group = Hue::Group.find(params[:id])
     HueExtensions::Group.set_hidden!(group.id, params.require(:room)[:hidden])
+    refresh_and_return
+  end
+
+  private
+
+  def refresh_and_return
     HouseBroadcast.everything
-    redirect_to dev_path(anchor: "visibility"), status: :see_other
+    redirect_to dev_path(anchor: VISIBILITY_ANCHOR), status: :see_other
   end
 end

@@ -37,7 +37,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
   test "explains when the bridge is unreachable and the mirror is empty" do
     Hue::Light.destroy_all
     Hue::ListenerState.current.disconnected!
-    Hue.client = Object.new.tap { |c| c.define_singleton_method(:devices) { raise Hue::Error, "Can't reach the bridge at 10.0.0.1" } }
+    Hue.client = Object.new.tap { |unreachable| unreachable.define_singleton_method(:devices) { raise Hue::Error, "Can't reach the bridge at 10.0.0.1" } }
     get root_path
     assert_response :service_unavailable
     assert_select "h2", /Can't reach the Hue bridge/
