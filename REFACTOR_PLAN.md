@@ -300,11 +300,19 @@ Touched only to follow the new API, reviewed fully in their own chunk: `house_br
 
 ## Chunk 9: JavaScript libraries
 
-- [ ] `app/javascript/application.js`
-- [ ] `app/javascript/lib/busy.js`
-- [ ] `app/javascript/lib/hue_color.js`
-- [ ] `app/javascript/lib/floor_camera.js`
-- [ ] `app/javascript/lib/floor_light.js`
+54 outputs of the colour, camera and geometry functions were recorded before the change and match
+exactly after it, including the visibility polygons the light simulation draws from.
+
+- [x] `app/javascript/application.js` (the deferral listener moved into `busy.js`)
+- [x] `app/javascript/lib/busy.js` (unused `releaseAll` removed)
+- [x] `app/javascript/lib/hue_color.js` (now re-exports the colour modules below)
+- [x] `app/javascript/lib/color/srgb.js`, `cie.js`, `gamut.js`, `hsv.js`, `white_temperature.js` (new)
+- [x] `app/javascript/lib/floor_camera.js` (camera fields renamed `zoom`, `offsetX`, `offsetY`; views use `width`, `height`; `toScreen` added)
+- [x] `app/javascript/lib/floor_geometry.js` (new: from the light module, plus the point-in-polygon and bounding box the controller kept inline)
+- [x] `app/javascript/lib/floor_light.js` (drawing only; walls use `width`, `height`, `rotation`)
+
+Touched only to follow the new API, reviewed fully in chunk 11: `floor_controller.js` (camera
+fields, wall rectangles, shared geometry, and a new saved-camera key).
 
 ## Chunk 10: Stimulus controllers for lights and rooms
 

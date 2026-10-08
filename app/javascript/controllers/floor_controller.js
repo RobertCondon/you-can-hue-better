@@ -1,7 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 import { release } from "lib/busy"
 import { drawFloorLight } from "lib/floor_light"
-import { clamp as clampCamera, zoomAt, pan as panCamera, fit as fitCamera, frame as frameCamera, levelFor, toWorld } from "lib/floor_camera"
+import { pointInPolygon, boundingBox } from "lib/floor_geometry"
+import { clamp as clampCamera, zoomAt, pan as panCamera, fit as fitCamera, frame as frameCamera, levelFor, toWorld, toScreen } from "lib/floor_camera"
 
 // The floor. Lights, walls and furniture are positioned HTML elements; the light itself is drawn
 // on a canvas underneath from those elements, so anything that moves or changes just redraws.
@@ -10,6 +11,8 @@ import { clamp as clampCamera, zoomAt, pan as panCamera, fit as fitCamera, frame
 // toolbar, remove the selection. Everything snaps to one unit (a tenth of a grid cell) and saves on drop.
 // Preview: swaps the lamps to a scene's state locally; the bulbs are untouched.
 const CELL = 10, SNAP = CELL / 10, ROTATE_SNAP = 5
+
+const CAMERA_STORAGE_KEY = "floor:camera:v2"
 
 export default class extends Controller {
   static targets = ["floor", "world", "light", "editButton", "editLabel", "tools", "hint", "canvas", "object", "selection", "selectionName", "roomChip", "sceneRow", "sceneChip", "setForm", "popover", "popoverBody",
@@ -50,19 +53,19 @@ export default class extends Controller {
   }
 
   // ---- camera: zoom and pan over the world ----
-  view() { const r = this.floorTarget.getBoundingClientRect(); return { w: r.width, h: r.height } }
+  view() { const r = this.floorTarget.getBoundingClientRect(); return { width: r.width, height: r.height } }
   applyCamera() {
     const c = this.camera, f = this.floorTarget
-    f.style.setProperty("--k", c.k); f.style.setProperty("--tx", `${c.tx}px`); f.style.setProperty("--ty", `${c.ty}px`)
-    f.dataset.level = levelFor(c.k)
-    try { localStorage.setItem("floor:camera", JSON.stringify(c)) } catch {}
+    f.style.setProperty("--k", c.zoom); f.style.setProperty("--tx", `${c.offsetX}px`); f.style.setProperty("--ty", `${c.offsetY}px`)
+    f.dataset.level = levelFor(c.zoom)
+    try { localStorage.setItem(CAMERA_STORAGE_KEY, JSON.stringify(c)) } catch {}
     this.scheduleRedraw()
     if (this.openFor) this.positionPopover(this.openFor)
   }
   setCamera(c) { this.camera = clampCamera(c, this.view()); this.applyCamera() }
-  restoreCamera() { try { return JSON.parse(localStorage.getItem("floor:camera")) } catch { return null } }
-  zoomIn()  { const v = this.view(); this.setCamera(zoomAt(this.camera, 1.5, v.w / 2, v.h / 2, v)) }
-  zoomOut() { const v = this.view(); this.setCamera(zoomAt(this.camera, 1 / 1.5, v.w / 2, v.h / 2, v)) }
+  restoreCamera() { try { return JSON.parse(localStorage.getItem(CAMERA_STORAGE_KEY)) } catch { return null } }
+  zoomIn()  { const v = this.view(); this.setCamera(zoomAt(this.camera, 1.5, v.width / 2, v.height / 2, v)) }
+  zoomOut() { const v = this.view(); this.setCamera(zoomAt(this.camera, 1 / 1.5, v.width / 2, v.height / 2, v)) }
   zoomFit() { this.setCamera(fitCamera()) }
   wheel(e) {
     e.preventDefault()
@@ -76,17 +79,17 @@ export default class extends Controller {
   doubleTap(e) {
     if (this.editing) return
     const v = this.view(), r = this.floorTarget.getBoundingClientRect()
-    if (this.camera.k >= 2.9) return this.setCamera(fitCamera())
+    if (this.camera.zoom >= 2.9) return this.setCamera(fitCamera())
     const w = this.percent(e)
     const net = this.netTargets.find(n => n.dataset.kind === "room" && pointInPolygon(w, JSON.parse(n.dataset.points)))
-    if (net) return this.setCamera(frameCamera(bboxOf(JSON.parse(net.dataset.points)), v))
+    if (net) return this.setCamera(frameCamera(boundingBox(JSON.parse(net.dataset.points)), v))
     this.setCamera(zoomAt(this.camera, 2, e.clientX - r.left, e.clientY - r.top, v))
   }
   frameNet(e) {
     if (this.painting) return this.paintRoom(e.currentTarget.dataset.groupId)
     if (this.editing) return
     const net = this.netTargets.find(n => n.dataset.id === e.currentTarget.dataset.netId)
-    if (net) this.setCamera(frameCamera(bboxOf(JSON.parse(net.dataset.points)), this.view()))
+    if (net) this.setCamera(frameCamera(boundingBox(JSON.parse(net.dataset.points)), this.view()))
   }
   // Pointer handling on the viewport itself: one finger pans the background, two fingers pinch.
   // Lamps and objects stop propagation of their own drags while editing.
@@ -368,8 +371,8 @@ export default class extends Controller {
     const w = this.percent(e)
     const first = this.draft[0]
     if (first && this.draft.length >= 3) {
-      const r = this.floorTarget.getBoundingClientRect(), v = this.view()
-      const fx = first.x / 100 * v.w * this.camera.k + this.camera.tx + r.left, fy = first.y / 100 * v.h * this.camera.k + this.camera.ty + r.top
+      const r = this.floorTarget.getBoundingClientRect(), onScreen = toScreen(this.camera, first, this.view())
+      const fx = onScreen.x + r.left, fy = onScreen.y + r.top
       if (Math.hypot(e.clientX - fx, e.clientY - fy) < 12) return this.closeDraft()
     }
     this.draft.push({ x: this.snapX(w.x), y: this.snapY(w.y) })
@@ -662,11 +665,11 @@ export default class extends Controller {
       x: cssNum(l, "--x"), y: cssNum(l, "--y") / a, hex: l.style.getPropertyValue("--hue").trim() || "#ffd9a0", bri: cssNum(l, "--bri")
     }))
     const walls = this.objectTargets.filter(o => o.dataset.kind === "wall").map(o => ({
-      x: cssNum(o, "--x"), y: cssNum(o, "--y") / a, w: cssNum(o, "--w"), h: cssNum(o, "--h") / a, r: cssNum(o, "--r")
+      x: cssNum(o, "--x"), y: cssNum(o, "--y") / a, width: cssNum(o, "--w"), height: cssNum(o, "--h") / a, rotation: cssNum(o, "--r")
     }))
     const outlinePoly = this.hasNetsTarget && this.netTargets.find(n => n.dataset.kind === "outline")
     const outline = outlinePoly ? JSON.parse(outlinePoly.dataset.points).map(([x, y]) => ({ x, y: y / a })) : null
-    drawFloorLight(c, { lights, walls, aspect: a, outline, camera: this.camera, dpr })
+    drawFloorLight(c, { lights, walls, aspect: a, outline, camera: this.camera, devicePixelRatio: dpr })
   }
 
   // ---- helpers ----
@@ -681,7 +684,7 @@ export default class extends Controller {
   centre(el) { return { x: cssNum(el, "--x") + cssNum(el, "--w") / 2, y: (cssNum(el, "--y") + cssNum(el, "--h") / 2) / this.ratio() } }
   percent(e) {
     const r = this.floorTarget.getBoundingClientRect()
-    return toWorld(this.camera, e.clientX - r.left, e.clientY - r.top, { w: r.width, h: r.height })
+    return toWorld(this.camera, e.clientX - r.left, e.clientY - r.top, { width: r.width, height: r.height })
   }
   headers() { return { "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content } }
   async patch(url, fields) {
@@ -696,6 +699,4 @@ const hueToHex = h => { const f = n => { const k = (n + h / 60) % 12; const c = 
 const swatchHTML = hex => `<button type="button" class="swatch" data-action="floor#pickPaint" data-floor-hex-param="${hex}" style="--c: ${hex}" aria-pressed="false" aria-label="${hex}"></button>`
 const readRecent = () => { try { return JSON.parse(localStorage.getItem("floor.recent") || "[]") } catch { return [] } }
 const rememberRecent = hexes => { try { const list = [...new Set([...hexes, ...readRecent()])].slice(0, 8); localStorage.setItem("floor.recent", JSON.stringify(list)) } catch {} }
-const bboxOf = pts => { const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]); const x = Math.min(...xs), y = Math.min(...ys); return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y } }
-const pointInPolygon = (p, pts) => { let c = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [ax, ay] = pts[i], [bx, by] = pts[j]; if ((ay > p.y) !== (by > p.y) && p.x < (bx - ax) * (p.y - ay) / (by - ay) + ax) c = !c } return c }
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, Math.round(v * 100) / 100))
