@@ -34,7 +34,7 @@ class LegacyRulesImport
     def skipped_lines
       return [] if @result.skipped.empty?
 
-      [ "#{@result.skipped.size} rule groups skipped:", *@result.skipped.map { |skip| "  rules #{skip[:rules].join(RULE_ID_SEPARATOR)}: #{skip[:reason]}" } ]
+      [ "#{@result.skipped.size} rule groups skipped:", *@result.skipped.map { |skip| "  rules #{skip.rule_ids.join(RULE_ID_SEPARATOR)}: #{skip.reason}" } ]
     end
   end
 end

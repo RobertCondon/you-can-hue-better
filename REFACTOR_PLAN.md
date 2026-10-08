@@ -170,15 +170,23 @@ activity or captures undo, `dashboard_controller.rb`, `house_broadcast/change_br
 
 Switch and dial bindings, press logging, and the import of the bridge's v1 rules.
 
-- [ ] `app/models/control_binding.rb`
-- [ ] `app/models/control_binding_step.rb`
-- [ ] `app/models/control_event.rb`
-- [ ] `app/models/cycle_state.rb`
-- [ ] `app/models/custom_scene.rb`
-- [ ] `app/models/custom_scene_state.rb`
-- [ ] `app/services/legacy_rules_import.rb`
-- [ ] `test/models/control_binding_test.rb`
-- [ ] `test/services/legacy_rules_import_test.rb`
+- [x] `app/models/control_binding.rb` (named gestures and actions; validation messages in the locale file)
+- [x] `app/models/control_binding_step.rb`
+- [x] `app/models/control_event.rb`
+- [x] `app/models/cycle_state.rb`
+- [x] `app/services/control_bindings/scene_cycle.rb` (new, from the cycle state; `take!` and `peek` become `advance!` and `upcoming_step`)
+- [x] `app/models/custom_scene.rb`
+- [x] `app/services/custom_scene_capture.rb` (new, from the custom scene)
+- [x] `app/models/custom_scene_state.rb`
+- [x] `app/services/legacy_rules_import.rb`
+- [x] `app/services/legacy_rules_import/` addresses, rule, v1 units, outcome, button importer, rotary importer (new, from the import)
+- [x] `app/services/legacy_rules_import/report.rb` (follows the new skip record)
+- [x] `config/locales/en.yml` (binding validation messages)
+- [x] `test/models/control_binding_test.rb`
+- [x] `test/services/legacy_rules_import_test.rb`
+
+Touched only to follow the new API, reviewed fully in its own chunk: `hue/payloads/relative_rotary.rb`
+now uses the binding's rotation gesture constants.
 
 ## Chunk 6: The floor
 

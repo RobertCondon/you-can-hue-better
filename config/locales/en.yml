@@ -22,3 +22,11 @@ en:
       all_off: "All off"
       all_on: "All on"
       some_on: "%{on} of %{total} on"
+  activerecord:
+    errors:
+      models:
+        control_binding:
+          attributes:
+            target:
+              must_be_light: "must be a light for this action"
+              must_be_group: "must be a room or zone for this action"

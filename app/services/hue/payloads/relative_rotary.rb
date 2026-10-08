@@ -10,8 +10,6 @@ module Hue
       STEPS_FIELD = "steps"
       DURATION_FIELD = "duration"
       COUNTER_CLOCKWISE = "counter_clock_wise"
-      COUNTER_CLOCKWISE_GESTURE = "rotate_ccw"
-      CLOCKWISE_GESTURE = "rotate_cw"
 
       def reported? = report.present?
       def action = report[ACTION_FIELD]
@@ -19,7 +17,7 @@ module Hue
       def direction = rotation[DIRECTION_FIELD]
       def steps = rotation[STEPS_FIELD]
       def duration = rotation[DURATION_FIELD]
-      def gesture = direction == COUNTER_CLOCKWISE ? COUNTER_CLOCKWISE_GESTURE : CLOCKWISE_GESTURE
+      def gesture = direction == COUNTER_CLOCKWISE ? ControlBinding::ROTATE_COUNTER_CLOCKWISE : ControlBinding::ROTATE_CLOCKWISE
 
       private
 
