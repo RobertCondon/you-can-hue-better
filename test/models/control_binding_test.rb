@@ -2,7 +2,7 @@ require "test_helper"
 
 class ControlBindingTest < ActiveSupport::TestCase
   setup do
-    Hue::Sync.run(hue)
+    Hue::Sync.run
     @button = Hue::Control.find("b1")
     @zone = Hue::Group.find("z1")
   end

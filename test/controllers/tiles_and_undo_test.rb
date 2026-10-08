@@ -54,7 +54,7 @@ class UndoTest < ActionDispatch::IntegrationTest
   test "a white light is restored as a temperature, not a colour" do
     Hue::Light.find("l1").update!(raw: Hue::Light.find("l1").raw.deep_merge("color_temperature" => { "mirek_valid" => true }), mirek: 366)
     undo = UndoAction.capture("test", %w[l1])
-    undo.apply!(hue)
+    undo.apply!
     assert_equal({ on: { on: true }, dimming: { brightness: 80.0 }, color_temperature: { mirek: 366 } }, hue.writes.last[2])
   end
 

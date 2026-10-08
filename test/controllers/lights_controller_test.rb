@@ -33,7 +33,7 @@ class LightsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "bridge errors are shown in the flash and logged" do
-    hue.define_singleton_method(:set_light) { |*| raise Hue::Error, "link button not pressed" }
+    hue.rejection_for_writes = "link button not pressed"
     patch light_path("l1"), params: { light: { on: "toggle" } }, as: :turbo_stream
     assert_select "turbo-stream[action=update][target=flash]", /link button not pressed/
     assert_equal "link button not pressed", Activity.last.result
@@ -44,9 +44,7 @@ class LightsControllerUnreachableTest < ActionDispatch::IntegrationTest
   setup { sync_mirror! }
 
   test "a bulb with no power still updates but warns the person" do
-    hue.define_singleton_method(:set_light) do |id, body|
-      super(id, body).merge("unreachable" => true)
-    end
+    hue.unpowered_light_ids << "l1"
     patch light_path("l1"), params: { light: { on: "toggle" } }, as: :turbo_stream
     assert_response :success
     assert_select "turbo-stream[action=replace][target=light_r1_l1]"

@@ -1,0 +1,2 @@
+local - claude --resume 1e200490-ad7a-4f93-9be1-d422d5a37092
+clanker claude --resume f3521a9f-6049-45a2-b5d9-a87a9d2b8e5f

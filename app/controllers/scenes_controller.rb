@@ -21,8 +21,8 @@ class ScenesController < RoomsController
     render json: scene.actions.map { |a| s = a.to_snapshot; { light_id: a.light_id, on: s.lit?, hex: s.hex, bri: s.lit? ? (s.brightness / 100.0).round(2) : 0 } }
   end
 
-  def activate = recall("active", "scene")
-  def play     = recall("dynamic_palette", "play")
+  def activate = recall(Hue::SceneRecall::STATIC_LOOK, "scene")
+  def play     = recall(Hue::SceneRecall::PLAY_PALETTE, "play")
 
   private
 
@@ -32,10 +32,10 @@ class ScenesController < RoomsController
     undo  = UndoAction.capture("#{scene.display_name} #{label == "play" ? "played" : "set"} in #{room.display_name}", scene.actions.pluck(:light_id))
 
     response = Activity.record(target_kind: "scene", target_id: scene.id, target_name: "#{scene.name} in #{room.name}", action: label) do
-      Hue.client.recall_scene(scene.id, action:)
+      Hue.client.scenes.recall(scene.id, action:)
     end
 
     settle
-    render_rooms(notice: response["unreachable"] ? unreachable_message("A light in #{room.name}") : nil, scene_ids: [ scene.id ], undo:)
+    render_rooms(notice: response.unreachable_lights? ? unreachable_message("A light in #{room.name}") : nil, scene_ids: [ scene.id ], undo:)
   end
 end

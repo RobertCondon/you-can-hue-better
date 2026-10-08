@@ -7,8 +7,8 @@ class LightNamesController < ApplicationController
 
     if p.key?(:name) && (name = p[:name].to_s.strip) != light.name
       Activity.record(target_kind: "light", target_id: light.id, target_name: light.name, action: "rename to #{name}", payload: { name: }) do
-        Hue.client.rename_light(light.id, name)
-        Hue.client.rename_device(light.device_id, name)
+        Hue.client.lights.rename(light.id, name)
+        Hue.client.devices.rename(light.device_id, name)
       end
       light.update!(name:)
       light.device.update!(name:)

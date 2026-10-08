@@ -7,23 +7,20 @@ class FloorPaintsController < ApplicationController
     raise Hue::Error, "Nothing to paint" if lights.empty?
 
     undo = UndoAction.capture("Painted #{lights.size} #{"light".pluralize(lights.size)}", lights.keys)
-    unreachable = false
-    Activity.record(target_kind: "floor", target_id: "paint", target_name: "Paint", action: "paint #{lights.size}", payload: strokes) do
-      strokes.each do |s|
-        light = lights[s["light_id"]] or next
-        response = Hue.client.set_light(light.id, command_for(s))
-        unreachable ||= response["unreachable"]
-      end
-      { "unreachable" => unreachable }
+    result = Activity.record(target_kind: "floor", target_id: "paint", target_name: "Paint", action: "paint #{lights.size}", payload: strokes) do
+      Hue::CommandResult.combine(strokes.filter_map do |stroke|
+        light = lights[stroke["light_id"]] or next
+        Hue.client.lights.update(light.id, command_for(stroke))
+      end)
     end
     settle
-    HouseBroadcast.changes(Hue::Mirror.apply(lights.keys.map { Hue.client.light(_1) }))
+    HouseBroadcast.changes(Hue::Mirror.apply(lights.keys.map { |light_id| Hue.client.lights.find(light_id) }))
 
     house = House.load(refresh: false)
     spots = Floor.live(house).spots.index_by { _1.light.id }
     streams = lights.keys.filter_map { |id| spots[id] && turbo_stream.replace("floor_light_#{id}", partial: "floors/light", locals: { spot: spots[id] }) }
     streams << turbo_stream.update("house_summary", partial: "dashboard/summary", locals: { house: })
-    streams << (unreachable ? flash_stream(unreachable_message("A painted light")) : undo_stream(undo))
+    streams << (result.unreachable_lights? ? flash_stream(unreachable_message("A painted light")) : undo_stream(undo))
     render turbo_stream: streams
   end
 

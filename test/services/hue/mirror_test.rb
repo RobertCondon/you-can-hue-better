@@ -57,8 +57,8 @@ class Hue::MirrorTest < ActiveSupport::TestCase
   end
 
   test "refresh catches the mirror up from a GET" do
-    hue.set_light("l2", { on: { on: true }, dimming: { brightness: 55 } })
-    Hue::Mirror.refresh(hue)
+    Hue.client.lights.update("l2", { on: { on: true }, dimming: { brightness: 55 } })
+    Hue::Mirror.refresh
     assert Hue::Light.find("l2").on
     assert_equal 55.0, Hue::Light.find("l2").brightness.to_f
   end

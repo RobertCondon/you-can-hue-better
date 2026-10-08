@@ -1,21 +1,45 @@
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
-require_relative "support/fake_hue_client"
+require_relative "support/fake_bridge"
+require_relative "support/fake_json_http"
 
 module ActiveSupport
   class TestCase
+    TEST_BRIDGE_ADDRESS = "bridge.test"
+    TEST_APP_KEY = "test-key"
+    MISSING_CONFIG_FILE = Pathname("/nonexistent/hue.json")
+
     parallelize(workers: :number_of_processors)
 
-    # The suite is "configured" through the environment; setup tests clear it to see the first run.
-    setup { ENV["HUE_BRIDGE"] = "bridge.test"; ENV["HUE_APP_KEY"] = "test-key"; Hue::Config.file = Pathname("/nonexistent/hue.json"); Hue.client = FakeHueClient.new }
-    teardown { Hue.client = nil; ENV.delete("HUE_BRIDGE"); ENV.delete("HUE_APP_KEY"); Hue::Config.file = nil; Hue::Pairer.transport = nil }
+    setup do
+      configure_bridge_through_environment
+      Hue::Config.file_path = MISSING_CONFIG_FILE
+      @fake_bridge = FakeBridge.new
+      Hue.client = Hue::Client.new(Hue::Config.load, connection: @fake_bridge)
+    end
 
-    def hue = Hue.client
+    teardown do
+      Hue.client = nil
+      Hue.json_http = nil
+      Hue::Config.file_path = nil
+      unconfigure_bridge
+    end
 
-    # Populate the mirror from the fake bridge and mark the listener live so House reads the mirror.
+    def hue = @fake_bridge
+
+    def configure_bridge_through_environment
+      ENV[Hue::Config::BRIDGE_VARIABLE] = TEST_BRIDGE_ADDRESS
+      ENV[Hue::Config::APP_KEY_VARIABLE] = TEST_APP_KEY
+    end
+
+    def unconfigure_bridge
+      ENV.delete(Hue::Config::BRIDGE_VARIABLE)
+      ENV.delete(Hue::Config::APP_KEY_VARIABLE)
+    end
+
     def sync_mirror!
-      Hue::Sync.run(hue)
+      Hue::Sync.run
       Hue::ListenerState.current.beat!
     end
   end

@@ -3,7 +3,7 @@ module Hue
   # anything the bridge no longer reports is removed. The event listener (later) keeps rows fresh
   # between runs; this is the baseline it starts from.
   class Sync
-    RESOURCES = %i[devices lights rooms zones grouped_lights scenes smart_scenes buttons rotaries zigbee_connectivity device_power].freeze
+    RESOURCES = %i[devices lights rooms zones grouped_lights scenes smart_scenes buttons relative_rotaries zigbee_connectivity device_power].freeze
 
     def self.run(client = Hue.client) = new(client).run
 
@@ -12,7 +12,7 @@ module Hue
     end
 
     def run
-      @r = RESOURCES.index_with { |name| @client.public_send(name) }
+      @r = RESOURCES.index_with { |name| @client.public_send(name).all }
       Record.transaction do
         devices  = sync_devices
         lights   = sync_lights
@@ -105,7 +105,7 @@ module Hue
           control_number: b.dig("metadata", "control_id"), id_v1: b["id_v1"],
           last_event: report["event"], last_event_at: report["updated"])
       end
-      rotaries = @r[:rotaries].map do |r|
+      rotaries = @r[:relative_rotaries].map do |r|
         report = r.dig("relative_rotary", "rotary_report") || {}
         upsert(Control, r["id"], device_id: r.dig("owner", "rid"), kind: "rotary", id_v1: r["id_v1"],
           last_event: report["action"], last_event_at: report["updated"])

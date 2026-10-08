@@ -15,7 +15,7 @@ class Activity < ApplicationRecord
   # Raises the Hue::Error after logging it so the controller can show it.
   def self.record(target_kind:, target_id:, target_name:, action:, payload: {}, source: "dashboard", control_event: nil)
     response = yield
-    result = response.is_a?(Hash) && response["unreachable"] ? UNREACHABLE : "ok"
+    result = response.unreachable_lights? ? UNREACHABLE : "ok"
     create!(target_kind:, target_id:, target_name:, action:, payload:, result:, source:, control_event:)
     response
   rescue Hue::Error => e

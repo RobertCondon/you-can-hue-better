@@ -4,7 +4,7 @@ class UndosController < RoomsController
     undo = UndoAction.fresh.find(params[:id])
     Activity.record(target_kind: "undo", target_id: undo.id.to_s, target_name: undo.description, action: "undo #{undo.light_count} lights") do
       undo.apply!
-      { "unreachable" => false }
+      Hue::CommandResult.delivered
     end
     undo.destroy
     settle

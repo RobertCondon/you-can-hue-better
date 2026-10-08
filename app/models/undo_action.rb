@@ -27,7 +27,7 @@ class UndoAction < ApplicationRecord
         elsif s["color_x"] then body[:color] = { xy: { x: s["color_x"], y: s["color_y"] } }
         end
       end
-      client.set_light(s["light_id"], body)
+      client.lights.update(s["light_id"], body)
     end
   end
 

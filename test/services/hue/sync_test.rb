@@ -2,7 +2,7 @@ require "test_helper"
 
 class Hue::SyncTest < ActiveSupport::TestCase
   test "builds the mirror from the bridge" do
-    counts = Hue::Sync.run(hue)
+    counts = Hue::Sync.run
     assert_equal({ devices: 3, lights: 2, groups: 3, scenes: 4, controls: 3 }, counts)
 
     dial = Hue::Device.find("d3")
@@ -31,15 +31,15 @@ class Hue::SyncTest < ActiveSupport::TestCase
   end
 
   test "is idempotent and prunes what the bridge no longer reports" do
-    Hue::Sync.run(hue)
+    Hue::Sync.run
     Hue::Light.create!(id: "ghost", device_id: "d1", name: "Gone")
-    Hue::Sync.run(hue)
+    Hue::Sync.run
     assert_equal 2, Hue::Light.count
     refute Hue::Light.exists?("ghost")
   end
 
   test "light rows convert to the view snapshot" do
-    Hue::Sync.run(hue)
+    Hue::Sync.run
     snap = Hue::Light.find("l1").to_snapshot
     assert_equal House::Light, snap.class
     assert_equal "Desk lamp", snap.name

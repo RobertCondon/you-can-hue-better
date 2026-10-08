@@ -28,7 +28,7 @@ module Hue
             next
           end
           if waiting
-            with_app { ::Hue.reset! }     # the first client was built before there was a bridge
+            with_app { ::Hue.reset_client! }
             waiting = false
           end
           with_app do
@@ -38,7 +38,7 @@ module Hue
           end
           @logger.info "hue-listener: connected, mirror synced"
           backoff = 1
-          ::Hue::EventStream.new.each(on_keepalive: -> { with_app { ::Hue::ListenerState.current.beat! } }) do |batch|
+          ::Hue::EventStream.new.each_batch(on_keepalive: -> { with_app { ::Hue::ListenerState.current.beat! } }) do |batch|
             with_app { handle(batch) }
             break if @stop.call
           end

@@ -22,7 +22,7 @@ module Hue
 
     # After a write, catch the mirror up without waiting for the stream: lights + group aggregates.
     def self.refresh(client = Hue.client)
-      apply(client.lights + client.grouped_lights)
+      apply(client.lights.all + client.grouped_lights.all)
     end
 
     def initialize(resource, event_id:, occurred_at:, kind:)

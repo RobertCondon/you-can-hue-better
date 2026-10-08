@@ -5,11 +5,11 @@ class RoomsController < ApplicationController
     undo = UndoAction.capture("#{room.display_name} turned #{on ? "on" : "off"}", room.lights.pluck(:id))
 
     response = Activity.record(target_kind: room.kind, target_id: room.id, target_name: room.name, action: on ? "on" : "off", payload: { on: { on: } }) do
-      Hue.client.set_grouped_light(room.grouped_light_id, { on: { on: } })
+      Hue.client.grouped_lights.update(room.grouped_light_id, { on: { on: } })
     end
 
     settle
-    render_rooms(notice: response["unreachable"] ? unreachable_message("A light in #{room.name}") : nil, undo:)
+    render_rooms(notice: response.unreachable_lights? ? unreachable_message("A light in #{room.name}") : nil, undo:)
   end
 
   # Arrange mode sends the full order of room ids, first to last.

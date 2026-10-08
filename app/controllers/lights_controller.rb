@@ -16,12 +16,12 @@ class LightsController < ApplicationController
     body, action = command_for(light)
 
     response = Activity.record(target_kind: "light", target_id: light.id, target_name: light.name, action:, payload: body) do
-      Hue.client.set_light(light.id, body)
+      Hue.client.lights.update(light.id, body)
     end
-    notice = unreachable_message(light.name) if response["unreachable"]
+    notice = unreachable_message(light.name) if response.unreachable_lights?
 
     # Catch the mirror up now rather than waiting for the event stream, so the response is current.
-    HouseBroadcast.changes(Hue::Mirror.apply([ Hue.client.light(light.id) ]))
+    HouseBroadcast.changes(Hue::Mirror.apply([ Hue.client.lights.find(light.id) ]))
     house = House.load(refresh: false)
     light = house.light(light.id)
 

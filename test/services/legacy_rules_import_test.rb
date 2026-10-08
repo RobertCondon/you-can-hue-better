@@ -1,7 +1,7 @@
 require "test_helper"
 
 class LegacyRulesImportTest < ActiveSupport::TestCase
-  setup { Hue::Sync.run(hue) }
+  setup { Hue::Sync.run }
 
   def rules = {
     # button 1 press: 3-scene cycle on group 85 via status sensor 22

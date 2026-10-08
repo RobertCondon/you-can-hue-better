@@ -3,10 +3,12 @@ module Hue
   # was last fully rebuilt. The dashboard reads it to decide whether the mirror can be trusted.
   class ListenerState < Record
     HEARTBEAT_EVERY = 20.seconds
+    MISSED_HEARTBEATS_BEFORE_STALE = 3
+    LIVENESS_WINDOW = HEARTBEAT_EVERY * MISSED_HEARTBEATS_BEFORE_STALE
 
     def self.current = first || create!
 
-    def live?  = heartbeat_at.present? && heartbeat_at > (HEARTBEAT_EVERY * 3).ago
+    def live?  = heartbeat_at.present? && heartbeat_at > LIVENESS_WINDOW.ago
     def stale? = !live?
 
     def beat!(event_id: nil, event_at: nil)
