@@ -15,6 +15,5 @@ module YouCanHueBetter
   class Application < Rails::Application
     config.load_defaults 8.1
     config.autoload_lib(ignore: %w[assets tasks puma])
-    config.x.hue.settle_seconds = 0.3
   end
 end

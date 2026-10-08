@@ -1,4 +1,6 @@
 module Hue
+  DEFAULT_SETTLE_SECONDS = 0.3
+
   def self.client
     @client ||= Api::Client.new
   end
@@ -22,5 +24,5 @@ module Hue
 
   def self.configured? = Config.load.configured?
 
-  def self.wait_for_bridge = sleep(Rails.configuration.x.hue.settle_seconds)
+  def self.wait_for_bridge = sleep(Rails.configuration.x.hue.settle_seconds || DEFAULT_SETTLE_SECONDS)
 end
