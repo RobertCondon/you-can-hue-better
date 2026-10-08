@@ -13,4 +13,5 @@ class House
   def room(room_id) = rooms.find { |room| room.id == room_id }
   def light(light_id) = lights.find { |light| light.id == light_id }
   def on_count = lights.count { |light| light.lit? && !light.hidden? }
+  def rooms_containing(light) = rooms.select { |room| room.lights.any? { |room_light| room_light.id == light.id } }
 end

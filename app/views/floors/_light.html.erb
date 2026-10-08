@@ -1,10 +1,9 @@
-<% light = spot.light; bri = light.lit? ? light.brightness / 100.0 : 0 %>
-<button type="button" class="floor__lamp <%= light.lit? ? "is-on" : "is-off" %> <%= "is-unreachable" unless light.responding? %> <%= "is-unplaced" unless spot.placed %> <%= "is-muted" if spot.muted %>"
-        id="floor_light_<%= light.id %>" data-light-id="<%= light.id %>" data-rooms="<%= spot.room_ids.join(" ") %>" data-floor-target="light"
-        style="--x: <%= spot.x %>; --y: <%= spot.y %>; --hue: <%= light.hex %>; --bri: <%= bri.round(2) %>; --ink: <%= light.tile_text_hex %>"
+<button type="button" class="<%= lamp_classes(spot) %>"
+        id="<%= targets.floor_lamp(spot.light) %>" data-light-id="<%= spot.light.id %>" data-rooms="<%= spot.room_ids.join(" ") %>" data-floor-target="light"
+        style="<%= lamp_style(spot) %>"
         data-action="pointerdown->floor#down pointermove->floor#move pointerup->floor#up pointercancel->floor#up keydown->floor#nudge click->floor#openLight"
-        data-floor-panel-url-param="<%= panel_light_path(light.id) %>"
-        aria-label="<%= light.display_name %>, <%= spot.muted ? "not in this scene" : light.brightness_label %>">
-  <span class="floor__dot" aria-hidden="true"><%= render "lights/icon", icon: light.icon %></span>
-  <span class="floor__name"><%= light.display_name %></span>
+        data-floor-panel-url-param="<%= panel_light_path(spot.light.id) %>"
+        aria-label="<%= lamp_label(spot) %>">
+  <span class="floor__dot" aria-hidden="true"><%= render "lights/icon", icon: spot.light.icon %></span>
+  <span class="floor__name"><%= spot.light.display_name %></span>
 </button>

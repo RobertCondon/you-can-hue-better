@@ -1,0 +1,46 @@
+<div class="floor-head">
+  <p class="floor-head__hint" data-floor-target="hint" <%= "hidden" unless floor.unplaced_count.positive? %>>
+    <%= t(".unplaced", count: floor.unplaced_count) %>
+  </p>
+  <div class="floor-head__tools">
+    <span class="floor__tools" data-floor-target="tools" hidden>
+      <% FloorObject::KINDS.each do |kind| %>
+        <button type="button" class="tool" data-action="floor#addObject" data-floor-kind-param="<%= kind %>"><span class="tool__swatch tool__swatch--<%= kind %>"></span><%= t(".objects.#{kind}") %></button>
+      <% end %>
+      <% [ FloorNet::ROOM, FloorNet::OUTLINE ].each do |net_kind| %>
+        <button type="button" class="tool tool--draw" data-action="floor#startTool" data-floor-tool-param="<%= net_kind %>" data-floor-target="toolButton" aria-pressed="false"><span class="tool__swatch tool__swatch--<%= net_kind == FloorNet::ROOM ? "net" : net_kind %>"></span><%= t(".nets.#{net_kind}") %></button>
+      <% end %>
+      <label class="tool tool--select">
+        <span class="muted"><%= t(".shape") %></span>
+        <select data-action="change->floor#setAspect">
+          <% floor_shape_options(floor).each do |label, aspect, selected| %>
+            <option value="<%= aspect %>" <%= "selected" if selected %>><%= label %></option>
+          <% end %>
+        </select>
+      </label>
+    </span>
+    <span class="floor__tools floor__tools--drawing" data-floor-target="drawing" hidden>
+      <span class="tool__name" data-floor-target="drawingHint"><%= t(".drawing_hint") %></span>
+      <button type="button" class="tool" data-action="floor#closeDraft"><%= t(".close_loop") %></button>
+      <button type="button" class="tool tool--danger" data-action="floor#cancelTool"><%= t(".cancel") %></button>
+    </span>
+    <span class="floor__tools floor__tools--selection" data-floor-target="selection" hidden>
+      <span class="tool__name" data-floor-target="selectionName"></span>
+      <select class="tool__select" data-floor-target="netRoom" data-action="change->floor#assignNetRoom" hidden aria-label="<%= t(".net_room") %>">
+        <option value=""><%= t(".house_outline") %></option>
+        <% rooms.each do |room| %><option value="<%= room.id %>"><%= room.display_name %></option><% end %>
+      </select>
+      <button type="button" class="tool" data-action="floor#rotateBy" data-floor-degrees-param="<%= -FloorsHelper::ROTATION_STEP_DEGREES %>" aria-label="<%= t(".rotate_left", degrees: FloorsHelper::ROTATION_STEP_DEGREES) %>">↺</button>
+      <button type="button" class="tool" data-action="floor#rotateBy" data-floor-degrees-param="<%= FloorsHelper::ROTATION_STEP_DEGREES %>" aria-label="<%= t(".rotate_right", degrees: FloorsHelper::ROTATION_STEP_DEGREES) %>">↻</button>
+      <button type="button" class="tool tool--danger" data-action="floor#removeSelected"><%= t(".remove") %></button>
+    </span>
+    <button type="button" class="tool tool--toggle" data-action="floor#togglePaint" data-floor-target="paintButton" aria-pressed="false">
+      <%= render "shared/icons/brush" %>
+      <%= t(".paint") %>
+    </button>
+    <button type="button" class="tool tool--toggle" data-action="floor#toggleEdit" data-floor-target="editButton" aria-pressed="false">
+      <%= render "shared/icons/pencil" %>
+      <span data-floor-target="editLabel"><%= t(".edit_floor") %></span>
+    </button>
+  </div>
+</div>

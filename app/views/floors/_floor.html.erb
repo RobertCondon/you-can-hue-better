@@ -1,154 +1,17 @@
-<%# The house floor: a dark room on a square grid, a glowing dot per light, walls that block and bounce
-    the light, and furniture. editable: true adds the filters and the editing tools.
-    rooms: filter chips (a room greys out every light outside it; picking one reveals its scenes).
-    scenes: { group_id => [scene] }; a scene chip previews it on the lamps without touching the bulbs. %>
-<% rooms = local_assigns[:rooms] || []; scenes = local_assigns[:scenes] || {} %>
+<% rooms = local_assigns.fetch(:rooms, []) %>
 <div class="floor-wrap" data-controller="floor" data-action="pinned:close->floor#dockClosed"
      data-floor-url-value="<%= floor_path %>" data-floor-objects-url-value="<%= floor_objects_path %>" data-floor-nets-url-value="<%= floor_nets_path %>" data-floor-paint-url-value="<%= floor_paint_path %>"
      data-floor-aspect-value="<%= floor.aspect %>">
-  <% if editable && rooms.any? %>
-    <div class="floor-filters">
-      <div class="chips chips--filters" role="group" aria-label="Show">
-        <button type="button" class="chip" aria-pressed="true" data-floor-target="roomChip" data-floor-room-param="" data-action="floor#pickRoom">Everything</button>
-        <% rooms.each do |room| %>
-          <button type="button" class="chip" aria-pressed="false" data-floor-target="roomChip" data-floor-room-param="<%= room.id %>" data-action="floor#pickRoom">
-            <%= room.display_name %><% if room.kind == "zone" %> <span class="muted">zone</span><% end %>
-          </button>
-        <% end %>
-      </div>
-      <% rooms.each do |room| %>
-        <% list = scenes[room.id] || [] %>
-        <% next if list.empty? %>
-        <div class="chips chips--scenes" data-floor-target="sceneRow" data-room="<%= room.id %>" hidden>
-          <span class="chips__label muted">Preview a scene</span>
-          <% list.each do |scene| %>
-            <button type="button" class="chip chip--scene" aria-pressed="false" data-floor-target="sceneChip"
-                    data-floor-url-param="<%= floor_state_scene_path(scene.id) %>" data-floor-set-url-param="<%= activate_scene_path(scene.id) %>"
-                    data-floor-palette-param="<%= scene.palette_hexes.to_json %>" data-action="floor#pickScene"
-                    style="<%= "--palette: linear-gradient(90deg, #{scene.palette_hexes.join(', ')});" if scene.palette_hexes.size > 1 %>">
-              <%= scene.display_name %>
-            </button>
-          <% end %>
-          <%= form_with url: "#", method: :post, class: "chip-form", data: { floor_target: "setForm" }, html: { hidden: true } do |f| %>
-            <%= f.button "Set this scene", class: "chip chip--primary" %>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
   <% if editable %>
-    <div class="floor-head">
-      <p class="floor-head__hint" data-floor-target="hint" <%= "hidden" unless floor.unplaced_count.positive? %>>
-        <%= pluralize(floor.unplaced_count, "light") %> not placed yet. Edit floor and drag them in from the bottom.
-      </p>
-      <div class="floor-head__tools">
-        <span class="floor__tools" data-floor-target="tools" hidden>
-          <button type="button" class="tool" data-action="floor#addObject" data-floor-kind-param="wall"><span class="tool__swatch tool__swatch--wall"></span>Wall</button>
-          <button type="button" class="tool" data-action="floor#addObject" data-floor-kind-param="box"><span class="tool__swatch tool__swatch--box"></span>Box</button>
-          <button type="button" class="tool" data-action="floor#addObject" data-floor-kind-param="circle"><span class="tool__swatch tool__swatch--circle"></span>Round</button>
-          <button type="button" class="tool tool--draw" data-action="floor#startTool" data-floor-tool-param="room" data-floor-target="toolButton" aria-pressed="false"><span class="tool__swatch tool__swatch--net"></span>Room net</button>
-          <button type="button" class="tool tool--draw" data-action="floor#startTool" data-floor-tool-param="outline" data-floor-target="toolButton" aria-pressed="false"><span class="tool__swatch tool__swatch--outline"></span>Outline</button>
-          <label class="tool tool--select">
-            <span class="muted">Shape</span>
-            <select data-action="change->floor#setAspect">
-              <% { "Wide" => 1.6, "Square" => 1.0, "Tall" => 0.7 }.each do |label, value| %>
-                <option value="<%= value %>" <%= "selected" if (floor.aspect - value).abs < 0.05 %>><%= label %></option>
-              <% end %>
-            </select>
-          </label>
-        </span>
-        <span class="floor__tools floor__tools--drawing" data-floor-target="drawing" hidden>
-          <span class="tool__name" data-floor-target="drawingHint">Click to add points; click the first point to close.</span>
-          <button type="button" class="tool" data-action="floor#closeDraft">Close loop</button>
-          <button type="button" class="tool tool--danger" data-action="floor#cancelTool">Cancel</button>
-        </span>
-        <span class="floor__tools floor__tools--selection" data-floor-target="selection" hidden>
-          <span class="tool__name" data-floor-target="selectionName"></span>
-          <select class="tool__select" data-floor-target="netRoom" data-action="change->floor#assignNetRoom" hidden aria-label="Room for this net">
-            <option value="">House outline</option>
-            <% (local_assigns[:rooms] || []).each do |room| %><option value="<%= room.id %>"><%= room.display_name %></option><% end %>
-          </select>
-          <button type="button" class="tool" data-action="floor#rotateBy" data-floor-degrees-param="-15" aria-label="Rotate left 15°">↺</button>
-          <button type="button" class="tool" data-action="floor#rotateBy" data-floor-degrees-param="15" aria-label="Rotate right 15°">↻</button>
-          <button type="button" class="tool tool--danger" data-action="floor#removeSelected">Remove</button>
-        </span>
-        <button type="button" class="tool tool--toggle" data-action="floor#togglePaint" data-floor-target="paintButton" aria-pressed="false">
-          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 12c2-1 2-3 3-4l5-6 2 2-6 5c-1 1-3 1-4 3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-          Paint
-        </button>
-        <button type="button" class="tool tool--toggle" data-action="floor#toggleEdit" data-floor-target="editButton" aria-pressed="false">
-          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M9.5 1.5l3 3L5 12H2v-3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-          <span data-floor-target="editLabel">Edit floor</span>
-        </button>
-      </div>
-    </div>
+    <%= render "floors/filters", rooms:, scenes: local_assigns.fetch(:scenes, {}) if rooms.any? %>
+    <%= render "floors/toolbar", floor:, rooms: %>
+    <%= render "floors/paint_tray" %>
+    <div class="dock dock--floor" id="<%= targets.light_dock %>" data-floor-target="dock" hidden></div>
   <% end %>
-  <% if editable %>
-    <div class="floor-paint" data-floor-target="tray" hidden>
-      <div class="floor-paint__row">
-        <span class="floor-paint__label muted">Whites</span>
-        <% { "Candle" => 400, "Warm" => 370, "Soft" => 286, "Cool" => 200, "Daylight" => 153 }.each do |label, mirek| %>
-          <button type="button" class="swatch" data-action="floor#pickPaint" data-floor-target="swatch" data-floor-hex-param="<%= Hue::Color.mirek_to_hex(mirek) %>" data-floor-mirek-param="<%= mirek %>"
-                  style="--c: <%= Hue::Color.mirek_to_hex(mirek) %>" aria-pressed="false" aria-label="<%= label %> white"></button>
-        <% end %>
-        <span class="floor-paint__label muted">Colour</span>
-        <% %w[#ff3b30 #ff9500 #ffcc00 #34c759 #30d5c8 #0a84ff #5e5ce6 #bf5af2 #ff2d55].each do |hex| %>
-          <button type="button" class="swatch" data-action="floor#pickPaint" data-floor-target="swatch" data-floor-hex-param="<%= hex %>" style="--c: <%= hex %>" aria-pressed="false" aria-label="<%= hex %>"></button>
-        <% end %>
-        <label class="floor-paint__custom" aria-label="Any hue">
-          <input type="range" min="0" max="359" value="300" data-floor-target="hueSlider" data-action="input->floor#pickHue">
-        </label>
-      </div>
-      <div class="floor-paint__row" data-floor-target="trayScene" hidden>
-        <span class="floor-paint__label muted">Scene</span>
-        <span class="floor-paint__group" data-floor-target="trayScenePalette"></span>
-      </div>
-      <div class="floor-paint__row" data-floor-target="trayRecent" hidden>
-        <span class="floor-paint__label muted">Recent</span>
-        <span class="floor-paint__group" data-floor-target="trayRecentPalette"></span>
-      </div>
-      <div class="floor-paint__row floor-paint__row--actions">
-        <span class="floor-paint__status" data-floor-target="paintStatus">Pick a colour, then tap or sweep across lamps. Tap a room name to paint the whole room.</span>
-        <button type="button" class="tool" data-action="floor#clearPaint" data-floor-target="paintClear" hidden>Clear</button>
-        <button type="button" class="tool tool--primary" data-action="floor#applyPaint" data-floor-target="paintApply" hidden>Apply</button>
-      </div>
-    </div>
-  <% end %>
-  <% if editable %><div class="dock dock--floor" id="light_dock" data-floor-target="dock" hidden></div><% end %>
-  <div class="floor" style="--aspect: <%= floor.aspect %>; --k: 1; --tx: 0px; --ty: 0px" data-level="far" data-floor-target="floor"
-       data-action="click->floor#floorClick pointerdown->floor#viewDown pointermove->floor#viewMove pointerup->floor#viewUp pointercancel->floor#viewUp wheel->floor#wheel dblclick->floor#doubleTap">
-    <canvas class="floor__light" data-floor-target="canvas" aria-hidden="true"></canvas>
-    <div class="floor__world" data-floor-target="world">
-      <svg class="floor__nets" viewBox="0 0 100 100" preserveAspectRatio="none" data-floor-target="nets" aria-hidden="true">
-        <path class="floor__void" data-floor-target="void" fill-rule="evenodd" d="<%= floor.nets.outlines.first ? "M0 0H100V100H0Z M#{floor.nets.outlines.first.points.map { _1.join(" ") }.join(" L ")} Z" : "" %>"/>
-        <% floor.nets.each do |net| %>
-          <polygon class="floor__net floor__net--<%= net.kind %>" id="floor_net_<%= net.id %>" data-floor-target="net" data-id="<%= net.id %>" data-kind="<%= net.kind %>"
-                   data-url="<%= floor_net_path(net) %>" data-group-id="<%= net.group_id %>" data-label="<%= net.display_label %>"
-                   data-points="<%= net.points.to_json %>" points="<%= net.points.map { _1.join(",") }.join(" ") %>"
-                   <% if editable %>data-action="click->floor#selectNet"<% end %>/>
-        <% end %>
-        <polyline class="floor__draft" data-floor-target="draft" points="" hidden/>
-      </svg>
-      <% floor.nets.rooms.each do |net| %>
-        <button type="button" class="floor__netlabel" data-floor-target="netLabel" data-net-id="<%= net.id %>"
-                data-group-id="<%= net.group_id %>" style="--x: <%= net.centroid[0] %>; --y: <%= net.centroid[1] %>" data-action="floor#frameNet"><%= net.display_label %></button>
-      <% end %>
-      <% floor.objects.each do |object| %>
-        <%= render "floors/object", object:, editable: %>
-      <% end %>
-      <% floor.spots.each do |spot| %>
-        <%= render "floors/light", spot: %>
-      <% end %>
-    </div>
-    <div class="floor__zoom" role="group" aria-label="Zoom">
-      <button type="button" data-action="floor#zoomIn" aria-label="Zoom in">+</button>
-      <button type="button" data-action="floor#zoomOut" aria-label="Zoom out">−</button>
-      <button type="button" data-action="floor#zoomFit" aria-label="Fit the house">⌂</button>
-    </div>
-  </div>
+  <%= render "floors/map", floor:, editable: %>
   <% if editable %>
     <div class="floor__popover" data-floor-target="popover" hidden>
-      <button type="button" class="floor__popover-close" aria-label="Close" data-action="floor#closeLight">×</button>
+      <button type="button" class="floor__popover-close" aria-label="<%= t(".close") %>" data-action="floor#closeLight">×</button>
       <div data-floor-target="popoverBody"></div>
     </div>
   <% end %>

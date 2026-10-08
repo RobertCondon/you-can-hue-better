@@ -1,0 +1,28 @@
+<div class="floor-filters">
+  <div class="chips chips--filters" role="group" aria-label="<%= t(".show") %>">
+    <button type="button" class="chip" aria-pressed="true" data-floor-target="roomChip" data-floor-room-param="" data-action="floor#pickRoom"><%= t(".everything") %></button>
+    <% rooms.each do |room| %>
+      <button type="button" class="chip" aria-pressed="false" data-floor-target="roomChip" data-floor-room-param="<%= room.id %>" data-action="floor#pickRoom">
+        <%= room.display_name %><% if room.kind == Hue::Group::ZONE %> <span class="muted"><%= t("rooms.badges.zone") %></span><% end %>
+      </button>
+    <% end %>
+  </div>
+  <% rooms.each do |room| %>
+    <% room_scenes = scenes.fetch(room.id, []) %>
+    <% next if room_scenes.empty? %>
+    <div class="chips chips--scenes" data-floor-target="sceneRow" data-room="<%= room.id %>" hidden>
+      <span class="chips__label muted"><%= t(".preview_scene") %></span>
+      <% room_scenes.each do |scene| %>
+        <button type="button" class="chip chip--scene" aria-pressed="false" data-floor-target="sceneChip"
+                data-floor-url-param="<%= floor_state_scene_path(scene.id) %>" data-floor-set-url-param="<%= activate_scene_path(scene.id) %>"
+                data-floor-palette-param="<%= scene.palette_hexes.to_json %>" data-action="floor#pickScene"
+                style="<%= palette_style(scene.palette_hexes) %>">
+          <%= scene.display_name %>
+        </button>
+      <% end %>
+      <%= form_with url: "#", method: :post, class: "chip-form", data: { floor_target: "setForm" }, html: { hidden: true } do |form| %>
+        <%= form.button t(".set_scene"), class: "chip chip--primary" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

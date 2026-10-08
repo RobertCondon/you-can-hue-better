@@ -252,36 +252,51 @@ gains the flash and editor error targets; `floor_paints_controller.rb` uses the 
 
 ## Chunk 8: Views
 
-- [ ] `app/views/layouts/application.html.erb`
-- [ ] `app/views/shared/_editor.html.erb`
-- [ ] `app/views/shared/_flash.html.erb`
-- [ ] `app/views/shared/_nav.html.erb`
-- [ ] `app/views/shared/_undo.html.erb`
-- [ ] `app/views/dashboard/show.html.erb`
-- [ ] `app/views/dashboard/dev.html.erb`
-- [ ] `app/views/dashboard/unreachable.html.erb`
-- [ ] `app/views/dashboard/_presses.html.erb`
-- [ ] `app/views/dashboard/_status.html.erb`
-- [ ] `app/views/dashboard/_summary.html.erb`
-- [ ] `app/views/dashboard/_visibility.html.erb`
-- [ ] `app/views/activities/_activity.html.erb`
-- [ ] `app/views/rooms/_room.html.erb`
-- [ ] `app/views/rooms/_head.html.erb`
-- [ ] `app/views/lights/_light.html.erb`
-- [ ] `app/views/lights/_icon.html.erb`
-- [ ] `app/views/lights/_panel.html.erb`
-- [ ] `app/views/lights/_pin.html.erb`
-- [ ] `app/views/scenes/index.html.erb`
-- [ ] `app/views/scenes/show.html.erb`
-- [ ] `app/views/scenes/_card.html.erb`
-- [ ] `app/views/floors/show.html.erb`
-- [ ] `app/views/floors/_floor.html.erb`
-- [ ] `app/views/floors/_light.html.erb`
-- [ ] `app/views/floors/_object.html.erb`
-- [ ] `app/views/setup/show.html.erb`
-- [ ] `app/views/pwa/manifest.json.erb`
-- [ ] `app/views/pwa/service-worker.js`
-- [ ] `config/locales/en.yml`
+Every view was rendered before and after and the HTML compared: the pages are identical apart
+from the setup form's new picker attributes and quotes now escaped as entities.
+
+- [x] `app/views/layouts/application.html.erb`
+- [x] `app/views/shared/_editor.html.erb`
+- [x] `app/views/shared/_flash.html.erb`
+- [x] `app/views/shared/_nav.html.erb`
+- [x] `app/views/shared/_undo.html.erb`
+- [x] `app/views/shared/icons/` chevron, power, brush, pencil, and the three view icons (new, from inline SVG)
+- [x] `app/views/dashboard/_lights.html.erb` (new: the header and rooms the everyday and dev pages shared by copy)
+- [x] `app/views/dashboard/show.html.erb`
+- [x] `app/views/dashboard/dev.html.erb`
+- [x] `app/views/dashboard/unreachable.html.erb`
+- [x] `app/views/dashboard/_presses.html.erb`
+- [x] `app/views/dashboard/_status.html.erb`
+- [x] `app/views/dashboard/_summary.html.erb`
+- [x] `app/views/dashboard/_visibility.html.erb`
+- [x] `app/views/activities/_activity.html.erb`
+- [x] `app/views/rooms/_room.html.erb`
+- [x] `app/views/rooms/_head.html.erb`
+- [x] `app/views/lights/_light.html.erb`
+- [x] `app/views/lights/_icon.html.erb`
+- [x] `app/views/lights/icons/` lamp, candle, spot, strip (new, from the icon's if chain)
+- [x] `app/views/lights/_panel.html.erb`
+- [x] `app/views/lights/_pin.html.erb`
+- [x] `app/views/scenes/index.html.erb`
+- [x] `app/views/scenes/show.html.erb`
+- [x] `app/views/scenes/_card.html.erb`
+- [x] `app/views/floors/show.html.erb`
+- [x] `app/views/floors/_floor.html.erb` (split into the four below)
+- [x] `app/views/floors/_filters.html.erb`, `_toolbar.html.erb`, `_paint_tray.html.erb`, `_map.html.erb` (new)
+- [x] `app/views/floors/_light.html.erb`
+- [x] `app/views/floors/_object.html.erb`
+- [x] `app/views/setup/show.html.erb` (inline script replaced by a Stimulus controller)
+- [x] `app/views/pwa/manifest.json.erb` (removed: generated, never routed)
+- [x] `app/views/pwa/service-worker.js` (removed: generated, never routed)
+- [x] `app/helpers/` application, navigation, lights, rooms, scenes, floors, dashboard (new view helpers)
+- [x] `app/javascript/controllers/bridge_choice_controller.js` (new)
+- [x] `config/locales/en.yml` (all view text)
+
+Touched only to follow the new API, reviewed fully in their own chunk: `house_broadcast/targets.rb`
+(element ids for every view), `house/light.rb` (`glow`), `house.rb` (`rooms_containing`),
+`floor.rb` (`outline`), `floor_net.rb` and `floor_polygon.rb` (SVG points and the void path),
+`floor_paint.rb` (the tray's whites and colours), `scene_preview.rb`, `hue/resources/renamable.rb`
+(the bridge's name length) and `hue/link_button_pairing.rb` (the 30-second window).
 
 ## Chunk 9: JavaScript libraries
 

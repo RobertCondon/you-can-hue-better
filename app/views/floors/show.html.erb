@@ -1,9 +1,9 @@
-<% content_for :title, "Floor" %>
-<%= turbo_stream_from "house" %>
+<% content_for :title, t(".title") %>
+<%= turbo_stream_from HouseBroadcast::STREAM %>
 <header class="house">
-  <h1>Floor</h1>
+  <h1><%= t(".title") %></h1>
   <div class="house__meta">
-    <div id="house_summary"><%= render "dashboard/summary", house: @house %></div>
+    <div id="<%= targets.house_summary %>"><%= render "dashboard/summary", house: @house %></div>
     <%= render "shared/nav", current: :floor %>
   </div>
 </header>

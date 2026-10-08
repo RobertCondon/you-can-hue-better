@@ -6,6 +6,20 @@ en:
         paired: paired here
         file: from config/hue.json
         none: not connected
+      title: Connect to your bridge
+      connected_html: Connected to the bridge at %{bridge} %{source}.
+      pairing_again: Pairing again replaces the stored key.
+      pairing_again_environment: Pairing again replaces the stored key but not the environment's.
+      heading: Connect to your Hue bridge
+      explanation: The app needs a key from the bridge. Pressing its button lets it hand one out.
+      bridge_address: Bridge address
+      address_placeholder: 192.168.0.44
+      bridges_found: Bridges found
+      found: Found on your network by Philips' discovery service.
+      not_found: Not found automatically. It is in the Hue app under Settings → My Hue system → the bridge, or on your router's device list.
+      press_button: Press the round button on top of the bridge.
+      then_connect: 'Within %{seconds} seconds, press this:'
+      connect: I've pressed the button, connect
     create:
       connected: Connected to the bridge at %{address}.
       connected_without_sync: 'Connected to the bridge at %{address}, but the first sync failed: %{reason}'
@@ -50,6 +64,18 @@ en:
   rooms:
     update:
       a_light_in: A light in %{room}
+    badges:
+      zone: zone
+      hidden: hidden
+    power:
+      turn_off: Turn %{room} off
+      turn_on: Turn %{room} on
+      title_off: Turn room off
+      title_on: Turn room on
+    head:
+      rename: Rename
+      move_up: Move %{room} up
+      move_down: Move %{room} down
   undos:
     create:
       undone: 'Undone: %{description}'
@@ -62,3 +88,163 @@ en:
       scene: "%{scene} set in %{room}"
       play: "%{scene} played in %{room}"
       target: "%{scene} in %{room}"
+  time:
+    formats:
+      clock: "%H:%M"
+  layouts:
+    application:
+      default_title: Lights
+  shared:
+    undo:
+      undo: Undo
+    editor:
+      name: Name
+      name_hint: Changes it on the bridge, for every app and switch.
+      nickname: Nickname
+      nickname_placeholder: Leave empty to use the name
+      nickname_hint: Only this dashboard sees it.
+      cancel: Cancel
+      save: Save
+    nav:
+      label: Views
+      lights: Lights
+      scenes: Scenes
+      floor: Floor
+  dashboard:
+    lights:
+      title: Lights
+      dev: dev
+      edit: Edit
+    show:
+      title: Lights
+    dev:
+      title: Lights (dev)
+      recent_changes: Recent changes
+      no_changes: Nothing yet. Tap a light to get started.
+      recent_presses: Recent presses
+    unreachable:
+      title: Bridge unreachable
+      heading: Can't reach the Hue bridge
+      advice_html: Check the bridge is powered on and this machine is on the same wifi, then %{try_again}.
+      try_again: try again
+    presses:
+      none: No presses heard yet.
+      with_steps: "%{gesture} %{steps} steps"
+    status:
+      live: Live
+      not_live_as_of: Not live. Bridge as of %{time}
+      not_live: Not live
+    summary:
+      lights_on: "%{on} of %{total} on"
+    visibility:
+      heading: Visibility
+      explanation: What the everyday views show. Anything hidden here is hidden everywhere outside /dev. "On floor" takes a light off the floor plan without hiding it.
+      room: Room
+      hidden: Hidden
+      light: Light
+      on_floor: On floor
+      icon: Icon
+      hide: Hide %{name}
+      show_on_floor: Show %{name} on the floor
+      icon_for: Icon for %{name}
+      automatic_icon: Auto (%{icon})
+  lights:
+    power:
+      turn_off: Turn off %{light}
+      turn_on: Turn on %{light}
+    panel:
+      not_responding: Not responding. Check it has power at the switch. The bridge last had it %{last_state}.
+      last_on: on at %{level}%
+      last_off: 'off'
+      rename: Change the name
+      'on': 'On'
+      brightness: Brightness
+      mode: Light mode
+      colour: Colour
+      white: White
+      pick_colour: Pick a colour
+      warm: Warm
+      cool: Cool
+    pin:
+      more_controls: More controls for %{light}
+      brightness_of: Brightness of %{light}
+      colour_of: Colour of %{light}
+      unpin: Unpin %{light}
+  scenes:
+    card:
+      playing: Playing
+      'on': 'On'
+      lights:
+        one: "%{count} light"
+        other: "%{count} lights"
+      also_in: also in %{rooms}
+      set: Set
+      play: Play
+    index:
+      title: Scenes
+    show:
+      floor_caption_html: 'The house with this scene: lights it doesn''t set are greyed out. %{arrange}.'
+      arrange_floor: Arrange the floor
+      each_light: What each light does
+  floors:
+    show:
+      title: Floor
+    floor:
+      close: Close
+      shapes:
+        wide: Wide
+        square: Square
+        tall: Tall
+      whites:
+        candle: Candle
+        warm: Warm
+        soft: Soft
+        cool: Cool
+        daylight: Daylight
+    filters:
+      show: Show
+      everything: Everything
+      preview_scene: Preview a scene
+      set_scene: Set this scene
+    toolbar:
+      unplaced:
+        one: "%{count} light not placed yet. Edit floor and drag them in from the bottom."
+        other: "%{count} lights not placed yet. Edit floor and drag them in from the bottom."
+      objects:
+        wall: Wall
+        box: Box
+        circle: Round
+      nets:
+        room: Room net
+        outline: Outline
+      shape: Shape
+      drawing_hint: Click to add points; click the first point to close.
+      close_loop: Close loop
+      cancel: Cancel
+      net_room: Room for this net
+      house_outline: House outline
+      rotate_left: Rotate left %{degrees}°
+      rotate_right: Rotate right %{degrees}°
+      remove: Remove
+      paint: Paint
+      edit_floor: Edit floor
+    paint_tray:
+      whites: Whites
+      white: "%{name} white"
+      colour: Colour
+      any_hue: Any hue
+      scene: Scene
+      recent: Recent
+      instructions: Pick a colour, then tap or sweep across lamps. Tap a room name to paint the whole room.
+      clear: Clear
+      apply: Apply
+    map:
+      zoom: Zoom
+      zoom_in: Zoom in
+      zoom_out: Zoom out
+      fit: Fit the house
+    light:
+      not_in_scene: not in this scene
+    object:
+      resize: Resize
+      rotate: Rotate

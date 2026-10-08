@@ -31,4 +31,5 @@ class Floor
 
   def home_id = @home.id
   def unplaced_count = spots.count { |spot| !spot.placed }
+  def outline = nets.outlines.first
 end

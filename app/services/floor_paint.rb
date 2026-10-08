@@ -5,6 +5,8 @@ class FloorPaint
   LIGHT_ID_KEY = "light_id"
   HEX_KEY = "hex"
   MIREK_KEY = "mirek"
+  WHITES = { candle: 400, warm: 370, soft: 286, cool: 200, daylight: 153 }.freeze
+  COLOURS = %w[#ff3b30 #ff9500 #ffcc00 #34c759 #30d5c8 #0a84ff #5e5ce6 #bf5af2 #ff2d55].freeze
 
   Stroke = Data.define(:light_id, :hex, :mirek) do
     def changes

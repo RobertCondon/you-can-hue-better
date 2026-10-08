@@ -1,14 +1,13 @@
-<%# A wall or piece of furniture. Walls are painted by the light canvas; furniture is this element. %>
-<div class="floor__object floor__object--<%= object.kind %>" id="floor_object_<%= object.id %>"
+<div class="floor__object floor__object--<%= object.kind %>" id="<%= targets.floor_object(object) %>"
      data-floor-target="object" data-id="<%= object.id %>" data-kind="<%= object.kind %>" data-url="<%= floor_object_path(object) %>"
-     style="--x: <%= object.x %>; --y: <%= object.y %>; --w: <%= object.w %>; --h: <%= object.h %>; --r: <%= object.rotation %>"
+     style="<%= object_style(object) %>"
      <% if editable %>tabindex="0" aria-label="<%= object.label.presence || object.kind %>"
      data-action="pointerdown->floor#objectDown pointermove->floor#objectMove pointerup->floor#objectUp pointercancel->floor#objectUp keydown->floor#objectKey"<% end %>>
   <% if object.label.present? %><span class="floor__label"><%= object.label %></span><% end %>
   <% if editable %>
-    <button type="button" class="floor__handle" aria-label="Resize" tabindex="-1" data-action="pointerdown->floor#resizeDown pointermove->floor#objectMove pointerup->floor#objectUp pointercancel->floor#objectUp"></button>
+    <button type="button" class="floor__handle" aria-label="<%= t(".resize") %>" tabindex="-1" data-action="pointerdown->floor#resizeDown pointermove->floor#objectMove pointerup->floor#objectUp pointercancel->floor#objectUp"></button>
     <% unless object.circle? %>
-      <button type="button" class="floor__rotate" aria-label="Rotate" tabindex="-1" data-action="pointerdown->floor#rotateDown pointermove->floor#objectMove pointerup->floor#objectUp pointercancel->floor#objectUp"></button>
+      <button type="button" class="floor__rotate" aria-label="<%= t(".rotate") %>" tabindex="-1" data-action="pointerdown->floor#rotateDown pointermove->floor#objectMove pointerup->floor#objectUp pointercancel->floor#objectUp"></button>
     <% end %>
   <% end %>
 </div>

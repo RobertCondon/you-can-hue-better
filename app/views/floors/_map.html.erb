@@ -1,0 +1,27 @@
+<div class="floor" style="<%= css_variables(aspect: floor.aspect, k: 1, tx: "0px", ty: "0px") %>" data-level="far" data-floor-target="floor"
+     data-action="click->floor#floorClick pointerdown->floor#viewDown pointermove->floor#viewMove pointerup->floor#viewUp pointercancel->floor#viewUp wheel->floor#wheel dblclick->floor#doubleTap">
+  <canvas class="floor__light" data-floor-target="canvas" aria-hidden="true"></canvas>
+  <div class="floor__world" data-floor-target="world">
+    <svg class="floor__nets" viewBox="0 0 100 100" preserveAspectRatio="none" data-floor-target="nets" aria-hidden="true">
+      <path class="floor__void" data-floor-target="void" fill-rule="evenodd" d="<%= floor.outline&.void_path %>"/>
+      <% floor.nets.each do |net| %>
+        <polygon class="floor__net floor__net--<%= net.kind %>" id="<%= targets.floor_net(net) %>" data-floor-target="net" data-id="<%= net.id %>" data-kind="<%= net.kind %>"
+                 data-url="<%= floor_net_path(net) %>" data-group-id="<%= net.group_id %>" data-label="<%= net.display_label %>"
+                 data-points="<%= net.points.to_json %>" points="<%= net.svg_points %>"
+                 <% if editable %>data-action="click->floor#selectNet"<% end %>/>
+      <% end %>
+      <polyline class="floor__draft" data-floor-target="draft" points="" hidden/>
+    </svg>
+    <% floor.nets.rooms.each do |net| %>
+      <button type="button" class="floor__netlabel" data-floor-target="netLabel" data-net-id="<%= net.id %>"
+              data-group-id="<%= net.group_id %>" style="<%= net_label_style(net) %>" data-action="floor#frameNet"><%= net.display_label %></button>
+    <% end %>
+    <%= render partial: "floors/object", collection: floor.objects, as: :object, locals: { editable: } %>
+    <%= render partial: "floors/light", collection: floor.spots, as: :spot %>
+  </div>
+  <div class="floor__zoom" role="group" aria-label="<%= t(".zoom") %>">
+    <button type="button" data-action="floor#zoomIn" aria-label="<%= t(".zoom_in") %>">+</button>
+    <button type="button" data-action="floor#zoomOut" aria-label="<%= t(".zoom_out") %>">−</button>
+    <button type="button" data-action="floor#zoomFit" aria-label="<%= t(".fit") %>">⌂</button>
+  </div>
+</div>

@@ -1,1 +1,1 @@
-<p class="flash <%= "flash--done" if local_assigns[:tone] == "done" %>" role="status" data-controller="toast" data-action="click->toast#dismiss"><%= message %></p>
+<p class="<%= class_names("flash", "flash--done" => local_assigns[:tone] == ToastStreams::DONE_TONE) %>" role="status" data-controller="toast" data-action="click->toast#dismiss"><%= message %></p>

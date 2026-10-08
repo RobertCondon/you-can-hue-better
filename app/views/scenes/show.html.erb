@@ -1,13 +1,13 @@
 <% content_for :title, @scene.display_name %>
-<%= turbo_stream_from "house" %>
+<%= turbo_stream_from HouseBroadcast::STREAM %>
 <header class="house">
   <div>
-    <p class="muted"><%= link_to "Scenes", scenes_path, class: "muted" %> / <%= @scene.group.display_name %></p>
+    <p class="muted"><%= link_to t("scenes.index.title"), scenes_path, class: "muted" %> / <%= @scene.group.display_name %></p>
     <h1><%= @scene.display_name %></h1>
   </div>
   <div class="house__meta">
-    <%= button_to "Set", activate_scene_path(@scene.id), class: "btn", form: { class: "chip-form" } %>
-    <% if @scene.dynamic? %><%= button_to "Play", play_scene_path(@scene.id), class: "btn", form: { class: "chip-form" } %><% end %>
+    <%= button_to t("scenes.card.set"), activate_scene_path(@scene.id), class: "btn", form: { class: "chip-form" } %>
+    <% if @scene.dynamic? %><%= button_to t("scenes.card.play"), play_scene_path(@scene.id), class: "btn", form: { class: "chip-form" } %><% end %>
     <%= render "shared/nav", current: :scenes %>
   </div>
 </header>
@@ -15,14 +15,14 @@
 <main>
   <section class="room">
     <%= render "floors/floor", floor: @floor, editable: false %>
-    <p class="muted floor-caption">The house with this scene: lights it doesn't set are greyed out. <%= link_to "Arrange the floor", floor_path %>.</p>
+    <p class="muted floor-caption"><%= t(".floor_caption_html", arrange: link_to(t(".arrange_floor"), floor_path)) %></p>
   </section>
   <div class="scene-cards scene-cards--single"><%= render "scenes/card", scene: @scene %></div>
   <section class="room">
-    <h2>What each light does</h2>
+    <h2><%= t(".each_light") %></h2>
     <div class="tiles">
       <% @lights.each do |light| %>
-        <article class="tile <%= light.on? ? "is-on" : "is-off" %>" style="--tile: <%= light.tile_hex %>; --ink: <%= light.tile_text_hex %>; --hue: <%= light.hex %>">
+        <article class="<%= class_names("tile", light.on? ? LightsHelper::ON_CLASS : LightsHelper::OFF_CLASS) %>" style="<%= scene_light_style(light) %>">
           <div class="tile__open tile__open--inert">
             <span class="tile__names">
               <span class="tile__name"><%= light.display_name %></span>

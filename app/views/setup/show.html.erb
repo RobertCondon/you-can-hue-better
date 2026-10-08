@@ -1,34 +1,31 @@
-<% content_for :title, "Connect to your bridge" %>
+<% content_for :title, t(".title") %>
 <header class="house">
-  <h1>Lights</h1>
+  <h1><%= t("dashboard.lights.title") %></h1>
 </header>
 <main class="setup">
   <% if @config.configured? %>
-    <p class="setup__current">Connected to the bridge at <strong><%= @config.bridge %></strong>
-      <span class="muted">(<%= t(".source.#{@config.source}") %>)</span>.
-      Pairing again replaces the stored key<%= " but not the environment's" if @config.source == :environment %>.</p>
+    <p class="setup__current"><%= t(".connected_html", bridge: tag.strong(@config.bridge), source: tag.span("(#{t(".source.#{@config.source}")})", class: "muted")) %>
+      <%= t(@config.source == :environment ? ".pairing_again_environment" : ".pairing_again") %></p>
   <% else %>
-    <h2>Connect to your Hue bridge</h2>
-    <p>The app needs a key from the bridge. Pressing its button lets it hand one out.</p>
+    <h2><%= t(".heading") %></h2>
+    <p><%= t(".explanation") %></p>
   <% end %>
 
-  <%= form_with url: setup_path, method: :post, class: "setup__form" do |f| %>
-    <label for="setup_bridge">Bridge address</label>
+  <%= form_with url: setup_path, method: :post, class: "setup__form", data: { controller: "bridge-choice" } do |form| %>
+    <label for="setup_bridge"><%= t(".bridge_address") %></label>
     <div class="setup__row">
-      <input type="text" id="setup_bridge" name="bridge" value="<%= @bridge_address %>" inputmode="decimal" autocomplete="off" placeholder="192.168.0.44" required>
+      <input type="text" id="setup_bridge" name="bridge" value="<%= @bridge_address %>" inputmode="decimal" autocomplete="off" placeholder="<%= t(".address_placeholder") %>" required data-bridge-choice-target="address">
       <% if @discovered_bridges.size > 1 %>
-        <select aria-label="Bridges found" onchange="document.getElementById('setup_bridge').value = this.value">
+        <select aria-label="<%= t(".bridges_found") %>" data-action="bridge-choice#choose">
           <% @discovered_bridges.each do |bridge| %><option value="<%= bridge.address %>" <%= "selected" if bridge.address == @bridge_address %>><%= bridge.address %> (<%= bridge.id %>)</option><% end %>
         </select>
       <% end %>
     </div>
-    <p class="muted setup__hint">
-      <% if @discovered_bridges.any? %>Found on your network by Philips' discovery service.<% else %>Not found automatically. It is in the Hue app under Settings → My Hue system → the bridge, or on your router's device list.<% end %>
-    </p>
+    <p class="muted setup__hint"><%= t(@discovered_bridges.any? ? ".found" : ".not_found") %></p>
     <ol class="setup__steps">
-      <li>Press the round button on top of the bridge.</li>
-      <li>Within 30 seconds, press this:</li>
+      <li><%= t(".press_button") %></li>
+      <li><%= t(".then_connect", seconds: Hue::LinkButtonPairing::PAIRING_WINDOW_SECONDS) %></li>
     </ol>
-    <button type="submit" class="btn btn--primary setup__go">I've pressed the button, connect</button>
+    <button type="submit" class="btn btn--primary setup__go"><%= t(".connect") %></button>
   <% end %>
 </main>

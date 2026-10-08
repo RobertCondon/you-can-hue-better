@@ -13,9 +13,10 @@ module Hue
     CLIENT_KEY_FIELD = "clientkey"
     BRIDGE_ID_FIELD = "bridgeid"
     LINK_BUTTON_NOT_PRESSED = 101
+    PAIRING_WINDOW_SECONDS = 30
     MAX_UNEXPECTED_REPLY_LENGTH = 120
     MISSING_ADDRESS_MESSAGE = "Enter the bridge's address first."
-    PRESS_BUTTON_MESSAGE = "Press the round button on the bridge, then try again within 30 seconds."
+    PRESS_BUTTON_MESSAGE = "Press the round button on the bridge, then try again within #{PAIRING_WINDOW_SECONDS} seconds."
     NOT_A_BRIDGE_MESSAGE = "That address answered, but not like a Hue bridge."
     CHECK_NETWORK_ADVICE = "Check the address and that this machine is on the same network."
 

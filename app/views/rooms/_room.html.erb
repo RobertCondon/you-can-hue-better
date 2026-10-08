@@ -1,4 +1,4 @@
-<section class="room room--<%= room.kind %>" id="room_<%= room.id %>" data-controller="room" data-room-id="<%= room.id %>">
+<section class="room room--<%= room.kind %>" id="<%= targets.room(room) %>" data-controller="room" data-room-id="<%= room.id %>">
   <%= render "rooms/head", room: %>
   <div class="room__body">
     <% if room.scenes.any? %>

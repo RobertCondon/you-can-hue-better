@@ -1,41 +1,23 @@
-<% content_for :title, "Lights (dev)" %>
-<%= turbo_stream_from "house" %>
+<% content_for :title, t(".title") %>
+<%= turbo_stream_from HouseBroadcast::STREAM %>
 <div data-controller="rooms editor" data-rooms-url-value="<%= order_rooms_path %>">
-  <header class="house">
-    <h1>Lights <span class="muted">dev</span></h1>
-    <div class="house__meta">
-      <div id="listener_status"><%= render "dashboard/status", state: @state %></div>
-      <div id="house_summary"><%= render "dashboard/summary", house: @house %></div>
-      <button type="button" class="btn btn--small" data-action="rooms#toggleEditing" data-rooms-target="editButton" aria-pressed="false">Edit</button>
-      <%= render "shared/nav", current: :lights %>
-    </div>
-  </header>
-
-  <main data-controller="light-panel" data-action="pinned:close->light-panel#close pinned:swipe->light-panel#swipe" data-rooms-target="list">
-    <div class="dock" id="light_dock" data-light-panel-target="dock" hidden></div>
-    <% @house.rooms.each do |room| %>
-      <%= render "rooms/room", room: %>
-    <% end %>
-  </main>
-  <%= render "shared/editor", bridge_names: true %>
+  <%= render "dashboard/lights", house: @house, state: @state, dev: true %>
   <%= render "dashboard/visibility", house: @house %>
 
   <aside class="activity">
     <div class="activity__col">
-      <h2>Recent changes</h2>
+      <h2><%= t(".recent_changes") %></h2>
       <% if @activities.empty? %>
-        <p class="muted">Nothing yet. Tap a light to get started.</p>
+        <p class="muted"><%= t(".no_changes") %></p>
       <% else %>
         <ol>
-          <% @activities.each do |a| %>
-            <%= render "activities/activity", activity: a %>
-          <% end %>
+          <%= render partial: "activities/activity", collection: @activities %>
         </ol>
       <% end %>
     </div>
     <div class="activity__col">
-      <h2>Recent presses</h2>
-      <div id="recent_presses"><%= render "dashboard/presses", presses: @presses %></div>
+      <h2><%= t(".recent_presses") %></h2>
+      <div id="<%= targets.recent_presses %>"><%= render "dashboard/presses", presses: @presses %></div>
     </div>
   </aside>
 </div>

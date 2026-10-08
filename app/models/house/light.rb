@@ -6,6 +6,8 @@ class House
     LOWEST_LIT_LEVEL = 1
     HIGHEST_LEVEL = 100
     UNLIT_LEVEL = 0
+    FULL_BRIGHTNESS = 100.0
+    GLOW_DECIMAL_PLACES = 2
 
     delegate :tile_hex, :tint_hex, :tile_text_hex, :fill_pct, :name_ink, :level_ink, to: :tile
 
@@ -40,6 +42,8 @@ class House
 
       I18n.t("house.light.level", level:)
     end
+
+    def glow = lit? ? (brightness / FULL_BRIGHTNESS).round(GLOW_DECIMAL_PLACES) : UNLIT_LEVEL
 
     def tile = LightTile.new(self)
   end

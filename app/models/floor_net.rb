@@ -17,6 +17,8 @@ class FloorNet < ApplicationRecord
   def display_label = label.presence || group&.display_name || I18n.t("floor.net.house_label")
   def centroid = polygon.centroid
   def bbox = polygon.bounds
+  def svg_points = polygon.svg_points
+  def void_path = polygon.void_path
 
   def as_json(*)
     { id:, kind:, group_id:, label: display_label, points:, centroid:, bbox: }

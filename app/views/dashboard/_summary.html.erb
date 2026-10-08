@@ -1,1 +1,1 @@
-<p class="count"><%= house.on_count %> of <%= house.lights.size %> on</p>
+<p class="count"><%= t(".lights_on", on: house.on_count, total: house.lights.size) %></p>

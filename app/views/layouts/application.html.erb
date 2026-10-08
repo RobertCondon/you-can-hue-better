@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title><%= content_for(:title) || "Lights" %></title>
+    <title><%= content_for(:title) || t(".default_title") %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-    <meta name="theme-color" content="#1c2130">
+    <meta name="theme-color" content="<%= ApplicationHelper::THEME_COLOR %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..700&display=swap" rel="stylesheet">
+    <% ApplicationHelper::FONT_HOSTS.each do |font_host| %>
+      <link rel="preconnect" href="<%= font_host %>" crossorigin>
+    <% end %>
+    <link href="<%= ApplicationHelper::FONT_STYLESHEET %>" rel="stylesheet">
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
   <body>
-    <div id="flash">
+    <div id="<%= targets.flash %>">
       <%= render "shared/flash", message: flash[:alert] if flash[:alert] %>
-      <%= render "shared/flash", message: flash[:notice], tone: "done" if flash[:notice] %>
+      <%= render "shared/flash", message: flash[:notice], tone: ToastStreams::DONE_TONE if flash[:notice] %>
     </div>
     <%= yield %>
   </body>

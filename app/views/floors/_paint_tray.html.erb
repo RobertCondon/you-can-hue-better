@@ -1,0 +1,29 @@
+<div class="floor-paint" data-floor-target="tray" hidden>
+  <div class="floor-paint__row">
+    <span class="floor-paint__label muted"><%= t(".whites") %></span>
+    <% paint_whites.each do |label, mirek, hex| %>
+      <button type="button" class="swatch" data-action="floor#pickPaint" data-floor-target="swatch" data-floor-hex-param="<%= hex %>" data-floor-mirek-param="<%= mirek %>"
+              style="<%= css_variables(c: hex) %>" aria-pressed="false" aria-label="<%= t(".white", name: label) %>"></button>
+    <% end %>
+    <span class="floor-paint__label muted"><%= t(".colour") %></span>
+    <% paint_colours.each do |hex| %>
+      <button type="button" class="swatch" data-action="floor#pickPaint" data-floor-target="swatch" data-floor-hex-param="<%= hex %>" style="<%= css_variables(c: hex) %>" aria-pressed="false" aria-label="<%= hex %>"></button>
+    <% end %>
+    <label class="floor-paint__custom" aria-label="<%= t(".any_hue") %>">
+      <input type="range" min="<%= FloorsHelper::HUE_SLIDER_RANGE.min %>" max="<%= FloorsHelper::HUE_SLIDER_RANGE.max %>" value="<%= FloorsHelper::HUE_SLIDER_START %>" data-floor-target="hueSlider" data-action="input->floor#pickHue">
+    </label>
+  </div>
+  <div class="floor-paint__row" data-floor-target="trayScene" hidden>
+    <span class="floor-paint__label muted"><%= t(".scene") %></span>
+    <span class="floor-paint__group" data-floor-target="trayScenePalette"></span>
+  </div>
+  <div class="floor-paint__row" data-floor-target="trayRecent" hidden>
+    <span class="floor-paint__label muted"><%= t(".recent") %></span>
+    <span class="floor-paint__group" data-floor-target="trayRecentPalette"></span>
+  </div>
+  <div class="floor-paint__row floor-paint__row--actions">
+    <span class="floor-paint__status" data-floor-target="paintStatus"><%= t(".instructions") %></span>
+    <button type="button" class="tool" data-action="floor#clearPaint" data-floor-target="paintClear" hidden><%= t(".clear") %></button>
+    <button type="button" class="tool tool--primary" data-action="floor#applyPaint" data-floor-target="paintApply" hidden><%= t(".apply") %></button>
+  </div>
+</div>

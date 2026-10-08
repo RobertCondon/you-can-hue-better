@@ -1,0 +1,17 @@
+<header class="house">
+  <h1><%= t(".title") %><% if dev %> <span class="muted"><%= t(".dev") %></span><% end %></h1>
+  <div class="house__meta">
+    <div id="<%= targets.listener_status %>"><%= render "dashboard/status", state: %></div>
+    <div id="<%= targets.house_summary %>"><%= render "dashboard/summary", house: %></div>
+    <button type="button" class="btn btn--small" data-action="rooms#toggleEditing" data-rooms-target="editButton" aria-pressed="false"><%= t(".edit") %></button>
+    <%= render "shared/nav", current: :lights %>
+  </div>
+</header>
+
+<main data-controller="light-panel" data-action="pinned:close->light-panel#close pinned:swipe->light-panel#swipe" data-rooms-target="list">
+  <div class="dock" id="<%= targets.light_dock %>" data-light-panel-target="dock" hidden></div>
+  <% house.rooms.each do |room| %>
+    <%= render "rooms/room", room: %>
+  <% end %>
+</main>
+<%= render "shared/editor", bridge_names: dev %>
