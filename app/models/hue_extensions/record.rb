@@ -1,8 +1,14 @@
 module HueExtensions
-  # Base for app-owned tables that extend a Hue mirror row one-to-one, sharing its id.
-  # Prefixed hue_extensions_; never written by sync.
   class Record < ApplicationRecord
+    MAX_NICKNAME_LENGTH = 40
+
     self.abstract_class = true
     self.table_name_prefix = "hue_extensions_"
+
+    def self.set_nickname!(id, nickname)
+      find_or_initialize_by(id:).update!(nickname: nickname.to_s.strip.presence)
+    end
+
+    def self.cast_boolean(value) = ActiveModel::Type::Boolean.new.cast(value)
   end
 end

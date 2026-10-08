@@ -110,23 +110,33 @@ to `hue/group.rb`, `hue/scene.rb` and `hue/control.rb`.
 
 The `hue_*` tables the bridge owns and the `hue_extensions_*` tables the app owns.
 
-- [ ] `app/models/application_record.rb`
-- [ ] `app/models/hue/record.rb`
-- [ ] `app/models/hue/device.rb`
-- [ ] `app/models/hue/light.rb`
-- [ ] `app/models/hue/group.rb`
-- [ ] `app/models/hue/group_light.rb`
-- [ ] `app/models/hue/scene.rb`
-- [ ] `app/models/hue/scene_action.rb`
-- [ ] `app/models/hue/control.rb`
-- [ ] `app/models/hue/listener_state.rb`
-- [ ] `app/models/hue_extensions/record.rb`
-- [ ] `app/models/hue_extensions/group.rb`
-- [ ] `app/models/hue_extensions/light.rb`
-- [ ] `app/models/hue_extensions/scene.rb`
-- [ ] `test/models/hue/scene_test.rb`
-- [ ] `test/models/hue/listener_state_test.rb`
-- [ ] `test/models/hue_extensions/group_test.rb`
+- [x] `app/models/application_record.rb` (no change needed)
+- [x] `app/models/hue/record.rb`
+- [x] `app/models/hue/device.rb` (unused `remotes` and `remote?` removed)
+- [x] `app/models/hue/light.rb`
+- [x] `app/models/hue/group.rb`
+- [x] `app/models/hue/group_light.rb`
+- [x] `app/models/hue/scene.rb`
+- [x] `app/models/hue/scene_action.rb`
+- [x] `app/models/hue/control.rb` (unused `by_bridge_id` removed)
+- [x] `app/models/hue/listener_state.rb` (`as_of` renamed `mirror_current_as_of`)
+- [x] `app/models/hue_extensions/record.rb` (shared nickname and boolean handling)
+- [x] `app/models/hue_extensions/group.rb`
+- [x] `app/models/hue_extensions/light.rb`
+- [x] `app/models/hue_extensions/scene.rb`
+- [x] `app/services/hue/light_snapshot.rb` (new: one builder for a light and for a scene's light)
+- [x] `app/services/hue/scene_action_rebuild.rb` (new, from the scene model)
+- [x] `app/services/hue/device_classifier.rb` (new, from the device model)
+- [x] `app/services/hue/payloads/scene.rb`, `scene_action.rb`, `palette.rb` (scene fields, actions and palette read from the payload; gamut, archetype and product archetype added to the light and device payloads)
+- [x] `config/locales/en.yml` (control labels)
+- [x] `test/models/hue/scene_test.rb`
+- [x] `test/models/hue/listener_state_test.rb`
+- [x] `test/models/hue/device_classifier_test.rb` (new)
+- [x] `test/models/hue_extensions/group_test.rb` (no change needed)
+- [x] `test/models/hue_extensions/light_test.rb` (new)
+
+Touched only to follow the new API, reviewed fully in their own chunk: `dashboard/_status.html.erb`
+and `visibility_controller.rb`.
 
 ## Chunk 4: The house snapshot, activity and undo
 

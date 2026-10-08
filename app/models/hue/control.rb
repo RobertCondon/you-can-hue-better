@@ -1,5 +1,4 @@
 module Hue
-  # A button or the rotary ring on a switch. Bindings hang off these.
   class Control < Record
     BUTTON = "button"
     ROTARY = "rotary"
@@ -12,14 +11,14 @@ module Hue
     validates :kind, inclusion: { in: KINDS }
     validates :control_number, presence: true, if: :button?
 
-    scope :buttons,  -> { where(kind: "button") }
-    scope :rotaries, -> { where(kind: "rotary") }
+    scope :buttons, -> { where(kind: BUTTON) }
+    scope :rotaries, -> { where(kind: ROTARY) }
 
-    def button? = kind == "button"
-    def rotary? = kind == "rotary"
+    def button? = kind == BUTTON
+    def rotary? = kind == ROTARY
 
-    def label = button? ? "#{device.name} button #{control_number}" : "#{device.name} ring"
-
-    def self.by_bridge_id(id) = find_by(id:)
+    def label
+      button? ? I18n.t("hue.control.button_label", device: device.name, number: control_number) : I18n.t("hue.control.ring_label", device: device.name)
+    end
   end
 end

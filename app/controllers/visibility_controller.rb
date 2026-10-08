@@ -3,7 +3,7 @@ class VisibilityController < ApplicationController
   def light
     light = Hue::Light.find(params[:id])
     p = params.require(:light).permit(:hidden, :on_floor, :icon)
-    HueExtensions::Light.set_visibility!(light.id, hidden: p[:hidden], on_floor: p[:on_floor], icon: p.key?(:icon) ? p[:icon] : :keep)
+    HueExtensions::Light.set_visibility!(light.id, p)
     HouseBroadcast.everything
     redirect_to dev_path(anchor: "visibility"), status: :see_other
   end

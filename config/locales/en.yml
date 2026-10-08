@@ -9,3 +9,7 @@ en:
     create:
       connected: "Connected to the bridge at %{address}."
       connected_without_sync: "Connected to the bridge at %{address}, but the first sync failed: %{reason}"
+  hue:
+    control:
+      button_label: "%{device} button %{number}"
+      ring_label: "%{device} ring"

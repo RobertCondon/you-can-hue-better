@@ -1,7 +1,7 @@
 <% if state.live? %>
   <p class="status is-live">Live</p>
-<% elsif state.as_of %>
-  <p class="status">Not live. Bridge as of <%= state.as_of.in_time_zone.strftime("%H:%M") %></p>
+<% elsif state.mirror_current_as_of %>
+  <p class="status">Not live. Bridge as of <%= state.mirror_current_as_of.in_time_zone.strftime("%H:%M") %></p>
 <% else %>
   <p class="status">Not live</p>
 <% end %>

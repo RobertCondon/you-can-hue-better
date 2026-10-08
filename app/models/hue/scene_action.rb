@@ -1,41 +1,34 @@
 module Hue
-  # What one light does in one scene. Mirror of raw.actions on the scene; rebuilt on every change.
   class SceneAction < Record
+    FALLBACK_HEX = "#ffd9a0"
+    MINIMUM_DOT_STRENGTH = 0.3
+    FULL_BRIGHTNESS = 100.0
+
     belongs_to :scene
     belongs_to :light
 
-    def xy      = color_x && { x: color_x.to_f, y: color_y.to_f }
-    def color?  = xy.present? || mirek.present?
+    def xy = color_x && { x: color_x.to_f, y: color_y.to_f }
+    def color? = xy.present? || mirek.present?
+    def white? = mirek.present? && xy.nil?
 
-    # The light as it would look in this scene: the same value object the dashboard renders.
-    def to_snapshot
-      House::Light.new(
-        id: light.id, name: light.name, on:, brightness: brightness.to_f, xy: xy || white_xy, owner_id: light.device_id,
-        gamut: light.raw.dig("color", "gamut")&.transform_values { _1.symbolize_keys }&.symbolize_keys,
-        mirek:, mirek_valid: mirek.present? && xy.nil?, nickname: light.extension&.nickname, reachable: light.device.reachable,
-        archetype: light.raw.dig("metadata", "archetype") || light.device.raw.dig("product_data", "product_archetype")
-      )
-    end
+    def white_xy = mirek && Color.hex_to_xy(Color.mirek_to_hex(mirek))
 
-    # Full-brightness colour of this action.
+    def to_snapshot = LightSnapshot.from_scene_action(self)
+
     def hex
-      return Hue::Color.xy_to_hex(xy[:x], xy[:y]) if xy
-      return Hue::Color.mirek_to_hex(mirek) if mirek
-      "#ffd9a0"
+      return Color.xy_to_hex(xy[:x], xy[:y]) if xy
+      return Color.mirek_to_hex(mirek) if mirek
+
+      FALLBACK_HEX
     end
 
-    # The colour at the scene's brightness, for dots and swatches.
-    def dot_hex = on ? Hue::Color.mix(House::Light::OFF_TILE, hex, 0.3 + 0.7 * (brightness.to_f / 100)) : House::Light::OFF_TILE
+    def dot_hex
+      return House::Light::OFF_TILE unless on
 
-    # Hue angle 0..360 for sorting a row of dots into a spectrum.
-    def hue_angle = Hue::Color.hue_angle(hex)
-
-    private
-
-    # A white given as a temperature still needs an xy for the tile maths.
-    def white_xy
-      return nil unless mirek
-      Hue::Color.hex_to_xy(Hue::Color.mirek_to_hex(mirek))
+      dot_strength = MINIMUM_DOT_STRENGTH + (1 - MINIMUM_DOT_STRENGTH) * (brightness.to_f / FULL_BRIGHTNESS)
+      Color.mix(House::Light::OFF_TILE, hex, dot_strength)
     end
+
+    def hue_angle = Color.hue_angle(hex)
   end
 end

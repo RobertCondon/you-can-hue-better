@@ -14,12 +14,12 @@ module Hue
     has_many :floor_objects, class_name: "::FloorObject", dependent: :delete_all
     has_many :floor_nets, class_name: "::FloorNet", dependent: :delete_all
 
-    def display_name = extension&.nickname.presence || name
-
     validates :name, presence: true
     validates :kind, inclusion: { in: KINDS }
 
-    scope :rooms, -> { where(kind: "room") }
-    scope :zones, -> { where(kind: "zone") }
+    scope :rooms, -> { where(kind: ROOM) }
+    scope :zones, -> { where(kind: ZONE) }
+
+    def display_name = extension&.nickname.presence || name
   end
 end
