@@ -1,6 +1,8 @@
 # Scenes: saving the bridge's, then making our own
 
-Written 2026-10-07. Facts below were checked against the bridge.
+Written 2026-10-07. Facts below were checked against the bridge. This is the plan the scenes and
+floor were built from, kept as a record of the choices made; the README describes what exists now.
+Part 1 B and the floor are built. Part 2, scenes made in the app, is not.
 
 **Built so far (2026-10-07):** Part 1 B. `hue_scenes` has the detail columns, `hue_scene_actions`
 is rebuilt on sync and on scene events, the listener applies scene status in place (no full sync

@@ -419,7 +419,9 @@ Skipped at Rob's request: the migrations have already run and stay as written.
 
 ## Chunk 15: Docs
 
-- [ ] `README.md`
-- [ ] `docs/HUE_NOTES.md`
-- [ ] `docs/DB_DESIGN.md`
-- [ ] `docs/SCENES_PLAN.md`
+- [x] `README.md` (rewritten around how the app is organised now; the old one named classes that no longer exist)
+- [x] `docs/HUE_NOTES.md` (rewritten: it had become Rails' generated placeholder README)
+- [x] `docs/DB_DESIGN.md` (status, table names, the extension and app tables brought up to date against the schema)
+- [x] `docs/SCENES_PLAN.md` (marked as the plan the scenes and floor were built from, with what is built)
+- [x] `design/README.md` and the preview pages (the stylesheet rebuild and the renamed colour tokens)
+- [x] `lib/tasks/design.rake` (new: rebuilds the design previews' stylesheet from the split files)

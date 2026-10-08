@@ -1,148 +1,111 @@
 # you can hue better
 
-A small Rails app for the Philips Hue lights in the house. Each light is a tile painted with its real
-colour and brightness. Tap a tile to toggle it, drag to dim, pick a colour, or recall a scene for a room.
-Everything talks to the bridge over the LAN; nothing goes through the Hue cloud.
+A Rails app for the Philips Hue lights in a house. Every light is a tile painted with its real colour
+and brightness, every scene is a card, and the whole house is a floor plan you can light, edit and
+paint. It talks to the bridge over the local network only; nothing goes through the Hue cloud.
 
 ## Run it
 
     bin/rails db:prepare
     bin/rails server
 
-Then open http://localhost:3000. Any phone on the same wifi can use `http://<this-mac>.local:3000`.
+Open http://localhost:3000. Any phone on the same network can use `http://<this-mac>.local:3000`.
 
-The three main views share a Lights / Scenes / Floor switch in their headers.
+The first visit without a bridge key lands on `/setup`: the app finds the bridge, you press the
+bridge's round button, and the key is stored. A key can also come from the environment
+(`HUE_BRIDGE`, `HUE_APP_KEY`) or from `config/hue.json` (gitignored, see `config/hue.example.json`).
+The environment wins, then a pairing made on the setup page, then the file.
 
-Scenes live at `/scenes` (cards per room: a dot per light in its scene colour, the palette behind,
-Set and Play) and `/scenes/:id`, which draws the scene on the house **floor**: every light the scene
-sets in its scene state, every other light greyed out. `/floor` is the one floor for the whole house
-(keyed by the bridge's home group), live, with Edit floor to drag lights into place (`light_placements`)
-and a shape control. Its chips filter to a room (others greyed) and then preview any of that room's scenes the same
-way, without touching the bulbs. Tapping a light outside edit mode opens its panel floating beside it
-(the same switch, brightness and colour controls as the rows), and drags on it paint the floor live. Unplaced lights line up along the bottom until dragged.
-The floor has a camera (`lib/floor_camera.js`): pinch or ctrl-scroll to zoom up to 6×, drag or scroll to pan,
-double-tap to zoom in, buttons for in, out and fit. Labels follow the zoom: room names only when far, lamp
-glyphs when nearer, glyph and name when close; the selected lamp always shows both. Lamps carry a glyph for
-what the bulb is (lamp, candle, spot, strip) from its Hue archetype. Editing is hidden below 900px wide.
+## What it does
 
-Edit floor can draw a **house outline** and **room nets** (`floor_nets`): click to add points, click the first
-point (or press Enter) to close the loop, Escape to abandon. Nets are labels for the floor, not physics: they
-name regions, double-tap frames one, and a room can have several. The outline blocks and bounces light like
-a wall and darkens the void outside it. A selected net shows draggable points (double-click one to remove it)
-and a room picker.
+**Lights** (`/`) is the everyday view, built for a phone. Rooms and zones collapse, remembered per
+device. A tile's icon switches the light, a sideways drag across it dims, and its name pins it: a bar
+docked at the top of the page with a slider and colour swatch that stays while the room scrolls.
+Swipe the bar to move to the next light; tap it to unfold rename and the colour wheel, which only
+offers colours the bulb can actually make. Edit arranges rooms, and the order is shared by every
+device. Names set here are nicknames this app shows; the bridge's name sits beside them.
 
-**Paint** (`floor_paints_controller.rb`): a tray of whites, colours, a hue slider, the previewed scene's
-palette and recent colours. Pick one, then tap or sweep across lamps, or tap a room's name in a net to
-paint the whole room. Lamps repaint locally; Apply sends one command per light and offers Undo.
+**Scenes** (`/scenes`) shows each room's scenes as cards with a dot per light and the palette behind,
+with Set and Play. A scene's page draws it on the floor plan.
 
-**Visibility** (`/dev`, `visibility_controller.rb`): per room, hidden; per light, hidden, on floor, and an
-icon override. Hidden here is hidden everywhere outside /dev, including counts and the floor. "On floor"
-takes a light off the floor plan without hiding it. On a phone the Lights/Scenes/Floor nav is a bottom
-tab bar.
+**Floor** (`/floor`) is one plan for the whole house. Lamps glow with their real colour; walls block
+and bounce the light, furniture is drawn, and an optional house outline shapes it. Pinch, scroll or
+double-tap to zoom, drag to pan. Filter to a room, preview any of its scenes without touching the
+bulbs, and Set the one you like. Tap a lamp for its controls. Edit floor (desktop only) places lamps,
+walls and furniture, and draws room outlines by clicking around a room and closing the loop. Paint
+picks a colour and sweeps it across lamps or whole rooms, then applies it in one go.
 
-Edit floor also adds **walls** and **furniture** (boxes and rounds): drag to move, resize from the corner,
-rotate from the top handle or the toolbar's ±15° (or `[` / `]`), Remove or Delete key; saved in
-`floor_objects`. The floor is a square grid (a cell is a tenth of the width); drops snap to a tenth of a cell,
-fine enough to feel free. **Preview** on the live floor shows any of the room's scenes on the lamps without touching
-the bulbs, with a Set button to actually recall it. The light is drawn on a canvas (`lib/floor_light.js`): each light fills what it
-can see past the walls, and every wall face it can see bounces light back as a mirrored source clipped
-to that face, so the floor brightens next to a wall. Furniture is drawn but does not affect the light.
-See `docs/SCENES_PLAN.md` for where this is going.
+Anything that changes several lights at once (a room, a scene, paint) offers Undo for an hour.
 
-Two views share the same partials:
-
-- `/` is the everyday view, built for a phone: compact rows, no logs. Rooms collapse (tap the name),
-  remembered per device. Arrange reorders rooms and saves the order on the server (`hue_extensions_groups`),
-  shared by every device. Rooms that have never been arranged fall in after the placed ones, ordered by
-  most lights, then most lights on, then name.
-- `/dev` is the developer view: the same rooms plus the activity log, the press log and the listener status.
-
-Names: tap a light's name in its panel, or a room's Rename button in Edit mode. On `/` this sets a
-**nickname**, which only this dashboard shows (the bridge's name appears in small text next to it). On
-`/dev` it can also **rename** the room or light on the bridge itself, which the Hue app and the switches
-then see too; a bulb and the device that owns it are renamed together. Nicknames live in the
-`hue_extensions_*` tables.
-
-Bridge connection details come from `config/hue.json` (gitignored):
-
-    {"bridge":"192.168.0.44","username":"<app key>","clientkey":"<client key>"}
-
-or from the environment as `HUE_BRIDGE` and `HUE_APP_KEY`. See `docs/HUE_NOTES.md` for how the
-key was obtained, the full light and scene inventory, and API notes. A Postman collection is in `postman/`.
+**Dev** (`/dev`) is the same Lights view plus the command log, the switch-press log, the listener's
+status, renaming on the bridge itself, and a visibility list: hide rooms or lights everywhere outside
+`/dev`, take a light off the floor plan, or override its icon.
 
 ## How it fits together
 
-- `app/services/hue/client.rb` wraps the CLIP v2 API over one persistent TLS connection.
-- `app/services/hue/color.rb` converts between hex and the CIE xy colours the bridge uses.
-- `app/models/house.rb` and `app/models/house/` are plain Ruby snapshots the dashboard renders, built from the mirror tables.
-- `app/models/activity.rb` logs every command sent to the bridge.
-- `app/models/hue/` are the `hue_*` mirror tables: a cache of bridge state. `Hue::Sync` rebuilds it, and
-  `Hue::Listener` (a thread started by a Puma plugin when the server boots) keeps it fresh from the
-  bridge's event stream, logs switch presses, and broadcasts changes to open pages over Turbo.
-  If the listener isn't live the dashboard refreshes the mirror from the bridge itself first.
-- `app/models/control_binding.rb` and friends describe what each remote button and the dial ring should do.
-  `bin/rails hue:import_v1_rules` seeds them from the bridge's legacy rules. Nothing acts on them yet.
-- `docs/DB_DESIGN.md` explains the schema and the plan for taking over the remotes.
-- `app/controllers/lights_controller.rb` handles a tile's three controls; rooms and scenes have their own.
-- A light's tile (`tile_controller.js`): the icon switches it, the name pins it, and a sideways drag
-  across the tile dims it with the fill following.
-- The pinned light (`lights/_pin`, `pinned_controller.js`, `light_panel_controller.js`): a bar docked at
-  the top of the page that stays while the room scrolls, with icon, name, level, a slider and the colour
-  swatch. Tap the name or swatch to unfold rename and colour beneath it; swipe the bar sideways to move to
-  the next light in that room; × unpins. On a phone the floor pins a tapped lamp the same way instead of
-  floating a popover.
-- A change made through the app is applied to the mirror and broadcast at once (`HouseBroadcast.changes`),
-  so every other open page sees it; the bridge's own event then has nothing new to say. A live update
-  aimed at something being dragged or previewed is held back (`lib/busy.js`) and lands on release.
-- Any action that touches more than one light (room on/off, scene Set or Play) captures the lights'
-  states first (`undo_actions`, kept an hour) and offers Undo in its toast.
-- `color_picker_controller.js` and `lib/hue_color.js` are that colour component: a Colour/White switch over
-  one circle. Colour is a hue/saturation wheel where every pixel is clamped to the bulb's own gamut; White is
-  the same circle as a warm-to-cool range. Dragging previews on the tile and panel, releasing sends xy or a
-  colour temperature to the bridge. While something is being dragged the panel is marked busy so a live
-  update can't replace it mid-gesture.
-- Responses are Turbo Streams, so only the tiles that changed re-render. Pages also subscribe to a
-  broadcast stream, so a wall switch or the Hue app changing a light shows up without a reload.
-- Set `HUE_LISTENER=0` to start the server without the listener.
+The bridge is the source of truth. The app keeps a mirror of it and never guesses.
 
-## Design previews
+- **Talking to the bridge** (`app/services/hue/`): `Hue::Client` exposes one resource class per bridge
+  resource (`client.lights.update`, `client.scenes.recall`, …) over a persistent connection.
+  `Hue::Payloads` name every field of the bridge's JSON once. Pairing is `BridgeDiscovery`,
+  `LinkButtonPairing` and `BridgeConnector`. `Hue::Color` converts between hex and the CIE xy colours
+  the bridge uses.
+- **The mirror** (`app/models/hue/`, tables `hue_*`): a cache of bridge state. `Hue::Sync` rebuilds it
+  in steps, one per table. `Hue::Listener`, a thread a Puma plugin starts with the server, applies the
+  bridge's event stream through `Hue::Mirror` (one applier per resource type), logs switch presses, and
+  reconnects with backoff. Set `HUE_LISTENER=0` to start the server without it.
+- **App-owned data**: `hue_extensions_*` tables share an id with the mirror row they extend (nicknames,
+  room order, visibility, icons). Floor placements, objects and outlines, undo states, the command log,
+  remote-control bindings and the stored pairing have their own tables. `docs/DB_DESIGN.md` explains the
+  schema.
+- **What the pages render** (`app/models/house.rb`, `app/models/house/`): immutable snapshots built from
+  the mirror, with hidden rooms and lights left out outside `/dev`.
+- **Commands** (`app/services/house_commands/`, `light_command.rb`, `floor_paint.rb`): each change is
+  logged by `ActivityRecorder`, and multi-light ones capture undo first (`app/services/undo/`).
+- **Live pages**: every change, from this app, the Hue app or a wall switch, reaches open pages as
+  Turbo Streams. `HouseBroadcast::Targets` names the elements they replace, and the views build their
+  ids from it. An update aimed at something under the pointer waits until it is released
+  (`app/javascript/lib/busy.js`).
+- **Front end**: Stimulus controllers in `app/javascript/controllers/`, with shared maths and helpers in
+  `app/javascript/lib/` (colour, the floor's camera, geometry and light). The floor's controller wires
+  the page to the classes in `lib/floor/`, one per job. Stylesheets are one file per part of the page,
+  with shared values in `tokens.css`. Every piece of visible text is in `config/locales/en.yml`.
+- **Remote controls**: `ControlBinding` and friends describe what each switch button and the dial ring
+  should do, seeded by `bin/rails hue:import_v1_rules` from the bridge's own rules. Nothing acts on them
+  yet: the bridge's rules still drive the switches.
 
-`design/` holds self-contained preview pages of the app's visual language (colours, type, view switch,
-chips and buttons, a room with rows, the light panel, scene cards, the floor), each with an `@dsCard`
-marker. Push them to a claude.ai/design design-system project with `/design-sync` from that folder, so
-Claude Design can lay out new screens with this app's real look. `design/README.md` says how to refresh them.
+`docs/HUE_NOTES.md` covers the bridge API as this app uses it. `docs/SCENES_PLAN.md` is the plan the
+scenes and floor were built from.
 
 ## Tests
 
     bin/rails test
 
-Tests run against an in-memory fake bridge (`test/support/fake_hue_client.rb`); nothing touches the real one.
+The tests run the real client against a fake bridge connection (`test/support/fake_bridge.rb`), so
+nothing touches the real bridge. `bin/ci` runs the style checker, the security audits and the tests.
 
+## Design previews
 
-## Deploying in Docker (clanker)
+`design/` holds preview pages of the app's look for a claude.ai/design project. See `design/README.md`.
 
-One container: Rails + Puma on port 3000, SQLite under `/rails/storage` (a named volume), and the
-Hue listener thread started by Puma. Action Cable uses Solid Cable on SQLite, so there is no Redis.
+## Deploying in Docker
+
+One container: Rails and Puma on port 3000, SQLite in a named volume, and the listener thread. Live
+updates use Solid Cable on SQLite, so there is no Redis.
 
 ```sh
-cp .env.example .env            # HUE_BRIDGE, HUE_APP_KEY (from config/hue.json), RAILS_MASTER_KEY (config/master.key)
-docker compose up -d --build    # http://clanker:3344
-docker compose logs -f hue      # "Live" in the header means the listener is on the bridge's event stream
+cp .env.example .env            # RAILS_MASTER_KEY; HUE_BRIDGE and HUE_APP_KEY are optional
+docker compose up -d --build    # http://<host>:3344
+docker compose logs -f hue      # "Live" in the page header means the listener is on the event stream
 ```
 
-- Secrets come in as environment variables; `config/hue.json` and `config/master.key` are never copied into the image.
-- `HUE_BRIDGE`/`HUE_APP_KEY` are optional. Without them the first visit lands on `/setup`: the app finds
-  the bridge through Philips' discovery service (or you type its address), you press the bridge's
-  button, and the key is stored in the database (`bridge_pairings`, in the volume). Precedence is
-  environment, then the pairing, then `config/hue.json`. `/setup` stays available to pair again.
-- The container needs to reach the bridge on the LAN. The default bridge network does; a custom network
-  with `internal: true` would not.
+- Secrets come in as environment variables; `config/hue.json` and `config/master.key` never go in the image.
+- Without a bridge key the first visit lands on `/setup`, and the pairing is stored in the volume.
+- The container must reach the bridge on the local network; Docker's default network does.
 - Plain HTTP by default. Behind a proxy that terminates TLS, set `RAILS_FORCE_SSL=1`.
-- Keep one container (Puma runs single-process), otherwise there would be two listeners writing the mirror.
-- The volume holds the mirror, nicknames, positions, floor objects, nets, visibility, undo and activity.
-  Back it up with `docker run --rm -v you-can-hue-better_hue_storage:/s -v "$PWD":/b alpine tar czf /b/hue-storage.tgz -C /s .`
-- Migrations run on start (`bin/docker-entrypoint` runs `db:prepare`). The bridge's v1 switch rules are untouched by all of this.
-
+- Run one container only, or two listeners would write the mirror.
+- Migrations run on start. Back up the volume with
+  `docker run --rm -v you-can-hue-better_hue_storage:/storage -v "$PWD":/backup alpine tar czf /backup/hue-storage.tgz -C /storage .`
 
 ## Licence
 

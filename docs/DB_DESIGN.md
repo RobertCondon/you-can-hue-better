@@ -1,11 +1,12 @@
 # Database design: event-fed mirror + app-owned remote control
 
-Written 2026-10-06. Companion to HUE_NOTES.md. Everything here was checked against the real bridge.
+Written 2026-10-06, updated 2026-10-09. Companion to HUE_NOTES.md. Everything here was checked
+against the real bridge.
 
-**Status:** the tables exist, the dashboard reads from the mirror, and `Hue::Listener` keeps the
-mirror fresh from the event stream (started with the server by a Puma plugin). Presses are logged to
-`control_events` but **not acted on**: the bridge's own rules still drive the switches and the dial,
-and nothing reads `control_bindings` yet. The dispatcher is the next piece.
+**Status:** the mirror, extension and app tables below all exist. The pages read from the mirror and
+`Hue::Listener` keeps it fresh from the event stream. Presses are logged to `control_events` but **not
+acted on**: the bridge's own rules still drive the switches and the dial, and nothing reads
+`control_bindings` yet. The dispatcher that would act on them is not built.
 
 Naming: mirror tables are prefixed `hue_` with models under `Hue::` (`Hue::Device`, `Hue::Light`,
 `Hue::Group`, `Hue::Scene`, `Hue::Control`, `Hue::ListenerState`). The bindings model is
@@ -36,7 +37,7 @@ Naming: mirror tables are prefixed `hue_` with models under `Hue::` (`Hue::Devic
 ## Principles
 
 1. **Two kinds of table, never mixed.** *Mirror* tables are a cache of bridge state, written only by
-   the listener. *App* tables are things the bridge cannot represent, written by controllers and jobs.
+   the sync, the listener and the mirror. *App* tables are things the bridge cannot represent.
 2. **Hue ids are the primary keys of mirror rows** (string UUIDs). No surrogate ids to translate.
 3. **Partial upserts.** Events carry only changed fields, so the listener merges; it never replaces.
    A `raw` JSON column keeps the last full resource for anything without a column.
@@ -59,7 +60,7 @@ hue_devices
   raw             json
   updated_at
 
-lights
+hue_lights
   id              string PK      Hue light service id
   device_id       string FK devices
   name            string
@@ -104,24 +105,37 @@ hue_controls                          one row per button or rotary service on a 
   last_event_at   datetime null
   unique (device_id, kind, control_number)
 
-hue_listener_states                   single row, read by the dashboard for "last heard 3s ago"
+hue_scene_actions                     what each light does in each scene, rebuilt from the scene
+  scene_id        string FK scenes
+  light_id        string FK lights
+  on, brightness, color_x, color_y, mirek
+
+hue_listener_states                   single row, read by the pages for "Live" or "Bridge as of 14:02"
   id              integer PK (always 1)
+  heartbeat_at    datetime null  null when disconnected
   last_event_id   string
   last_event_at   datetime
-  connected_at    datetime null
   full_sync_at    datetime
+  connected_at    datetime null  unused; left from the first listener
 ```
 
-Full sync (on boot, on reconnect, and every 10 minutes as belt and braces) reads device, light,
-room, zone, scene, button, relative_rotary, zigbee_connectivity, device_power and rebuilds
-everything, including `group_lights`. Between syncs the stream keeps rows current.
+`hue_scenes` also carries the scene's palette, speed, image and status columns for the scene cards.
+
+A full sync (when the listener connects or reconnects, and whenever an event reports a structural
+change such as a new room or device) reads every resource type and rebuilds everything, including
+`hue_group_lights`, then removes anything the bridge no longer reports. Between syncs the stream
+keeps rows current.
 
 ## Extension tables (app-owned, one-to-one with a mirror row)
 
 `hue_extensions_*` tables share their primary key with the mirror row they extend and are never
-written by sync. `hue_extensions_groups` (model `HueExtensions::Group`) holds what the app knows
-about a room or zone: today its dashboard `position`; later hidden, nickname, default scene.
-`Hue::Group#extension` reaches it. A room deleted on the bridge cascades its extension row away.
+written by sync. A room, light or scene deleted on the bridge cascades its extension row away.
+
+- `hue_extensions_groups`: a room's `position` on the Lights page, `nickname`, `hidden`, and for the
+  house's home group, the floor's `floor_aspect`.
+- `hue_extensions_lights`: `nickname`, `hidden`, `on_floor`, and an `icon` override.
+- `hue_extensions_scenes`: `nickname`, plus `favourite`, `hidden`, `position`, `made_here` and `notes`,
+  which are reserved for scenes made in the app (see SCENES_PLAN.md) and not used yet.
 
 ## App tables (controller / job owned)
 
@@ -182,9 +196,26 @@ control_events                    every press and turn, forever (cheap: a few hu
   created_at
   index (occurred_at), unique (bridge_event_id, control_id)
 
-activities                        existing, two new columns
-  + source          string       dashboard | remote | schedule | api
-  + control_event_id integer FK null
+activities                        one row per command sent to the bridge
+  target_kind, target_id, target_name, action, payload, result
+  source            string       dashboard | remote | schedule | api
+  control_event_id  integer FK null
+
+undo_actions                      the lights' states before a multi-light action, kept an hour
+  description       string
+  states            json
+
+light_placements                  where each light sits on the house floor (percent of the floor)
+  group_id, light_id, x, y
+
+floor_objects                     walls and furniture on the house floor
+  group_id, kind (wall | box | circle), x, y, w, h, rotation, label
+
+floor_nets                        room outlines and the house outline (group_id null)
+  group_id null, points json, label
+
+bridge_pairings                   the key from the setup page; one row
+  bridge, app_key, client_key, bridge_id, paired_at
 ```
 
 ## Why these choices
@@ -249,6 +280,6 @@ The bridge's v1 rules and the app must not both act on a press. Plan:
 ## Deliberately left out for now
 
 - `schedules` / `automations`: the bridge's time-based behaviours still work and are fine there.
-  When they move into the app they become Solid Queue recurring jobs plus one `automations` table.
+  When they move into the app they become recurring jobs plus one `automations` table.
 - Multi-bridge, multi-home: everything assumes one bridge. Adding `bridge_id` later is mechanical.
 - Entertainment / streaming API: a different protocol (UDP), out of scope.

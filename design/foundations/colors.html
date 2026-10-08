@@ -7,8 +7,8 @@
 <style>
 /* Dusk palette: the page is the room at evening; the tiles are the lamps. */
 :root {
-  --bg: #1c2130;
-  --bg-raised: #242a3b;
+  --page: #1c2130;
+  --surface: #242a3b;
   --ink: #ece9e2;
   --ink-soft: #9aa0b3;
   --line: #333a4e;
@@ -19,7 +19,7 @@
 
 * { box-sizing: border-box; }
 
-html { background: var(--bg); }
+html { background: var(--page); }
 
 body {
   margin: 0;
@@ -29,7 +29,7 @@ body {
   font-size: 16px;
   line-height: 1.4;
   color: var(--ink);
-  background: var(--bg);
+  background: var(--page);
   max-width: 1180px;
   margin-inline: auto;
 }
@@ -85,11 +85,11 @@ h2 { font-size: clamp(20px, 2.4vw, 26px); }
 .room__editing { display: none; gap: 4px; }
 .is-editing .room__editing { display: flex; }
 .tile__realname { font-size: 12px; opacity: 0.7; line-height: 1.2; }
-.btn--primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn--primary { background: var(--ink); color: var(--page); border-color: var(--ink); }
 
 .btn, .chip {
   font: inherit; cursor: pointer; color: var(--ink);
-  background: var(--bg-raised); border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
   padding: 8px 16px;
 }
 .btn:hover, .chip:hover { border-color: var(--ink-soft); }
@@ -141,7 +141,7 @@ h2 { font-size: clamp(20px, 2.4vw, 26px); }
   grid-column: 1 / -1;
   margin-top: -8px;
   padding: 14px;
-  background: var(--bg-raised);
+  background: var(--surface);
   border: 1px solid var(--line);
   border-top: 0;
   border-radius: 0 0 var(--radius) var(--radius);
@@ -191,13 +191,13 @@ input[type="range"]:focus-visible { outline: 2px solid var(--ink); outline-offse
 .picker { display: grid; gap: 10px; justify-items: center; }
 .picker__modes {
   display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 2px; width: 220px;
-  background: var(--bg); border-radius: 999px;
+  background: var(--page); border-radius: 999px;
 }
 .picker__modes button {
   font: inherit; font-size: 14px; color: var(--ink-soft); background: transparent; border: 0;
   border-radius: 999px; padding: 6px 0; cursor: pointer;
 }
-.picker__modes button[aria-pressed="true"] { background: var(--bg-raised); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+.picker__modes button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
 .picker__modes button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .picker__wheel { position: relative; width: 220px; height: 220px; }
 .picker__wheel canvas { width: 220px; height: 220px; border-radius: 50%; display: block; cursor: crosshair; touch-action: none; }
@@ -213,7 +213,7 @@ input[type="range"]:focus-visible { outline: 2px solid var(--ink); outline-offse
 .scene-card {
   --palette: none;
   position: relative; overflow: hidden; display: flex; flex-direction: column;
-  background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
 }
 .scene-card::before {
   content: ""; position: absolute; inset: 0; background: var(--palette); opacity: 0.18; pointer-events: none;
@@ -223,7 +223,7 @@ input[type="range"]:focus-visible { outline: 2px solid var(--ink); outline-offse
 .scene-card__body:focus-visible { outline: 2px solid var(--ink); outline-offset: -3px; }
 .scene-card__title { display: flex; align-items: center; gap: 8px; }
 .scene-card__name { font-size: 17px; font-weight: 500; }
-.badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--ink); color: var(--bg); }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--ink); color: var(--page); }
 .badge--quiet { background: var(--line); color: var(--ink); }
 .dots { display: flex; flex-wrap: wrap; gap: 5px; }
 .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35) inset, 0 0 8px -2px var(--c); }
@@ -231,24 +231,24 @@ input[type="range"]:focus-visible { outline: 2px solid var(--ink); outline-offse
 .tile__open--inert { cursor: default; }
 
 /* Main views */
-.views { display: inline-flex; gap: 2px; padding: 3px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: 999px; }
+.views { display: inline-flex; gap: 2px; padding: 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; }
 .views__link { padding: 6px 14px; border-radius: 999px; color: var(--ink-soft); text-decoration: none; font-size: 14px; }
 .views__link:hover { color: var(--ink); }
-.views__link.is-current { background: var(--ink); color: var(--bg); }
+.views__link.is-current { background: var(--ink); color: var(--page); }
 .views__link:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 /* The floor: a dark room on a square grid; the light is drawn on a canvas, lights and objects sit on top. */
 .floor-wrap { display: grid; gap: 12px; }
 .floor-filters { display: grid; gap: 8px; }
-.chips--filters .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.chips--filters .chip[aria-pressed="true"] .muted { color: var(--bg); opacity: 0.7; }
+.chips--filters .chip[aria-pressed="true"] { background: var(--ink); color: var(--page); border-color: var(--ink); }
+.chips--filters .chip[aria-pressed="true"] .muted { color: var(--page); opacity: 0.7; }
 .chips--scenes { align-items: center; }
 .chips--scenes[hidden] { display: none; }
 .chips__label { font-size: 13px; flex: none; }
 .chip--scene { --palette: none; position: relative; overflow: hidden; }
 .chip--scene::before { content: ""; position: absolute; inset: 0; background: var(--palette); opacity: 0.22; }
 .chip--scene[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
-.chip--primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip--primary { background: var(--ink); color: var(--page); border-color: var(--ink); }
 .floor-caption { margin: 8px 0 0; font-size: 14px; }
 .floor-caption a { color: var(--ink); }
 .floor {
@@ -294,7 +294,7 @@ input[type="range"]:focus-visible { outline: 2px solid var(--ink); outline-offse
 .floor-head__hint[hidden] { display: none; }
 .floor-head__tools {
   margin-left: auto; display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
-  padding: 3px; border-radius: 12px; background: var(--bg-raised); border: 1px solid var(--line);
+  padding: 3px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line);
 }
 .floor__tools { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
 .floor__tools[hidden] { display: none; }
@@ -305,11 +305,11 @@ input[type="range"]:focus-visible { outline: 2px solid var(--ink); outline-offse
 }
 .tool:hover { background: color-mix(in srgb, var(--ink) 10%, transparent); }
 .tool:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
-.tool--toggle[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.tool--toggle[aria-pressed="true"] { background: var(--ink); color: var(--page); }
 .tool--danger { color: var(--danger); }
 .tool--select { gap: 6px; cursor: default; }
 .tool--select:hover { background: transparent; }
-.tool--select select { font: inherit; font-size: 13px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 3px 6px; }
+.tool--select select { font: inherit; font-size: 13px; color: var(--ink); background: var(--page); border: 1px solid var(--line); border-radius: 6px; padding: 3px 6px; }
 .tool__name { font-size: 13px; color: var(--ink-soft); padding: 0 4px; }
 .tool__swatch { width: 14px; height: 10px; border: 1px solid color-mix(in srgb, var(--ink) 55%, transparent); }
 .tool__swatch--wall { height: 5px; background: #3b4154; border-color: color-mix(in srgb, var(--ink) 35%, transparent); }
@@ -327,7 +327,7 @@ input[type="range"]:focus-visible { outline: 2px solid var(--ink); outline-offse
 .floor__label { font-size: 11px; color: var(--ink-soft); text-shadow: 0 1px 2px rgba(0,0,0,0.8); pointer-events: none; }
 .floor__handle, .floor__rotate { display: none; position: absolute; padding: 0; border: 0; cursor: pointer; box-sizing: border-box; }
 .floor__handle { right: -7px; bottom: -7px; width: 14px; height: 14px; border-radius: 3px; background: var(--ink); cursor: nwse-resize; }
-.floor__rotate { left: 50%; top: -22px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--bg-raised); border: 2px solid var(--ink); cursor: grab; }
+.floor__rotate { left: 50%; top: -22px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--surface); border: 2px solid var(--ink); cursor: grab; }
 .floor__rotate::before { content: ""; position: absolute; left: 50%; top: 100%; width: 2px; height: 8px; margin-left: -1px; background: var(--ink); }
 .is-editing .floor__object { pointer-events: auto; cursor: move; }
 .is-editing .floor__object--wall { outline: 1px dashed color-mix(in srgb, var(--ink) 50%, transparent); outline-offset: -1px; }
@@ -358,13 +358,13 @@ input[type="range"]:focus-visible { outline: 2px solid var(--ink); outline-offse
 /* Name / nickname editor */
 .editor {
   margin: auto; padding: 18px; width: min(92vw, 360px); border: 1px solid var(--line); border-radius: var(--radius);
-  background: var(--bg-raised); color: var(--ink); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.8);
+  background: var(--surface); color: var(--ink); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.8);
 }
 .editor::backdrop { background: rgba(10, 12, 20, 0.6); }
 .editor__title { margin: 0 0 14px; font-size: 18px; font-weight: 500; }
 .editor__field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; font-size: 14px; }
 .editor__field input {
-  font: inherit; font-size: 16px; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  font: inherit; font-size: 16px; color: var(--ink); background: var(--page); border: 1px solid var(--line);
   border-radius: 10px; padding: 9px 12px;
 }
 .editor__field input:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
@@ -401,8 +401,8 @@ body { padding: 24px; max-width: none; }
 
 <p class="ds-note">The page is the room at dusk. There is no brand accent: the lights' own colours are the accent, painted onto tiles and the floor.</p>
 <div class="ds-row">
-  <div style="width:120px"><div style="height:64px;border-radius:12px;background:#1c2130;border:1px solid #333a4e"></div><small>--bg #1c2130</small></div>
-  <div style="width:120px"><div style="height:64px;border-radius:12px;background:#242a3b;border:1px solid #333a4e"></div><small>--bg-raised #242a3b</small></div>
+  <div style="width:120px"><div style="height:64px;border-radius:12px;background:#1c2130;border:1px solid #333a4e"></div><small>--page #1c2130</small></div>
+  <div style="width:120px"><div style="height:64px;border-radius:12px;background:#242a3b;border:1px solid #333a4e"></div><small>--surface #242a3b</small></div>
   <div style="width:120px"><div style="height:64px;border-radius:12px;background:#333a4e"></div><small>--line #333a4e</small></div>
   <div style="width:120px"><div style="height:64px;border-radius:12px;background:#ece9e2"></div><small>--ink #ece9e2</small></div>
   <div style="width:120px"><div style="height:64px;border-radius:12px;background:#9aa0b3"></div><small>--ink-soft #9aa0b3</small></div>
