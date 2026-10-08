@@ -1,0 +1,15 @@
+.editor {
+  margin: auto; padding: 18px; width: min(92vw, 360px); border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow-dialog);
+}
+.editor::backdrop { background: var(--backdrop); }
+.editor__title { margin: 0 0 14px; font-size: var(--text-2xl); font-weight: 500; }
+.editor__field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; font-size: var(--text-md); }
+.editor__field input {
+  font: inherit; font-size: var(--text-lg); color: var(--ink); background: var(--page); border: 1px solid var(--line);
+  border-radius: var(--radius-control); padding: 9px 12px;
+}
+.editor__field input:focus-visible { outline: var(--focus-width) solid var(--ink); outline-offset: 1px; }
+.editor__field small { color: var(--ink-soft); }
+.editor__error { margin: 0 0 10px; color: var(--danger); font-size: var(--text-md); min-height: 1em; }
+.editor__actions { display: flex; justify-content: flex-end; gap: 8px; }

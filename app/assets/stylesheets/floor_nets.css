@@ -1,0 +1,28 @@
+.floor__nets { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 0; }
+.floor__void { fill: var(--void); pointer-events: none; }
+.floor__net { fill: var(--net-fill); stroke: var(--net-stroke); stroke-width: 1.2px; stroke-dasharray: 5 4; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.floor__net--outline { fill: none; stroke: var(--outline-stroke); stroke-width: 1.5px; stroke-dasharray: none; }
+.is-editing .floor__net { pointer-events: visiblePainted; cursor: pointer; }
+.is-editing.is-drawing .floor__net { pointer-events: none; }
+.is-editing .floor__net:hover { fill: var(--net-fill-hover); }
+.floor__net.is-selected { stroke: var(--ink); stroke-width: 2px; stroke-dasharray: none; fill: var(--net-fill-selected); }
+.floor__draft { fill: var(--draft-fill); stroke: var(--draft); stroke-width: 1.5px; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.floor__draft[hidden] { display: none; }
+.is-drawing .floor { cursor: crosshair; }
+
+.floor__netlabel {
+  all: unset; position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); z-index: var(--layer-label);
+  transform: translate(-50%, -50%) scale(calc(1 / var(--k, 1))); font-size: var(--text-sm); color: var(--ink-soft); letter-spacing: 0.01em;
+  padding: 4px 8px; border-radius: var(--radius-small); cursor: pointer; text-shadow: 0 1px 3px var(--text-shadow); white-space: nowrap;
+}
+.floor__netlabel:hover { color: var(--ink); background: var(--net-fill-hover); }
+.floor__netlabel:focus-visible { outline: var(--focus-width) solid var(--ink); }
+.floor[data-level="near"] .floor__netlabel { opacity: 0.35; }
+.is-editing .floor__netlabel { pointer-events: none; }
+
+.floor__vertex {
+  all: unset; position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); z-index: var(--layer-vertex);
+  width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 2px solid var(--ink); box-sizing: border-box;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--k, 1))); cursor: grab; touch-action: none;
+}
+.floor__vertex:first-of-type { background: var(--ink); }

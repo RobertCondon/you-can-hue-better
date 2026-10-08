@@ -1,0 +1,83 @@
+:root {
+  --page: #1c2130;
+  --surface: #242a3b;
+  --ink: #ece9e2;
+  --ink-soft: #9aa0b3;
+  --line: #333a4e;
+  --danger: #ff8b7a;
+  --danger-surface: #3a2a2c;
+  --danger-line: #5a3a3c;
+  --live: #7ed68a;
+  --live-glow: #7ed68a88;
+  --off-tile: #2b3040;
+  --off-ring: #434a60;
+  --dark-ink: #15181f;
+  --light-ink: #f3f1ec;
+  --warm-white: #ffd9a0;
+  --floor-ground: #151823;
+  --floor-control: rgba(21, 24, 35, 0.85);
+  --wall: #3b4154;
+  --draft: #ffb05f;
+  --draft-fill: rgba(255, 176, 95, 0.1);
+  --marker: #fff;
+  --void: rgba(8, 10, 16, 0.55);
+  --backdrop: rgba(10, 12, 20, 0.6);
+  --net-fill: rgba(236, 233, 226, 0.03);
+  --net-fill-hover: rgba(236, 233, 226, 0.08);
+  --net-fill-selected: rgba(236, 233, 226, 0.06);
+  --net-stroke: rgba(236, 233, 226, 0.4);
+  --outline-stroke: rgba(236, 233, 226, 0.75);
+  --grid-line: rgba(255, 255, 255, 0.045);
+  --grid-line-major: rgba(255, 255, 255, 0.09);
+  --grid-line-editing: rgba(255, 255, 255, 0.07);
+  --grid-line-major-editing: rgba(255, 255, 255, 0.14);
+  --vignette: rgba(0, 0, 0, 0.35);
+  --dot-ring: rgba(0, 0, 0, 0.35);
+  --lamp-ring: rgba(0, 0, 0, 0.5);
+  --swatch-ring: rgba(0, 0, 0, 0.4);
+  --marker-ring: rgba(0, 0, 0, 0.6);
+  --text-shadow: rgba(0, 0, 0, 0.9);
+  --label-shadow: rgba(0, 0, 0, 0.8);
+  --hue-spectrum: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+
+  --shadow-toast: 0 12px 32px -8px rgba(0, 0, 0, 0.6);
+  --shadow-dock: 0 16px 40px -20px rgba(0, 0, 0, 0.9);
+  --shadow-floor: 0 30px 60px -40px rgba(0, 0, 0, 0.9);
+  --shadow-popover: 0 24px 60px -18px rgba(0, 0, 0, 0.9);
+  --shadow-dialog: 0 24px 60px -16px rgba(0, 0, 0, 0.8);
+
+  --radius: 14px;
+  --radius-medium: 12px;
+  --radius-control: 10px;
+  --radius-small: 8px;
+  --radius-tiny: 6px;
+  --radius-pill: 999px;
+
+  --text-xxs: 11px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-md: 14px;
+  --text-base: 15px;
+  --text-lg: 16px;
+  --text-xl: 17px;
+  --text-2xl: 18px;
+
+  --focus-width: 2px;
+  --quick: 160ms;
+  --page-gutter: clamp(16px, 3vw, 40px);
+  --section-gap: clamp(24px, 4vw, 48px);
+  --page-width: 1180px;
+  --tab-bar-height: 70px;
+  --picker-size: 220px;
+
+  --layer-object: 1;
+  --layer-label: 2;
+  --layer-lamp: 3;
+  --layer-vertex: 4;
+  --layer-toast: 5;
+  --layer-controls: 6;
+  --layer-dock: 7;
+  --layer-popover: 8;
+
+  color-scheme: dark;
+}

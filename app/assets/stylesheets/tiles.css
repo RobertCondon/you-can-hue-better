@@ -1,0 +1,50 @@
+.tiles {
+  display: grid; gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+}
+
+.tile {
+  --tile: var(--off-tile); --fillc: var(--off-tile); --fill: 0%; --ink: var(--light-ink); --name-ink: var(--light-ink); --level-ink: var(--light-ink); --hue: var(--warm-white);
+  position: relative; overflow: hidden; isolation: isolate;
+  display: flex; align-items: stretch; min-height: 64px;
+  background: var(--tile); border-radius: var(--radius);
+  touch-action: pan-y; user-select: none; -webkit-user-select: none;
+}
+.tile.is-on { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hue) 30%, transparent); }
+.tile.is-off { box-shadow: inset 0 0 0 1px var(--line); }
+.tile.is-unreachable { opacity: 0.75; }
+.tile.is-pinned { outline: var(--focus-width) solid var(--ink); outline-offset: -2px; }
+.tile:has(+ .light-panel) { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+.tile__fill { position: absolute; left: 0; top: 0; bottom: 0; width: var(--fill); background: var(--fillc); transition: width var(--quick) ease; pointer-events: none; }
+.tile.is-dragging .tile__fill { transition: none; }
+
+.tile__icon {
+  all: unset; position: relative; z-index: 1; width: 48px; flex: none; cursor: pointer;
+  display: grid; place-items: center;
+}
+.tile__icon:focus-visible .tile__dot { outline: var(--focus-width) solid var(--ink); outline-offset: 2px; }
+.tile__dot {
+  width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--hue); color: var(--ink); box-shadow: 0 0 0 2px var(--dot-ring);
+}
+.tile__dot .ico { width: 16px; height: 16px; }
+.tile.is-off .tile__dot, .pin.is-off .tile__dot { background: transparent; color: var(--ink-soft); box-shadow: 0 0 0 2px var(--off-ring) inset; }
+.tile.is-unreachable .tile__dot { color: var(--danger); box-shadow: 0 0 0 2px var(--danger) inset; background: transparent; }
+
+.tile__open {
+  all: unset; position: relative; z-index: 1; cursor: pointer; flex: 1; min-width: 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px 10px 2px;
+}
+.tile__open:focus-visible { outline: var(--focus-width) solid var(--ink); outline-offset: -3px; border-radius: var(--radius); }
+.tile__open--inert { cursor: default; }
+.tile__names { display: flex; flex-direction: column; min-width: 0; color: var(--name-ink); }
+.tile__name { font-size: var(--text-base); font-weight: 500; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tile__realname { font-size: var(--text-xs); opacity: 0.75; line-height: 1.2; }
+.tile__badge { font-size: var(--text-xxs); font-weight: 400; opacity: 0.7; border: 1px solid currentColor; border-radius: var(--radius-pill); padding: 0 6px; vertical-align: middle; }
+.tile__level { font-size: var(--text-md); color: var(--level-ink); opacity: 0.9; font-variant-numeric: tabular-nums; flex: 0 1 auto; text-align: right; }
+.tile.is-unreachable .tile__level { color: var(--danger); opacity: 1; font-size: var(--text-xs); line-height: 1.2; max-width: 5.5em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile__fill, .chevron { transition: none; }
+}

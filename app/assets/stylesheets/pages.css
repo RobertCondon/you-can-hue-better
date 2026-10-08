@@ -1,0 +1,14 @@
+.unreachable { max-width: 50ch; }
+.unreachable a { color: var(--ink); }
+
+.setup { max-width: 52ch; }
+.setup h2 { font-size: 26px; margin: 0 0 8px; }
+.setup p { margin: 0 0 16px; line-height: 1.5; }
+.setup__form { display: flex; flex-direction: column; gap: 8px; }
+.setup__form label { font-size: var(--text-sm); color: var(--ink-soft); }
+.setup__row { display: flex; gap: 8px; flex-wrap: wrap; }
+.setup__row input, .setup__row select { font: inherit; font-size: var(--text-2xl); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-control); padding: 10px 12px; min-width: 0; flex: 1; }
+.setup__row input:focus-visible, .setup__row select:focus-visible { outline: var(--focus-width) solid var(--ink); }
+.setup__hint { font-size: var(--text-sm); margin: 0; }
+.setup__steps { margin: 16px 0 8px; padding-left: 22px; line-height: 1.6; }
+.setup__go { align-self: flex-start; font-size: var(--text-lg); padding: 12px 20px; }

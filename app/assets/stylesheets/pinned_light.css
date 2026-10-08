@@ -1,0 +1,31 @@
+.dock { position: sticky; top: env(safe-area-inset-top, 0px); z-index: var(--layer-dock); margin: 0 0 14px; }
+.dock[hidden] { display: none; }
+.dock--floor { margin: 0 0 10px; }
+
+.pin {
+  --hue: var(--warm-white); --ink: var(--dark-ink); --fill: 0%;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-dock);
+}
+.pin__bar {
+  display: grid; grid-template-columns: 48px minmax(0, 1fr) minmax(90px, 1.1fr) 30px 30px; align-items: center; gap: 8px;
+  padding: 6px 8px 6px 0; touch-action: pan-y; user-select: none; -webkit-user-select: none;
+}
+.pin__toggle { display: contents; }
+.pin__icon { all: unset; width: 48px; height: 48px; display: grid; place-items: center; cursor: pointer; }
+.pin__icon:focus-visible .tile__dot { outline: var(--focus-width) solid var(--ink); outline-offset: 2px; }
+.pin__names { all: unset; cursor: pointer; display: flex; flex-direction: column; min-width: 0; padding: 4px 0; }
+.pin__names:focus-visible { outline: var(--focus-width) solid var(--ink); border-radius: var(--radius-tiny); }
+.pin__name { font-size: var(--text-base); font-weight: 500; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pin__level { font-size: var(--text-xs); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.pin__dim { display: flex; align-items: center; }
+.pin__dim input[type="range"] { height: 28px; }
+.pin__dim input[type="range"]::-webkit-slider-thumb { width: 16px; height: 16px; margin-top: -6px; }
+.pin__swatch { width: 26px; height: 26px; padding: 0; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--ink-soft) 60%, transparent); background: var(--hue); cursor: pointer; }
+.pin.is-off .pin__swatch { background: transparent; }
+.pin__close { all: unset; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; color: var(--ink-soft); font: var(--text-2xl)/1 sans-serif; cursor: pointer; }
+.pin__close:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 10%, transparent); }
+.pin__sheet { display: none; border-top: 1px solid var(--line); }
+.dock.is-expanded .pin__sheet { display: block; }
+.pin__sheet .light-panel { margin: 0; border: 0; border-radius: 0 0 var(--radius) var(--radius); }
+.pin__sheet .light-panel__head .switch, .pin__sheet .light-panel__row { display: none; }

@@ -10,7 +10,7 @@
       <link rel="preconnect" href="<%= font_host %>" crossorigin>
     <% end %>
     <link href="<%= ApplicationHelper::FONT_STYLESHEET %>" rel="stylesheet">
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag(*ApplicationHelper::STYLESHEETS, "data-turbo-track": "reload") %>
     <%= javascript_importmap_tags %>
   </head>
   <body>

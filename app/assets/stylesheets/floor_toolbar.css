@@ -1,0 +1,35 @@
+.floor-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; min-height: 34px; }
+.floor-head__hint { margin: 0; font-size: var(--text-sm); color: var(--ink-soft); }
+.floor-head__hint[hidden] { display: none; }
+.floor-head__tools {
+  margin-left: auto; display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  padding: 3px; border-radius: var(--radius-medium); background: var(--surface); border: 1px solid var(--line);
+}
+.floor__tools { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
+.floor__tools[hidden] { display: none; }
+.floor__tools--selection, .floor__tools--drawing { padding-left: 6px; border-left: 1px solid var(--line); }
+
+.tool {
+  font: inherit; font-size: var(--text-sm); color: var(--ink); background: transparent; border: 1px solid transparent; border-radius: var(--radius-small);
+  padding: 6px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; line-height: 1;
+}
+.tool:hover { background: color-mix(in srgb, var(--ink) 10%, transparent); }
+.tool:focus-visible { outline: var(--focus-width) solid var(--ink); outline-offset: -2px; }
+.tool--toggle[aria-pressed="true"] { background: var(--ink); color: var(--page); }
+.tool--draw[aria-pressed="true"] { background: color-mix(in srgb, var(--ink) 14%, transparent); }
+.tool--danger { color: var(--danger); }
+.tool--select { gap: 6px; cursor: default; }
+.tool--select:hover { background: transparent; }
+.tool--select select, .tool__select { font: inherit; font-size: var(--text-sm); color: var(--ink); background: var(--page); border: 1px solid var(--line); border-radius: var(--radius-tiny); padding: 3px 6px; }
+.tool__select[hidden] { display: none; }
+.tool__name { font-size: var(--text-sm); color: var(--ink-soft); padding: 0 4px; }
+.tool__swatch { width: 14px; height: 10px; border: 1px solid color-mix(in srgb, var(--ink) 55%, transparent); }
+.tool__swatch--wall { height: 5px; background: var(--wall); border-color: color-mix(in srgb, var(--ink) 35%, transparent); }
+.tool__swatch--box { border-radius: 2px; background: color-mix(in srgb, var(--ink) 7%, transparent); }
+.tool__swatch--circle { width: 12px; height: 12px; border-radius: 50%; background: color-mix(in srgb, var(--ink) 7%, transparent); }
+.tool__swatch--net { height: 10px; border: 1px dashed color-mix(in srgb, var(--ink) 65%, transparent); }
+.tool__swatch--outline { height: 10px; border: 1.5px solid color-mix(in srgb, var(--ink) 80%, transparent); }
+
+@media (max-width: 899px) {
+  .floor-head__tools .tool[data-floor-target="editButton"] { display: none; }
+}

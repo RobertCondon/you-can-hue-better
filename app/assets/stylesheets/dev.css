@@ -1,0 +1,23 @@
+.visibility { margin-top: 40px; }
+.visibility h2 { font-size: 20px; margin: 0 0 4px; }
+.visibility > p { margin: 0 0 14px; max-width: 65ch; }
+.visibility__cols { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); align-items: start; }
+.visibility__table { width: 100%; border-collapse: collapse; font-size: var(--text-md); }
+.visibility__table th { text-align: left; font-weight: 500; color: var(--ink-soft); font-size: var(--text-xs); padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.visibility__table td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.visibility__table form { margin: 0; }
+.visibility__table input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--ink); }
+.visibility__table select { font: inherit; font-size: var(--text-sm); color: var(--ink); background: var(--page); border: 1px solid var(--line); border-radius: var(--radius-tiny); padding: 3px 6px; }
+
+.activity { display: flex; gap: 40px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 24px; margin-top: 16px; }
+.activity h2 { font-size: var(--text-2xl); margin-bottom: 12px; }
+.activity__col { flex: 1 1 320px; }
+.activity ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-width: 60ch; }
+.activity li { display: flex; gap: 12px; align-items: baseline; font-size: var(--text-base); }
+.activity .when { color: var(--ink-soft); font-variant-numeric: tabular-nums; min-width: 3.2em; }
+.activity .what { color: var(--ink-soft); }
+.activity .err, .activity .failed .what { color: var(--danger); }
+
+@media (max-width: 899px) {
+  .visibility__cols { grid-template-columns: 1fr; }
+}

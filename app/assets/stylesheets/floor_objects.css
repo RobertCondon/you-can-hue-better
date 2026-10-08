@@ -1,0 +1,19 @@
+.floor__object {
+  position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); width: calc(var(--w) * 1%); height: calc(var(--h) * 1%);
+  transform: rotate(calc(var(--r, 0) * 1deg)); transform-origin: center;
+  pointer-events: none; z-index: var(--layer-object); display: grid; place-items: center; box-sizing: border-box; outline: none;
+}
+.floor__object--box, .floor__object--circle { border: 1px solid color-mix(in srgb, var(--ink) 45%, transparent); background: color-mix(in srgb, var(--ink) 7%, transparent); }
+.floor__object--box { border-radius: var(--radius-tiny); }
+.floor__object--circle { border-radius: 50%; }
+.floor__label { font-size: var(--text-xxs); color: var(--ink-soft); text-shadow: 0 1px 2px var(--label-shadow); pointer-events: none; }
+
+.floor__handle, .floor__rotate { display: none; position: absolute; padding: 0; border: 0; cursor: pointer; box-sizing: border-box; transform: scale(calc(1 / var(--k, 1))); }
+.floor__handle { right: -7px; bottom: -7px; width: 14px; height: 14px; border-radius: 3px; background: var(--ink); cursor: nwse-resize; transform-origin: 100% 100%; }
+.floor__rotate { left: 50%; top: -22px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--surface); border: 2px solid var(--ink); cursor: grab; transform-origin: 50% 100%; }
+.floor__rotate::before { content: ""; position: absolute; left: 50%; top: 100%; width: 2px; height: 8px; margin-left: -1px; background: var(--ink); }
+
+.is-editing .floor__object { pointer-events: auto; cursor: move; }
+.is-editing .floor__object--wall { outline: 1px dashed color-mix(in srgb, var(--ink) 50%, transparent); outline-offset: -1px; }
+.is-editing .floor__object.is-selected { outline: var(--focus-width) solid var(--ink); outline-offset: 1px; z-index: var(--layer-label); }
+.is-editing .floor__object.is-selected .floor__handle, .is-editing .floor__object.is-selected .floor__rotate { display: block; }

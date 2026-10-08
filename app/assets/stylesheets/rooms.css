@@ -1,0 +1,21 @@
+.room { margin-bottom: var(--section-gap); }
+.room__head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.room__title {
+  all: unset; cursor: pointer; display: flex; align-items: last baseline; gap: 12px; flex: 1; min-width: 0;
+  padding: 4px 0; border-radius: var(--radius-small);
+}
+.room__title:focus-visible { outline: var(--focus-width) solid var(--ink); outline-offset: 4px; }
+.room__title h2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.room__kind { color: var(--ink-soft); font-size: 0.7em; }
+.room__summary { color: var(--ink-soft); white-space: nowrap; }
+.room__names { display: flex; flex-direction: column; min-width: 0; }
+.room__realname { font-size: var(--text-xs); color: var(--ink-soft); line-height: 1.2; }
+.room__editing { display: none; gap: 4px; }
+.is-editing .room__editing { display: flex; }
+.chevron { align-self: center; color: var(--ink-soft); transition: transform var(--quick) ease; flex: none; }
+.room.is-collapsed { margin-bottom: 14px; }
+.room.is-collapsed .chevron { transform: rotate(-90deg); }
+.room.is-collapsed .room__body { display: none; }
+
+.scenes { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.scenes::-webkit-scrollbar { display: none; }

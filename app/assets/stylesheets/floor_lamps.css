@@ -1,0 +1,32 @@
+.floor__lamp {
+  all: unset; position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%);
+  transform: translate(-50%, -50%) scale(calc(1 / var(--k, 1))); transform-origin: 50% 50%;
+  width: 110px; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; touch-action: none;
+  text-align: center; z-index: var(--layer-lamp); padding: 11px 0;
+}
+.floor__dot {
+  width: 22px; height: 22px; border-radius: 50%; background: var(--hue); color: var(--ink, var(--dark-ink));
+  display: grid; place-items: center;
+  box-shadow: 0 0 0 2px var(--lamp-ring), 0 0 calc(4px + 16px * var(--bri, 0)) var(--hue);
+}
+.floor__dot .ico { width: 13px; height: 13px; }
+.floor__name { font-size: var(--text-xs); line-height: 1.15; color: var(--ink); text-shadow: 0 1px 3px var(--text-shadow); max-width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+.floor__lamp.is-off .floor__dot { background: transparent; color: var(--ink-soft); box-shadow: 0 0 0 2px var(--line) inset; }
+.floor__lamp.is-unreachable .floor__dot { background: transparent; color: var(--danger); border: 2px dashed var(--danger); box-sizing: border-box; box-shadow: none; }
+.floor__lamp.is-unreachable .floor__name { color: var(--danger); }
+.floor__lamp.is-unplaced .floor__dot { outline: 2px dashed var(--ink-soft); outline-offset: 2px; }
+.floor__lamp.is-muted { opacity: 0.35; filter: saturate(0); }
+.floor__lamp:focus-visible .floor__dot, .floor__lamp.is-open .floor__dot { outline: var(--focus-width) solid var(--ink); outline-offset: 3px; }
+:not(.is-editing) > .floor .floor__lamp { cursor: pointer; }
+
+.floor[data-level="far"] .floor__name, .floor[data-level="mid"] .floor__name { display: none; }
+.floor[data-level="far"] .floor__dot { width: 16px; height: 16px; }
+.floor[data-level="far"] .floor__dot .ico { display: none; }
+.floor .floor__lamp.is-open .floor__name, .floor .floor__lamp:focus-visible .floor__name { display: block; }
+.floor .floor__lamp.is-open .floor__dot { width: 22px; height: 22px; }
+.floor .floor__lamp.is-open .floor__dot .ico { display: block; }
+
+.is-editing .floor { cursor: default; }
+.is-editing .floor__lamp { cursor: grab; }
+.is-editing .floor__lamp:active { cursor: grabbing; }

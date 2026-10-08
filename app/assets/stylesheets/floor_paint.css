@@ -1,0 +1,26 @@
+.floor-paint { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; margin-bottom: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-medium); }
+.floor-paint[hidden] { display: none; }
+.floor-paint__row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.floor-paint__row[hidden] { display: none; }
+.floor-paint__row--actions { justify-content: space-between; }
+.floor-paint__label { font-size: var(--text-xs); margin-right: 2px; }
+.floor-paint__label:not(:first-child) { margin-left: 8px; }
+.floor-paint__group { display: inline-flex; flex-wrap: wrap; gap: 8px; }
+.floor-paint__status { font-size: var(--text-sm); color: var(--ink-soft); flex: 1; min-width: 0; }
+.floor-paint__custom { display: inline-flex; align-items: center; width: 120px; }
+.floor-paint__custom input[type="range"] { width: 100%; height: 26px; background: var(--hue-spectrum); border-radius: 13px; }
+.floor-paint__custom input[type="range"]::-webkit-slider-runnable-track { background: transparent; }
+.floor-paint__custom input[type="range"]::-webkit-slider-thumb { background: var(--c, #ff00ff); border: 2px solid var(--ink); width: 18px; height: 18px; margin-top: -8px; }
+
+.swatch { width: 26px; height: 26px; padding: 0; border-radius: 50%; border: 2px solid transparent; background: var(--c); cursor: pointer; box-shadow: 0 0 0 1px var(--swatch-ring) inset; }
+.swatch[aria-pressed="true"] { border-color: var(--ink); box-shadow: 0 0 0 2px var(--surface) inset; }
+.swatch:focus-visible { outline: var(--focus-width) solid var(--ink); outline-offset: 2px; }
+
+.tool--primary { background: var(--ink); color: var(--page); border-color: var(--ink); }
+.tool--primary:hover { background: var(--ink); }
+.tool--primary:disabled { opacity: 0.6; }
+
+.is-painting .floor { cursor: cell; }
+.is-painting .floor__lamp { cursor: cell; }
+.is-painting .floor__netlabel { pointer-events: auto; color: var(--ink); background: var(--net-fill-hover); }
+.floor__lamp.is-painted .floor__dot { box-shadow: 0 0 0 2px var(--brush, var(--ink)), 0 0 14px 2px color-mix(in srgb, var(--hue) 70%, transparent); }

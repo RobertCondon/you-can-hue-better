@@ -358,7 +358,16 @@ bridge: camera, lamp panel, filters and preview, lamp and object editing, nets, 
 
 ## Chunk 12: Stylesheet
 
-- [ ] `app/assets/stylesheets/application.css`
+Every element's computed style was compared with the old stylesheet swapped in, on every page and
+in the main interactive states, at desktop and phone widths: identical, apart from the phone
+floor's zoom buttons, which the old file's rule order had stretched down the whole map.
+
+- [x] `app/assets/stylesheets/application.css` (removed: split into the files below)
+- [x] `app/assets/stylesheets/tokens.css` (new: colours, shadows, radii, type sizes, timings, layers)
+- [x] `app/assets/stylesheets/base.css`, `header.css`, `toasts.css`, `rooms.css`, `tiles.css`, `light_panel.css`, `pinned_light.css`, `scenes.css`, `dev.css` (new)
+- [x] `app/assets/stylesheets/floor.css`, `floor_toolbar.css`, `floor_nets.css`, `floor_paint.css`, `floor_objects.css`, `floor_lamps.css` (new)
+- [x] `app/assets/stylesheets/editor.css`, `pages.css` (new)
+- [x] `app/views/layouts/application.html.erb`, `app/helpers/application_helper.rb` (the stylesheets in their load order)
 
 ## Chunk 13: Configuration and deployment
 
