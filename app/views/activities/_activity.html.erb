@@ -1,0 +1,6 @@
+<li class="<%= activity.ok? ? "" : "failed" %>">
+  <span class="when"><%= activity.created_at.in_time_zone.strftime("%H:%M") %></span>
+  <span><%= activity.target_name %></span>
+  <span class="what"><%= activity.action %></span>
+  <% unless activity.ok? %><span class="err"><%= activity.result %></span><% end %>
+</li>

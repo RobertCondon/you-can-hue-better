@@ -1,0 +1,13 @@
+<% if presses.empty? %>
+  <p class="muted">No presses heard yet.</p>
+<% else %>
+  <ol>
+    <% presses.each do |e| %>
+      <li>
+        <span class="when"><%= e.occurred_at.in_time_zone.strftime("%H:%M") %></span>
+        <span><%= e.control.label %></span>
+        <span class="what"><%= e.gesture.humanize.downcase %><%= " #{e.rotation_steps} steps" if e.rotation_steps %></span>
+      </li>
+    <% end %>
+  </ol>
+<% end %>

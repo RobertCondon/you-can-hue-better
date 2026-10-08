@@ -1,0 +1,23 @@
+<div class="room__head" id="room_head_<%= room.id %>">
+  <button type="button" class="room__title" data-action="room#toggle" aria-expanded="true" aria-controls="room_<%= room.id %>">
+    <svg class="chevron" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="room__names">
+      <% if room.nicknamed? %><small class="room__realname"><%= room.name %></small><% end %>
+      <h2><%= room.display_name %><% if room.kind == "zone" %> <span class="room__kind">zone</span><% end %><% if room.hidden? %> <span class="room__kind">hidden</span><% end %></h2>
+    </span>
+    <span class="room__summary"><%= room.summary %></span>
+  </button>
+  <div class="room__editing">
+    <button type="button" class="btn btn--small"
+            data-action="editor#open" data-editor-url-param="<%= room_names_path(room.id) %>" data-editor-kind-param="room"
+            data-editor-title-param="<%= room.name %>" data-editor-name-param="<%= room.name %>" data-editor-nickname-param="<%= room.nickname %>">Rename</button>
+    <button type="button" class="btn btn--icon" data-action="rooms#moveUp" aria-label="Move <%= room.display_name %> up">▲</button>
+    <button type="button" class="btn btn--icon" data-action="rooms#moveDown" aria-label="Move <%= room.display_name %> down">▼</button>
+  </div>
+  <%= form_with url: room_path(room.id), method: :patch, class: "room__toggle" do |f| %>
+    <input type="hidden" name="room[on]" value="<%= !room.any_on? %>">
+    <button type="submit" class="btn btn--icon <%= room.any_on? ? "is-on" : "" %>" aria-label="<%= room.any_on? ? "Turn #{room.display_name} off" : "Turn #{room.display_name} on" %>" title="<%= room.any_on? ? "Turn room off" : "Turn room on" %>">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v6M4.2 4.2a5.4 5.4 0 1 0 7.6 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  <% end %>
+</div>

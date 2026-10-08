@@ -1,0 +1,13 @@
+<% content_for :title, "Floor" %>
+<%= turbo_stream_from "house" %>
+<header class="house">
+  <h1>Floor</h1>
+  <div class="house__meta">
+    <div id="house_summary"><%= render "dashboard/summary", house: @house %></div>
+    <%= render "shared/nav", current: :floor %>
+  </div>
+</header>
+<main data-controller="editor">
+  <%= render "floors/floor", floor: @floor, editable: true, rooms: @rooms, scenes: @scenes %>
+  <%= render "shared/editor", bridge_names: false %>
+</main>

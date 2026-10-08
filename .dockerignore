@@ -1,0 +1,24 @@
+# Secrets never go in the image: they come in as environment variables.
+/config/master.key
+/config/hue.json
+/.env*
+!/.env.example
+
+# Local state and noise.
+/.git/
+/log/*
+/tmp/*
+/storage/*
+/db/*.sqlite3
+/db/*.sqlite3-*
+/node_modules/
+/public/assets
+/coverage/
+.DS_Store
+
+# Not needed to run the app.
+/data/
+/design/
+/docs/
+/test/
+/README.md

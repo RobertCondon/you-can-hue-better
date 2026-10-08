@@ -1,0 +1,37 @@
+<% content_for :title, @scene.display_name %>
+<%= turbo_stream_from "house" %>
+<header class="house">
+  <div>
+    <p class="muted"><%= link_to "Scenes", scenes_path, class: "muted" %> / <%= @scene.group.display_name %></p>
+    <h1><%= @scene.display_name %></h1>
+  </div>
+  <div class="house__meta">
+    <%= button_to "Set", activate_scene_path(@scene.id), class: "btn", form: { class: "chip-form" } %>
+    <% if @scene.dynamic? %><%= button_to "Play", play_scene_path(@scene.id), class: "btn", form: { class: "chip-form" } %><% end %>
+    <%= render "shared/nav", current: :scenes %>
+  </div>
+</header>
+
+<main>
+  <section class="room">
+    <%= render "floors/floor", floor: @floor, editable: false %>
+    <p class="muted floor-caption">The house with this scene: lights it doesn't set are greyed out. <%= link_to "Arrange the floor", floor_path %>.</p>
+  </section>
+  <div class="scene-cards scene-cards--single"><%= render "scenes/card", scene: @scene %></div>
+  <section class="room">
+    <h2>What each light does</h2>
+    <div class="tiles">
+      <% @lights.each do |light| %>
+        <article class="tile <%= light.on? ? "is-on" : "is-off" %>" style="--tile: <%= light.tile_hex %>; --ink: <%= light.tile_text_hex %>; --hue: <%= light.hex %>">
+          <div class="tile__open tile__open--inert">
+            <span class="tile__names">
+              <span class="tile__name"><%= light.display_name %></span>
+              <% if light.nicknamed? %><small class="tile__realname"><%= light.name %></small><% end %>
+            </span>
+            <span class="tile__level"><%= light.brightness_label %></span>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  </section>
+</main>

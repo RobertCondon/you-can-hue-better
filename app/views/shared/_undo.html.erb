@@ -1,0 +1,4 @@
+<div class="flash flash--undo" role="status" data-controller="toast">
+  <span><%= undo.description %></span>
+  <%= button_to "Undo", undo_path(undo), class: "flash__undo", form: { class: "chip-form", data: { turbo: true } } %>
+</div>

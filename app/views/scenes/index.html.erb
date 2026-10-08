@@ -1,0 +1,28 @@
+<% content_for :title, "Scenes" %>
+<%= turbo_stream_from "house" %>
+<header class="house">
+  <h1>Scenes</h1>
+  <div class="house__meta">
+    <%= render "shared/nav", current: :scenes %>
+  </div>
+</header>
+
+<main class="scenes-page">
+  <% @rooms.each do |room| %>
+    <% scenes = @scenes_by_room[room.id] || [] %>
+    <% next if scenes.empty? %>
+    <section class="room">
+      <div class="room__head">
+        <span class="room__names">
+          <% if room.nicknamed? %><small class="room__realname"><%= room.name %></small><% end %>
+          <h2><%= room.display_name %><% if room.kind == "zone" %> <span class="room__kind">zone</span><% end %></h2>
+        </span>
+      </div>
+      <div class="scene-cards">
+        <% scenes.each do |scene| %>
+          <%= render "scenes/card", scene: %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</main>

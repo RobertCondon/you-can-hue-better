@@ -1,0 +1,25 @@
+<%# A scene: its name, the lights it sets as a row of dots in their scene colours, and its palette behind. %>
+<% hexes = scene.palette_hexes %>
+<article class="scene-card <%= "is-active" if scene.active? %> <%= "is-playing" if scene.playing? %>" id="scene_card_<%= scene.id %>"
+         style="<%= "--palette: linear-gradient(90deg, #{hexes.join(', ')});" if hexes.size > 1 %>">
+  <%= link_to scene_path(scene), class: "scene-card__body" do %>
+    <span class="scene-card__title">
+      <span class="scene-card__name"><%= scene.display_name %></span>
+      <% if scene.playing? %><span class="badge">Playing</span><% elsif scene.active? %><span class="badge badge--quiet">On</span><% end %>
+    </span>
+    <span class="dots" aria-label="<%= scene.actions.size %> lights">
+      <% scene.actions.sort_by(&:hue_angle).each do |a| %>
+        <span class="dot" style="--c: <%= a.dot_hex %>" title="<%= a.light.extension&.nickname.presence || a.light.name %>"></span>
+      <% end %>
+    </span>
+    <% if (others = scene.siblings.map { _1.group.display_name }).any? %>
+      <small class="muted">also in <%= others.to_sentence %></small>
+    <% end %>
+  <% end %>
+  <div class="scene-card__actions">
+    <%= button_to "Set", activate_scene_path(scene.id), class: "chip", form: { class: "chip-form" } %>
+    <% if scene.dynamic? %>
+      <%= button_to "Play", play_scene_path(scene.id), class: "chip", form: { class: "chip-form" } %>
+    <% end %>
+  </div>
+</article>

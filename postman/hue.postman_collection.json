@@ -1,0 +1,343 @@
+{
+  "info": {
+    "name": "Hue bridge (you-can-hue-better)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "bridge",
+      "value": "192.168.0.44"
+    },
+    {
+      "key": "hue_key",
+      "value": "PASTE_APP_KEY_HERE"
+    }
+  ],
+  "item": [
+    {
+      "name": "Pair (press link button first)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://{{bridge}}/api",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"devicetype\": \"postman#rob\",\n  \"generateclientkey\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Bridge config (no auth)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          }
+        ],
+        "url": "https://{{bridge}}/api/0/config"
+      }
+    },
+    {
+      "name": "List lights",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/light"
+      }
+    },
+    {
+      "name": "List rooms",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/room"
+      }
+    },
+    {
+      "name": "List zones",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/zone"
+      }
+    },
+    {
+      "name": "List scenes",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/scene"
+      }
+    },
+    {
+      "name": "List devices",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/device"
+      }
+    },
+    {
+      "name": "List grouped lights",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/grouped_light"
+      }
+    },
+    {
+      "name": "Kitchen table light: on 50%",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/light/1862f572-a983-46ed-a207-7a80a18bfc8d",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"on\": {\n    \"on\": true\n  },\n  \"dimming\": {\n    \"brightness\": 50\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Kitchen table light: off",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/light/1862f572-a983-46ed-a207-7a80a18bfc8d",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"on\": {\n    \"on\": false\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Kitchen table light: warm white",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/light/1862f572-a983-46ed-a207-7a80a18bfc8d",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"on\": {\n    \"on\": true\n  },\n  \"color_temperature\": {\n    \"mirek\": 400\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Kitchen table light: red",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/light/1862f572-a983-46ed-a207-7a80a18bfc8d",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"on\": {\n    \"on\": true\n  },\n  \"color\": {\n    \"xy\": {\n      \"x\": 0.675,\n      \"y\": 0.322\n    }\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Living room: all off",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/grouped_light/bbbf4215-a4b2-44e7-9f92-5177faba4166",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"on\": {\n    \"on\": false\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Living room: all on 60%",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/grouped_light/bbbf4215-a4b2-44e7-9f92-5177faba4166",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"on\": {\n    \"on\": true\n  },\n  \"dimming\": {\n    \"brightness\": 60\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Whole house: off",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/grouped_light/0b2e485a-b425-4906-8027-ebc6446a3a4c",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"on\": {\n    \"on\": false\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Scene: Living room Palm Beach",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "hue-application-key",
+            "value": "{{hue_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://{{bridge}}/clip/v2/resource/scene/3c6a7aed-a858-4279-b741-7a4a6221cd28",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"recall\": {\n    \"action\": \"active\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

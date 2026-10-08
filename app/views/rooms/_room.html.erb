@@ -1,0 +1,17 @@
+<section class="room room--<%= room.kind %>" id="room_<%= room.id %>" data-controller="room" data-room-id="<%= room.id %>">
+  <%= render "rooms/head", room: %>
+  <div class="room__body">
+    <% if room.scenes.any? %>
+      <div class="scenes">
+        <% room.scenes.each do |scene| %>
+          <%= button_to scene.name, activate_scene_path(scene.id), class: "chip", form: { class: "chip-form" } %>
+        <% end %>
+      </div>
+    <% end %>
+    <div class="tiles">
+      <% room.lights.each do |light| %>
+        <%= render "lights/light", light:, room: %>
+      <% end %>
+    </div>
+  </div>
+</section>

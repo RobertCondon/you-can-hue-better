@@ -1,0 +1,20 @@
+<%# A light's tile: tap the icon to switch it, tap the name to open its panel, drag across it to dim. %>
+<article class="tile <%= light.lit? ? "is-on" : "is-off" %> <%= "is-unreachable" unless light.responding? %>" id="light_<%= room.id %>_<%= light.id %>"
+         style="--tile: <%= light.tint_hex %>; --fillc: <%= light.tile_hex %>; --fill: <%= light.fill_pct %>%; --hue: <%= light.hex %>; --ink: <%= light.tile_text_hex %>; --name-ink: <%= light.name_ink %>; --level-ink: <%= light.level_ink %>"
+         data-controller="tile" data-tile-url-value="<%= light_path(light.id) %>" data-light-id="<%= light.id %>" data-brightness="<%= light.brightness.round %>"
+         data-action="pointerdown->tile#down pointermove->tile#move pointerup->tile#up pointercancel->tile#up click->tile#guard:capture">
+  <span class="tile__fill" aria-hidden="true"></span>
+  <button type="button" class="tile__icon" data-action="tile#toggle" aria-pressed="<%= light.lit? %>"
+          aria-label="<%= light.lit? ? "Turn off" : "Turn on" %> <%= light.display_name %>">
+    <span class="tile__dot"><%= render "lights/icon", icon: light.icon %></span>
+  </button>
+  <button type="button" class="tile__open" data-action="light-panel#toggle"
+          data-light-panel-id-param="<%= light.id %>" data-light-panel-pin-url-param="<%= pin_light_path(light.id) %>" data-light-panel-room-param="<%= room.id %>"
+          aria-expanded="false" aria-controls="light_dock">
+    <span class="tile__names">
+      <span class="tile__name"><%= light.display_name %><% if light.hidden? %> <span class="tile__badge">hidden</span><% end %></span>
+      <% if light.nicknamed? %><small class="tile__realname"><%= light.name %></small><% end %>
+    </span>
+    <span class="tile__level" data-level><%= light.brightness_label %></span>
+  </button>
+</article>

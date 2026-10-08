@@ -1,0 +1,21 @@
+<% content_for :title, "Lights" %>
+<%= turbo_stream_from "house" %>
+<div class="compact" data-controller="rooms editor" data-rooms-url-value="<%= order_rooms_path %>">
+  <header class="house">
+    <h1>Lights</h1>
+    <div class="house__meta">
+      <div id="listener_status"><%= render "dashboard/status", state: @state %></div>
+      <div id="house_summary"><%= render "dashboard/summary", house: @house %></div>
+      <button type="button" class="btn btn--small" data-action="rooms#toggleEditing" data-rooms-target="editButton" aria-pressed="false">Edit</button>
+      <%= render "shared/nav", current: :lights %>
+    </div>
+  </header>
+
+  <main data-controller="light-panel" data-action="pinned:close->light-panel#close pinned:swipe->light-panel#swipe" data-rooms-target="list">
+    <div class="dock" id="light_dock" data-light-panel-target="dock" hidden></div>
+    <% @house.rooms.each do |room| %>
+      <%= render "rooms/room", room: %>
+    <% end %>
+  </main>
+  <%= render "shared/editor", bridge_names: false %>
+</div>

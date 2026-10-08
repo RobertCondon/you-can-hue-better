@@ -1,0 +1,23 @@
+<%# One dialog for the page. bridge_names: true adds the Name field that renames on the bridge. %>
+<dialog class="editor" data-editor-target="dialog">
+  <%= form_with url: "#", method: :patch, data: { editor_target: "form", action: "turbo:submit-end->editor#submitted" } do |f| %>
+    <p class="editor__title" data-editor-target="title"></p>
+    <% if bridge_names %>
+      <label class="editor__field">
+        <span>Name</span>
+        <input type="text" maxlength="32" required data-editor-target="name">
+        <small>Changes it on the bridge, for every app and switch.</small>
+      </label>
+    <% end %>
+    <label class="editor__field">
+      <span>Nickname</span>
+      <input type="text" maxlength="40" data-editor-target="nickname" placeholder="Leave empty to use the name">
+      <small>Only this dashboard sees it.</small>
+    </label>
+    <p id="editor_error" class="editor__error" role="alert"></p>
+    <div class="editor__actions">
+      <button type="button" class="btn" data-action="editor#close">Cancel</button>
+      <button type="submit" class="btn btn--primary">Save</button>
+    </div>
+  <% end %>
+</dialog>

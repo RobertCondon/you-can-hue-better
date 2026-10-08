@@ -1,0 +1,51 @@
+<%# The in-depth view of one light. Lives directly under the tile that opened it; one per page. %>
+<div class="light-panel" id="light_panel_<%= light.id %>" data-light-id="<%= light.id %>" data-brightness="<%= light.brightness.round %>"
+     style="--hue: <%= light.hex %>"
+     data-controller="light color-picker"
+     data-color-picker-id-value="<%= light.id %>" data-color-picker-url-value="<%= light_path(light.id) %>"
+     data-color-picker-gamut-value="<%= light.gamut.to_json %>"
+     data-color-picker-x-value="<%= light.xy&.dig(:x) %>" data-color-picker-y-value="<%= light.xy&.dig(:y) %>"
+     data-color-picker-mirek-value="<%= light.mirek %>" data-color-picker-mode-value="<%= light.color_mode %>">
+  <% unless light.responding? %>
+    <p class="light-panel__notice">Not responding. Check it has power at the switch. The bridge last had it <%= light.on? ? "on at #{light.brightness.round}%" : "off" %>.</p>
+  <% end %>
+  <div class="light-panel__head">
+    <button type="button" class="light-panel__name" title="Change the name"
+            data-action="editor#open" data-editor-url-param="<%= light_names_path(light.id) %>" data-editor-kind-param="light"
+            data-editor-title-param="<%= light.name %>" data-editor-name-param="<%= light.name %>" data-editor-nickname-param="<%= light.nickname %>">
+      <span><%= light.display_name %></span>
+      <% if light.nicknamed? %><small><%= light.name %></small><% end %>
+    </button>
+    <%= form_with url: light_path(light.id), method: :patch, class: "switch" do |f| %>
+      <input type="hidden" name="light[on]" value="false">
+      <label class="switch__control">
+        <input type="checkbox" name="light[on]" value="true" <%= "checked" if light.on? %> data-action="change->light#submit">
+        <span class="switch__track" aria-hidden="true"></span>
+        <span class="sr-only">On</span>
+      </label>
+    <% end %>
+  </div>
+
+  <%= form_with url: light_path(light.id), method: :patch, class: "light-panel__row" do |f| %>
+    <label for="panel_bri_<%= light.id %>">Brightness</label>
+    <input type="range" id="panel_bri_<%= light.id %>" name="light[brightness]" min="1" max="100"
+           value="<%= light.on? ? light.brightness.round : 0 %>"
+           data-action="input->light#preview change->light#submit">
+    <output data-level for="panel_bri_<%= light.id %>"><%= light.brightness_label %></output>
+  <% end %>
+
+  <% if light.color? %>
+    <div class="picker">
+      <div class="picker__modes" role="group" aria-label="Light mode">
+        <button type="button" aria-pressed="true"  data-color-picker-target="modeButton" data-color-picker-mode-param="xy" data-action="click->color-picker#chooseMode">Colour</button>
+        <button type="button" aria-pressed="false" data-color-picker-target="modeButton" data-color-picker-mode-param="ct" data-action="click->color-picker#chooseMode">White</button>
+      </div>
+      <div class="picker__wheel">
+        <canvas data-color-picker-target="wheel" aria-label="Pick a colour"
+                data-action="pointerdown->color-picker#down pointermove->color-picker#move pointerup->color-picker#up pointercancel->color-picker#up"></canvas>
+        <span class="picker__marker" data-color-picker-target="marker" hidden></span>
+      </div>
+      <div class="picker__ends" data-color-picker-target="ends" hidden><span>Warm</span><span>Cool</span></div>
+    </div>
+  <% end %>
+</div>

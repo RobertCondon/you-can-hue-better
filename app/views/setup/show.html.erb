@@ -1,0 +1,34 @@
+<% content_for :title, "Connect to your bridge" %>
+<header class="house">
+  <h1>Lights</h1>
+</header>
+<main class="setup">
+  <% if @config.configured? %>
+    <p class="setup__current">Connected to the bridge at <strong><%= @config.bridge %></strong>
+      <span class="muted">(<%= { env: "from the environment", paired: "paired here", file: "from config/hue.json" }[@config.source] %>)</span>.
+      Pairing again replaces the stored key<%= " but not the environment's" if @config.source == :env %>.</p>
+  <% else %>
+    <h2>Connect to your Hue bridge</h2>
+    <p>The app needs a key from the bridge. Pressing its button lets it hand one out.</p>
+  <% end %>
+
+  <%= form_with url: setup_path, method: :post, class: "setup__form" do |f| %>
+    <label for="setup_bridge">Bridge address</label>
+    <div class="setup__row">
+      <input type="text" id="setup_bridge" name="bridge" value="<%= @bridge %>" inputmode="decimal" autocomplete="off" placeholder="192.168.0.44" required>
+      <% if @found.size > 1 %>
+        <select aria-label="Bridges found" onchange="document.getElementById('setup_bridge').value = this.value">
+          <% @found.each do |b| %><option value="<%= b["internalipaddress"] %>" <%= "selected" if b["internalipaddress"] == @bridge %>><%= b["internalipaddress"] %> (<%= b["id"] %>)</option><% end %>
+        </select>
+      <% end %>
+    </div>
+    <p class="muted setup__hint">
+      <% if @found.any? %>Found on your network by Philips' discovery service.<% else %>Not found automatically. It is in the Hue app under Settings → My Hue system → the bridge, or on your router's device list.<% end %>
+    </p>
+    <ol class="setup__steps">
+      <li>Press the round button on top of the bridge.</li>
+      <li>Within 30 seconds, press this:</li>
+    </ol>
+    <button type="submit" class="btn btn--primary setup__go">I've pressed the button, connect</button>
+  <% end %>
+</main>
