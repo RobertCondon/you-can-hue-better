@@ -6,6 +6,15 @@ module FloorsHelper
   HUE_SLIDER_START = 300
   LAMP_CLASSES = { unplaced: "is-unplaced", muted: "is-muted" }.freeze
 
+  def floor_script_labels
+    {
+      done: t("floors.script.done"), editFloor: t("floors.toolbar.edit_floor"),
+      roomHint: t("floors.script.room_hint"), outlineHint: t("floors.script.outline_hint"),
+      houseOutline: t("floors.toolbar.house_outline"), netName: t("floors.script.net_name"), point: t("floors.script.point"),
+      painted: t("floors.script.painted"), paintInstructions: t("floors.paint_tray.instructions")
+    }
+  end
+
   def floor_shape_options(floor)
     SHAPES.map { |shape, aspect| [ t("floors.floor.shapes.#{shape}"), aspect, (floor.aspect - aspect).abs < SHAPE_MATCH_TOLERANCE ] }
   end

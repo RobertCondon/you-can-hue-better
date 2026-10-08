@@ -340,9 +340,21 @@ dismissing a toast.
 
 ## Chunk 11: The floor's Stimulus controller
 
-At 700 lines it is several controllers in one: camera, editing, nets, paint and the light panel.
+The controller stays the page's single Stimulus entry point (so the views barely change) and each
+of its jobs moved into its own class. Every interaction was exercised in the browser against the
+bridge: camera, lamp panel, filters and preview, lamp and object editing, nets, and paint with Undo.
 
-- [ ] `app/javascript/controllers/floor_controller.js`
+- [x] `app/javascript/controllers/floor_controller.js` (700 lines to 160: wiring only)
+- [x] `app/javascript/lib/floor/viewport.js` (new: camera, zoom, pan, pinch, coordinates, snapping)
+- [x] `app/javascript/lib/floor/light_canvas.js` (new: reads lamps, walls and the outline, draws the light)
+- [x] `app/javascript/lib/floor/selection.js` (new: the selection the object and net tools share)
+- [x] `app/javascript/lib/floor/layout_editor.js` (new: edit mode, lamps, walls and furniture)
+- [x] `app/javascript/lib/floor/net_editor.js` (new: drawing tools, nets, vertices, room assignment)
+- [x] `app/javascript/lib/floor/scene_preview.js` (new: room filter and scene preview)
+- [x] `app/javascript/lib/floor/paint_brush.js` (new: tray, brush, sweep, apply)
+- [x] `app/javascript/lib/floor/lamp_panel.js` (new: the popover beside a lamp, or the dock on a phone)
+- [x] `app/javascript/lib/floor/element_style.js` (new: CSS-variable helpers the classes share)
+- [x] `app/views/floors/_floor.html.erb`, `app/helpers/floors_helper.rb`, `config/locales/en.yml` (the controller's text)
 
 ## Chunk 12: Stylesheet
 

@@ -249,3 +249,10 @@ en:
     object:
       resize: Resize
       rotate: Rotate
+    script:
+      done: Done
+      room_hint: Click around the room, then click the first point to close.
+      outline_hint: 'Trace the house: click around its edge, then click the first point to close.'
+      net_name: 'Net: %{name}'
+      point: Point %{number}
+      painted: "%{count} painted · tap a room name to paint the whole room"

@@ -1,7 +1,7 @@
 <% rooms = local_assigns.fetch(:rooms, []) %>
 <div class="floor-wrap" data-controller="floor" data-action="pinned:close->floor#dockClosed"
      data-floor-url-value="<%= floor_path %>" data-floor-objects-url-value="<%= floor_objects_path %>" data-floor-nets-url-value="<%= floor_nets_path %>" data-floor-paint-url-value="<%= floor_paint_path %>"
-     data-floor-aspect-value="<%= floor.aspect %>">
+     data-floor-aspect-value="<%= floor.aspect %>" data-floor-labels-value="<%= floor_script_labels.to_json %>">
   <% if editable %>
     <%= render "floors/filters", rooms:, scenes: local_assigns.fetch(:scenes, {}) if rooms.any? %>
     <%= render "floors/toolbar", floor:, rooms: %>
