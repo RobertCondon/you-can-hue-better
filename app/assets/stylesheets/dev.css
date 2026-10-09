@@ -16,7 +16,8 @@
 .activity li { display: flex; gap: 12px; align-items: baseline; font-size: var(--text-base); }
 .activity .when { color: var(--ink-soft); font-variant-numeric: tabular-nums; min-width: 3.2em; }
 .activity .what { color: var(--ink-soft); }
-.activity .err, .activity .failed .what { color: var(--danger); }
+.activity .result, .activity .failed .what { color: var(--danger); }
+.activity .pending .result { color: var(--ink-soft); font-style: italic; }
 
 @media (max-width: 899px) {
   .visibility__cols { grid-template-columns: 1fr; }

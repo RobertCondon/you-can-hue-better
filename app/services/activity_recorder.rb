@@ -1,10 +1,10 @@
 class ActivityRecorder
-  def self.record(target_kind:, target_id:, target_name:, action:, payload: {}, source: Activity::DASHBOARD, control_event: nil, &command)
-    new(target_kind:, target_id:, target_name:, action:, payload:, source:, control_event:).record(&command)
-  end
+  def self.record(**activity_attributes, &command) = new(**activity_attributes).record(&command)
 
-  def initialize(**activity_attributes)
-    @activity_attributes = activity_attributes
+  def self.pending(**activity_attributes) = new(**activity_attributes).pending
+
+  def initialize(target_kind:, target_id:, target_name:, action:, payload: {}, source: Activity::DASHBOARD, control_event: nil)
+    @activity_attributes = { target_kind:, target_id:, target_name:, action:, payload:, source:, control_event: }
   end
 
   def record
@@ -15,6 +15,8 @@ class ActivityRecorder
     log(error.message)
     raise
   end
+
+  def pending = log(Activity::PENDING)
 
   private
 

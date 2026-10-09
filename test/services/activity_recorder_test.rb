@@ -18,4 +18,10 @@ class ActivityRecorderTest < ActiveSupport::TestCase
     assert_raises(Hue::Error) { record { raise Hue::Error, "link button not pressed" } }
     assert_equal "link button not pressed", Activity.last.result
   end
+
+  test "logs a press as pending and returns the row to settle later" do
+    activity = ActivityRecorder.pending(target_kind: "light", target_id: "l1", target_name: "Desk lamp", action: "on")
+    assert activity.pending?
+    assert_equal [ "Desk lamp", Activity::DASHBOARD ], [ activity.target_name, activity.source ]
+  end
 end

@@ -24,9 +24,24 @@ module HueListenerThread
   def running? = @thread&.alive? || false
 end
 
+module LeftoverActivity
+  LOG_PREFIX = "leftover-activity:"
+
+  module_function
+
+  def interrupt
+    ::Rails.application.executor.wrap { ::Activity.interrupt_pending! }
+  rescue StandardError => error
+    ::Rails.logger.warn("#{LOG_PREFIX} #{error.class}: #{error.message}")
+  end
+end
+
 Puma::Plugin.create do
   def start(launcher)
-    launcher.events.on_booted { HueListenerThread.start }
+    launcher.events.on_booted do
+      LeftoverActivity.interrupt
+      HueListenerThread.start
+    end
     launcher.events.on_stopped { HueListenerThread.stop }
   end
 end

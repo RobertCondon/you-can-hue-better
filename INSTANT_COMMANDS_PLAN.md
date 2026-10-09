@@ -128,14 +128,15 @@ Live check:
 
 The log shows a press as pending first, then what happened.
 
-- [ ] `app/models/activity.rb` (`PENDING`, `INTERRUPTED`, `pending?`, `settle!`, `interrupt_pending!`)
-- [ ] `app/services/activity_recorder.rb` (adds `pending`, keeps `record` for `call_now`)
-- [ ] `app/views/activities/_activity.html.erb` (pending look)
-- [ ] `app/assets/stylesheets/pages.css` or the activity styles (pending look)
-- [ ] `lib/puma/plugin/hue_listener.rb` (marks leftover pending rows as cut short by a restart, server boot only)
-- [ ] `config/locales/en.yml` (pending and interrupted wording)
-- [ ] `test/models/activity_test.rb` (new)
-- [ ] `test/services/activity_recorder_test.rb`
+- [x] `app/models/activity.rb` (`PENDING`, `INTERRUPTED`, `pending` scope, `pending?`, `settle!`, `interrupt_pending!`)
+- [x] `app/services/activity_recorder.rb` (adds `pending`, keeps `record` for `call_now`)
+- [x] `app/views/activities/_activity.html.erb` (the result span is `result`, not `err`, since pending isn't an error)
+- [x] `app/helpers/dashboard_helper.rb` (`pending` class)
+- [x] `app/assets/stylesheets/dev.css` (pending shows soft and italic)
+- [x] `lib/puma/plugin/hue_listener.rb` (`LeftoverActivity` marks leftover pending rows as cut short by a restart, server boot only)
+- [-] `config/locales/en.yml` (results are stored text constants on `Activity`, like `OK` and `UNREACHABLE`)
+- [x] `test/models/activity_test.rb` (new)
+- [x] `test/services/activity_recorder_test.rb`
 
 The tidy-up runs from the Puma plugin, not an initializer, so opening a console while the server
 runs never marks a live press as interrupted.
