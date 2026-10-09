@@ -1,5 +1,5 @@
 import { styleNumber, clampRounded, setStyles } from "lib/floor/element_style"
-import { patch, formDataFrom } from "lib/requests"
+import { post, patch, destroy } from "lib/requests"
 
 const EDITING_MIN_WIDTH = 900
 const EDITING_CLASS = "is-editing"
@@ -89,7 +89,7 @@ export class FloorLayoutEditor {
   }
 
   saveLamp(lamp) {
-    patch(this.floor.urlValue, formDataFrom({ light_id: lamp.dataset.lightId, x: styleNumber(lamp, "--x"), y: styleNumber(lamp, "--y") }))
+    patch(this.floor.urlValue, { light_id: lamp.dataset.lightId, x: styleNumber(lamp, "--x"), y: styleNumber(lamp, "--y") })
   }
 
   startObjectMove(event) {
@@ -211,7 +211,7 @@ export class FloorLayoutEditor {
   }
 
   async addObject(kind) {
-    const response = await fetch(this.floor.objectsUrlValue, { method: "POST", body: formDataFrom({ kind }), headers: this.floor.csrfHeaders })
+    const response = await post(this.floor.objectsUrlValue, { kind })
     if (!response.ok) return
     const html = await response.text()
     const firstLamp = this.floor.worldTarget.querySelector(LAMP_SELECTOR)
@@ -223,22 +223,22 @@ export class FloorLayoutEditor {
   }
 
   async removeObject(object) {
-    await fetch(object.dataset.url, { method: "DELETE", headers: this.floor.csrfHeaders })
+    await destroy(object.dataset.url)
     if (this.floor.selection.object === object) this.floor.selection.clear()
     object.remove()
   }
 
   saveObject(object) {
-    patch(object.dataset.url, formDataFrom({
+    patch(object.dataset.url, {
       x: styleNumber(object, "--x"), y: styleNumber(object, "--y"), w: styleNumber(object, "--w"), h: styleNumber(object, "--h"), rotation: styleNumber(object, "--r")
-    }))
+    })
   }
 
   setAspect(aspect) {
     this.floor.aspect = aspect
     this.floor.floorTarget.style.setProperty("--aspect", aspect)
     this.normaliseCircles()
-    patch(this.floor.urlValue, formDataFrom({ aspect }))
+    patch(this.floor.urlValue, { aspect })
   }
 
   centreOf(object) {

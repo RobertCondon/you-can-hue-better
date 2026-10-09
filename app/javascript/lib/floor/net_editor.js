@@ -1,5 +1,5 @@
 import { styleNumber, clampRounded, setStyles } from "lib/floor/element_style"
-import { formDataFrom } from "lib/requests"
+import { post, patch, destroy } from "lib/requests"
 import { pointInPolygon } from "lib/floor_geometry"
 
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg"
@@ -76,7 +76,7 @@ export class FloorNetEditor {
     if (!this.tool || this.draft.length < MINIMUM_POINTS) return
     const fields = { points: JSON.stringify(this.draft.map(point => [point.x, point.y])) }
     if (this.tool === ROOM) fields.group_id = this.floor.preview.chosenRoomId || ""
-    const response = await fetch(this.floor.netsUrlValue, { method: "POST", body: formDataFrom(fields), headers: this.floor.csrfHeaders })
+    const response = await post(this.floor.netsUrlValue, fields)
     this.cancelTool()
     if (!response.ok) return
     const net = await response.json()
@@ -226,7 +226,7 @@ export class FloorNetEditor {
 
   async removeSelected() {
     const polygon = this.floor.selection.net
-    await fetch(polygon.dataset.url, { method: "DELETE", headers: this.floor.csrfHeaders })
+    await destroy(polygon.dataset.url)
     this.labelFor(polygon.dataset.id)?.remove()
     if (polygon.dataset.kind === OUTLINE) this.drawVoid(null)
     this.floor.selection.clear()
@@ -245,7 +245,7 @@ export class FloorNetEditor {
   }
 
   send(polygon, fields) {
-    return fetch(polygon.dataset.url, { method: "PATCH", body: formDataFrom(fields), headers: this.floor.csrfHeaders })
+    return patch(polygon.dataset.url, fields)
   }
 
   polygonFor(netId) { return this.floor.netTargets.find(polygon => polygon.dataset.id === String(netId)) }

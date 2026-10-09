@@ -46,8 +46,6 @@ export default class extends Controller {
 
   get labels() { return this.labelsValue }
 
-  get csrfHeaders() { return { "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content } }
-
   watchForRedraws() {
     this.resizeObserver = new ResizeObserver(() => this.lightCanvas.redraw())
     this.resizeObserver.observe(this.floorTarget)

@@ -1,5 +1,6 @@
 import { hold, release } from "lib/busy"
 import { roomIdsOf, snapshotAppearance, restoreAppearance, setStyles } from "lib/floor/element_style"
+import { getJson } from "lib/requests"
 
 const MUTED_CLASS = "is-muted"
 const ON_CLASS = "is-on"
@@ -7,7 +8,6 @@ const OFF_CLASS = "is-off"
 const PREVIEWING_CLASS = "is-previewing"
 const CHIP_ROW_SELECTOR = ".chips"
 const SET_FORM_SELECTOR = "[data-floor-target=setForm]"
-const JSON_ACCEPT = { Accept: "application/json" }
 
 export class FloorScenePreview {
   constructor(floor) {
@@ -30,9 +30,9 @@ export class FloorScenePreview {
     this.muteOutsideChosenRoom()
     if (alreadyShowing) return
 
-    const response = await fetch(url, { headers: JSON_ACCEPT })
-    if (!response.ok) return
-    const statesByLight = Object.fromEntries((await response.json()).map(state => [state.light_id, state]))
+    const states = await getJson(url)
+    if (!states) return
+    const statesByLight = Object.fromEntries(states.map(state => [state.light_id, state]))
     this.originalAppearances = Object.fromEntries(this.floor.lightTargets.map(lamp => [lamp.dataset.lightId, snapshotAppearance(lamp)]))
     for (const lamp of this.floor.lightTargets) this.showSceneState(lamp, statesByLight[lamp.dataset.lightId])
     chip.setAttribute("aria-pressed", "true")

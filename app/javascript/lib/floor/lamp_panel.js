@@ -1,4 +1,4 @@
-import { fetchHtml } from "lib/requests"
+import { getHtml } from "lib/requests"
 
 const DOCK_MAX_WIDTH = 900
 const PHONE_MAX_WIDTH = 640
@@ -20,7 +20,7 @@ export class FloorLampPanel {
   async toggle(lamp, panelUrl) {
     if (this.openLamp === lamp) return this.close()
     const docked = window.innerWidth < DOCK_MAX_WIDTH && this.floor.hasDockTarget
-    const html = await fetchHtml(docked ? panelUrl.replace(PANEL_PATH_END, PIN_PATH_END) : panelUrl)
+    const html = await getHtml(docked ? panelUrl.replace(PANEL_PATH_END, PIN_PATH_END) : panelUrl)
     if (!html) return
     this.close()
     if (docked) this.showIn(this.floor.dockTarget, this.floor.dockTarget, html)

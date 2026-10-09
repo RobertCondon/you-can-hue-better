@@ -1,6 +1,6 @@
 import { hold, release } from "lib/busy"
 import { styleNumber, roomIdsOf, snapshotAppearance, restoreAppearance } from "lib/floor/element_style"
-import { formDataFrom } from "lib/requests"
+import { post, renderStreams, ACCEPT } from "lib/requests"
 
 const RECENT_STORAGE_KEY = "floor.recent"
 const RECENT_LIMIT = 8
@@ -20,7 +20,6 @@ const GREEN_HOUR = 8
 const BLUE_HOUR = 4
 const MAX_CHANNEL = 255
 const HEX_BASE = 16
-const TURBO_STREAM_ACCEPT = { Accept: "text/vnd.turbo-stream.html" }
 
 function hueToHex(hueDegrees) {
   const channel = startHour => {
@@ -146,15 +145,13 @@ export class FloorPaintBrush {
     const strokes = Object.values(this.strokes)
     if (!strokes.length) return
     this.floor.paintApplyTarget.disabled = true
-    const response = await fetch(this.floor.paintUrlValue, {
-      method: "POST", body: formDataFrom({ strokes: JSON.stringify(strokes) }), headers: { ...this.floor.csrfHeaders, ...TURBO_STREAM_ACCEPT }
-    })
+    const response = await post(this.floor.paintUrlValue, { strokes: JSON.stringify(strokes) }, { accept: ACCEPT.turboStream })
     this.floor.paintApplyTarget.disabled = false
     if (!response.ok) return
     rememberColours(strokes.map(stroke => stroke.hex))
     this.floor.preview.end()
     this.clear()
-    window.Turbo.renderStreamMessage(await response.text())
+    await renderStreams(response)
     this.renderRecent()
   }
 }

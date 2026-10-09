@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { fetchHtml } from "lib/requests"
+import { getHtml } from "lib/requests"
 
 const PINNED_CLASS = "is-pinned"
 const EXPANDED_CLASS = "is-expanded"
@@ -16,7 +16,7 @@ export default class extends Controller {
   }
 
   async pin(lightId, pinUrl, roomId) {
-    const pinHtml = await fetchHtml(pinUrl)
+    const pinHtml = await getHtml(pinUrl)
     if (!pinHtml) return
     this.dockTarget.innerHTML = pinHtml
     this.dockTarget.hidden = false

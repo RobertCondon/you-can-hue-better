@@ -1,25 +1,48 @@
-const TURBO_STREAM = "text/vnd.turbo-stream.html"
-const HTML = "text/html"
+const CSRF_TOKEN_SELECTOR = 'meta[name="csrf-token"]'
+const GET = "GET"
+const POST = "POST"
+const PATCH = "PATCH"
+const DELETE = "DELETE"
 
-const csrfToken = () => document.querySelector('meta[name="csrf-token"]').content
+export const ACCEPT = { turboStream: "text/vnd.turbo-stream.html", html: "text/html", json: "application/json" }
 
-export function formDataFrom(fields) {
+const csrfToken = () => document.querySelector(CSRF_TOKEN_SELECTOR).content
+
+function formDataFrom(fields) {
   const body = new FormData()
-  for (const [name, value] of Object.entries(fields)) body.append(name, value)
+  for (const [name, value] of Object.entries(fields)) {
+    for (const item of [value].flat()) body.append(name, item)
+  }
   return body
 }
 
-export async function patchAndRenderStreams(url, fields) {
-  const response = await fetch(url, { method: "PATCH", body: formDataFrom(fields), headers: { Accept: TURBO_STREAM, "X-CSRF-Token": csrfToken() } })
+export function request(method, url, { fields, accept } = {}) {
+  const headers = { "X-CSRF-Token": csrfToken() }
+  if (accept) headers.Accept = accept
+  return fetch(url, { method, headers, body: fields && formDataFrom(fields) })
+}
+
+export const post = (url, fields, options = {}) => request(POST, url, { ...options, fields })
+
+export const patch = (url, fields, options = {}) => request(PATCH, url, { ...options, fields })
+
+export const destroy = url => request(DELETE, url)
+
+export async function renderStreams(response) {
   if (response.ok) window.Turbo.renderStreamMessage(await response.text())
   return response
 }
 
-export function patch(url, body) {
-  return fetch(url, { method: "PATCH", body, headers: { "X-CSRF-Token": csrfToken() } })
+export async function patchAndRenderStreams(url, fields) {
+  return renderStreams(await patch(url, fields, { accept: ACCEPT.turboStream }))
 }
 
-export async function fetchHtml(url) {
-  const response = await fetch(url, { headers: { Accept: HTML } })
+export async function getHtml(url) {
+  const response = await request(GET, url, { accept: ACCEPT.html })
   return response.ok ? response.text() : null
+}
+
+export async function getJson(url) {
+  const response = await request(GET, url, { accept: ACCEPT.json })
+  return response.ok ? response.json() : null
 }
