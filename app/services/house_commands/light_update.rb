@@ -1,6 +1,5 @@
 module HouseCommands
   class LightUpdate < Command
-    TOGGLE = "toggle"
     ACTIVITY_KIND = "light"
 
     def initialize(light, fields)
@@ -32,6 +31,6 @@ module HouseCommands
       raise Hue::Error, I18n.t("house_commands.light_update.nothing_to_change")
     end
 
-    def requested_power = @fields[:on] == TOGGLE ? @light.off? : ActiveModel::Type::Boolean.new.cast(@fields[:on])
+    def requested_power = ActiveModel::Type::Boolean.new.cast(@fields[:on])
   end
 end

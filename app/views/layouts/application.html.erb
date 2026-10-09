@@ -18,6 +18,9 @@
   </head>
   <body>
     <%= turbo_stream_from(*hue_tab_stream) %>
+    <template data-toast-template data-toast-target="<%= targets.flash %>" data-still-changing="<%= t("toasts.still_changing") %>">
+      <%= render "shared/flash", message: "" %>
+    </template>
     <div id="<%= targets.flash %>">
       <%= render "shared/flash", message: flash[:alert] if flash[:alert] %>
       <%= render "shared/flash", message: flash[:notice], tone: ToastStreams::DONE_TONE if flash[:notice] %>

@@ -20,6 +20,8 @@ class PinnedLightTest < ActionDispatch::IntegrationTest
     assert_select "#light_pin_l1 .pin__bar [data-level]", "80%"
     assert_select "#light_pin_l1 .pin__bar input[type=range][value='80']"
     assert_select "#light_pin_l1 .pin__bar .pin__swatch[data-action='pinned#expand']"
+    assert_select "#light_pin_l1 form.pin__toggle[data-controller=async-hue-call][data-async-hue-call-light-ids-value='[\"l1\"]'] button[name='light[on]'][value=false]"
+    assert_select "#light_pin_l1 form.pin__dim[data-action='submit->async-hue-call#submit']"
     assert_select "#light_pin_l1 .pin__sheet #light_panel_l1 .switch input[checked]"
   end
 

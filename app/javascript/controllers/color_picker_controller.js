@@ -1,8 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 import { hold, release } from "lib/busy"
 import { GAMUT_C } from "lib/hue_color"
-import { patchAndRenderStreams } from "lib/requests"
-import { previewColour } from "lib/light_preview"
+import { asyncHueCall } from "lib/hue_calls"
+import { isPending } from "lib/light_intents"
+import { previewColour, snapshotLight, restoreLight } from "lib/light_preview"
+import { showStillChanging } from "lib/toasts"
 import { drawColourWheel, drawWhiteRange, colourAt, mirekAt, colourHex, whiteHex, colourMarkerPosition, whiteMarkerPosition } from "lib/color_wheel"
 
 const WHITE_MODE = "ct"
@@ -35,6 +37,7 @@ export default class extends Controller {
 
   down(event) {
     event.target.setPointerCapture(event.pointerId)
+    this.beforeDrag = { appearance: snapshotLight(this.idValue), chromaticity: this.chromaticity, mirek: this.mirek }
     this.dragging = true
     hold(this.element)
     this.move(event)
@@ -57,9 +60,21 @@ export default class extends Controller {
     if (!this.dragging) return
     this.dragging = false
     release(this.element)
-    patchAndRenderStreams(this.urlValue, this.whiteMode
+    isPending(this.idValue) ? this.snapBack() : asyncHueCall(this.urlValue, this.chosenFields(), [ this.idValue ])
+  }
+
+  chosenFields() {
+    return this.whiteMode
       ? { "light[mirek]": this.mirek }
-      : { "light[x]": this.chromaticity.x.toFixed(CHROMATICITY_DECIMAL_PLACES), "light[y]": this.chromaticity.y.toFixed(CHROMATICITY_DECIMAL_PLACES) })
+      : { "light[x]": this.chromaticity.x.toFixed(CHROMATICITY_DECIMAL_PLACES), "light[y]": this.chromaticity.y.toFixed(CHROMATICITY_DECIMAL_PLACES) }
+  }
+
+  snapBack() {
+    restoreLight(this.beforeDrag.appearance)
+    this.chromaticity = this.beforeDrag.chromaticity
+    this.mirek = this.beforeDrag.mirek
+    this.placeMarker()
+    showStillChanging()
   }
 
   get whiteMode() {

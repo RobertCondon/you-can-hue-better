@@ -13,7 +13,7 @@ class LightsControllerTest < ActionDispatch::IntegrationTest
   def tab_broadcasts(&) = capture_turbo_stream_broadcasts(HouseBroadcast.tab_stream(TAB), &)
 
   test "a press is accepted straight away with a time to check in" do
-    press("l1", on: "toggle")
+    press("l1", on: "false")
     assert_response :accepted
     assert_equal [ [ :light, "l1", { on: { on: false } } ] ], hue.writes
     assert_includes Hue::CallTimings::FLOOR_MILLISECONDS..Hue::CallTimings::CEILING_MILLISECONDS, response.headers[HueCalls::CHECK_IN_HEADER].to_i
@@ -49,7 +49,7 @@ class LightsControllerTest < ActionDispatch::IntegrationTest
 
   test "a bridge error is logged and shown only to the tab that pressed" do
     hue.rejection_for_writes = "link button not pressed"
-    toasts = tab_broadcasts { press("l1", on: "toggle") }
+    toasts = tab_broadcasts { press("l1", on: "false") }
     assert_response :accepted
     assert_equal "link button not pressed", Activity.last.result
     assert_match(/link button not pressed/, toasts.sole.to_html)
@@ -58,7 +58,7 @@ class LightsControllerTest < ActionDispatch::IntegrationTest
 
   test "a bulb with no power keeps the change and warns the tab that pressed" do
     hue.unpowered_light_ids << "l1"
-    toasts = tab_broadcasts { press("l1", on: "toggle") }
+    toasts = tab_broadcasts { press("l1", on: "false") }
     assert_equal "not responding", Activity.last.result
     assert_match(/Desk lamp isn't responding/, toasts.sole.to_html)
   end
@@ -107,5 +107,16 @@ class LightsControllerTest < ActionDispatch::IntegrationTest
     tab = css_select("meta[name=hue-tab]").sole["content"]
     assert_predicate tab, :present?
     assert_select "turbo-cable-stream-source", minimum: 2
+  end
+
+  test "every page carries the toast the browser shows when a light is still changing" do
+    get root_path
+    assert_select "template[data-toast-template][data-toast-target=flash][data-still-changing='Still changing. Try again in a moment.']"
+  end
+
+  test "the panel's switch and brightness go through the async form controller" do
+    get panel_light_path("l1")
+    assert_select "#light_panel_l1 form.switch[data-controller=async-hue-call]"
+    assert_select "#light_panel_l1 form.light-panel__row[data-controller=async-hue-call]"
   end
 end

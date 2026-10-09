@@ -45,6 +45,12 @@
 .tile__level { font-size: var(--text-md); color: var(--level-ink); opacity: 0.9; font-variant-numeric: tabular-nums; flex: 0 1 auto; text-align: right; }
 .tile.is-unreachable .tile__level { color: var(--danger); opacity: 1; font-size: var(--text-xs); line-height: 1.2; max-width: 5.5em; }
 
+.tile.is-pending .tile__dot, .pin.is-pending .tile__dot, .floor__lamp.is-pending .floor__dot,
+.light-panel.is-pending .switch__track { animation: pending-breath 1.6s ease-in-out infinite; }
+@keyframes pending-breath { 50% { opacity: 0.45; } }
+
 @media (prefers-reduced-motion: reduce) {
   .tile__fill, .chevron { transition: none; }
+  .tile.is-pending .tile__dot, .pin.is-pending .tile__dot, .floor__lamp.is-pending .floor__dot,
+  .light-panel.is-pending .switch__track { animation: none; opacity: 0.7; }
 }

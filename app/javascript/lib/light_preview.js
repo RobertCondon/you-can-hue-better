@@ -1,8 +1,11 @@
 import { mixHex } from "lib/hue_color"
 import { lightConstants } from "lib/light_constants"
+import { snapshotAppearance, restoreAppearance } from "lib/floor/element_style"
 
 const ON_CLASS = "is-on"
 const OFF_CLASS = "is-off"
+const LEVEL_SELECTOR = "[data-level]"
+const NO_FILL = "0%"
 
 const elementsShowing = lightId => document.querySelectorAll(`[data-light-id="${lightId}"]`)
 
@@ -17,7 +20,7 @@ export function previewLevel(lightId, level) {
     element.style.setProperty("--fill", `${level}%`)
     element.style.setProperty("--bri", level / lightConstants().highestLevel)
     showAsOn(element)
-    for (const levelLabel of element.querySelectorAll("[data-level]")) levelLabel.textContent = `${level}%`
+    for (const levelLabel of element.querySelectorAll(LEVEL_SELECTOR)) levelLabel.textContent = `${level}%`
   }
 }
 
@@ -28,5 +31,30 @@ export function previewColour(lightId, hex) {
     element.style.setProperty("--hue", hex)
     element.style.setProperty("--tile", mixHex(offTile, hex, glowMinimum + (1 - glowMinimum) * level / highestLevel))
     showAsOn(element)
+  }
+}
+
+export function previewPower(lightId, on) {
+  for (const element of elementsShowing(lightId)) {
+    element.classList.toggle(ON_CLASS, on)
+    element.classList.toggle(OFF_CLASS, !on)
+    element.style.setProperty("--fill", on ? `${element.dataset.brightness}%` : NO_FILL)
+  }
+}
+
+export function snapshotLight(lightId) {
+  return [...elementsShowing(lightId)].map(element => ({
+    element,
+    appearance: snapshotAppearance(element),
+    brightness: element.dataset.brightness,
+    levels: [...element.querySelectorAll(LEVEL_SELECTOR)].map(levelLabel => levelLabel.textContent)
+  }))
+}
+
+export function restoreLight(snapshot) {
+  for (const { element, appearance, brightness, levels } of snapshot) {
+    restoreAppearance(element, appearance)
+    element.dataset.brightness = brightness
+    element.querySelectorAll(LEVEL_SELECTOR).forEach((levelLabel, index) => { levelLabel.textContent = levels[index] })
   }
 }

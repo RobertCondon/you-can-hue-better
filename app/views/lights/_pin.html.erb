@@ -3,8 +3,8 @@
      data-controller="light pinned"
      data-action="pointerdown->pinned#swipeStart pointermove->pinned#swipeMove pointerup->pinned#swipeEnd pointercancel->pinned#swipeEnd click->pinned#guard:capture">
   <div class="pin__bar">
-    <%= form_with url: light_path(light.id), method: :patch, class: "pin__toggle" do |form| %>
-      <button type="submit" name="light[on]" value="<%= HouseCommands::LightUpdate::TOGGLE %>" class="pin__icon" aria-pressed="<%= light.lit? %>" aria-label="<%= light_power_label(light) %>">
+    <%= async_hue_form_with url: light_path(light.id), method: :patch, class: "pin__toggle", light_ids: [ light.id ] do |form| %>
+      <button type="submit" name="light[on]" value="<%= !light.lit? %>" class="pin__icon" aria-pressed="<%= light.lit? %>" aria-label="<%= light_power_label(light) %>">
         <span class="tile__dot"><%= render "lights/icon", icon: light.icon %></span>
       </button>
     <% end %>
@@ -12,7 +12,7 @@
       <span class="pin__name"><%= light.display_name %></span>
       <span class="pin__level" data-level><%= light.brightness_label %></span>
     </button>
-    <%= form_with url: light_path(light.id), method: :patch, class: "pin__dim" do |form| %>
+    <%= async_hue_form_with url: light_path(light.id), method: :patch, class: "pin__dim", light_ids: [ light.id ] do |form| %>
       <label class="sr-only" for="pin_bri_<%= light.id %>"><%= t(".brightness_of", light: light.display_name) %></label>
       <input type="range" id="pin_bri_<%= light.id %>" name="light[brightness]" min="<%= Hue::Api::Limits::LIT_BRIGHTNESS.min %>" max="<%= Hue::Api::Limits::LIT_BRIGHTNESS.max %>"
              value="<%= slider_level(light) %>" data-action="input->light#preview change->light#submit">

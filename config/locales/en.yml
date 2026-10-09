@@ -58,6 +58,7 @@ en:
     not_responding: "%{light} isn't responding. Check it has power at the switch."
     lights_busy: "%{target} is being changed from another device. Try again in a moment."
     went_wrong: "Something went wrong changing %{target}. Try again."
+    still_changing: "Still changing. Try again in a moment."
   rooms:
     update:
       a_light_in: A light in %{room}

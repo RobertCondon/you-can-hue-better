@@ -17,6 +17,8 @@ Rails.application.routes.draw do
     resource :names, only: :update, controller: "room_names"
   end
 
+  resources :locks, only: :index
+
   resources :scenes, only: [ :index, :show ] do
     member do
       post :activate

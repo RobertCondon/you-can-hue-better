@@ -7,8 +7,8 @@ class HouseCommands::LightUpdateTest < ActiveSupport::TestCase
 
   def sent_payload = hue.writes.last[2]
 
-  test "toggle switches to the opposite of what the bridge reports" do
-    update_with(on: "toggle")
+  test "power is sent exactly as asked" do
+    update_with(on: "false")
     assert_equal [ { on: { on: false } }, "off" ], [ sent_payload, Activity.last.action ]
   end
 

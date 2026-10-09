@@ -212,27 +212,31 @@ Live check:
 ## Chunk 6: The browser side, on single lights
 
 The pressing tab draws the guess, pulses, denies presses while pending, and speaks the same two
-names as the controllers.
+names as the controllers. `lib/busy.js` stays: the floor previews still use it, and pending
+lights use its hold to keep the truth back until `settle`, then apply it in one go.
 
-- [ ] `app/javascript/lib/hue_calls.js` (new: `asyncHueCall`, `directHueCall`, 202, 409 and 200 handling)
-- [ ] `app/javascript/lib/stream_actions.js` (`settle` frees the lights in `light_intents.js`)
-- [ ] `app/javascript/lib/light_intents.js` (new, replaces `lib/busy.js`: free or pending per light, pulse, bounce toast, check-in timer)
-- [ ] `app/javascript/lib/busy.js` (removed)
-- [ ] `app/javascript/controllers/async_hue_call_controller.js` (new: async forms)
-- [ ] `app/javascript/controllers/direct_hue_call_controller.js` (new: direct forms)
-- [ ] `app/javascript/controllers/tile_controller.js` (`asyncHueCall`, sends `on` or `off`, denies drags while pending)
-- [ ] `app/javascript/controllers/color_picker_controller.js` (`asyncHueCall`, snaps back while pending)
-- [ ] `app/javascript/controllers/light_controller.js` (panel and pin forms through `async-hue-call`)
-- [ ] `app/javascript/controllers/toast_controller.js` (bounce toasts)
-- [ ] `app/helpers/hue_calls_helper.rb` (adds `async_hue_form_with`, `async_hue_button_to`, `direct_hue_form_with`)
-- [ ] `app/views/lights/_light.html.erb`, `_pin.html.erb`, `_panel.html.erb` (async helpers, `on` or `off` not `toggle`)
-- [ ] `app/services/house_commands/light_update.rb` (`TOGGLE` removed)
-- [ ] `app/controllers/locks_controller.rb` (new: `GET /locks?light_ids=`)
-- [ ] `config/routes.rb` (`/locks`)
-- [ ] `app/assets/stylesheets/tiles.css`, `light_panel.css`, `pinned_light.css` (soft pulse, still for reduced motion)
-- [ ] `test/controllers/locks_controller_test.rb` (new)
-- [ ] `test/controllers/tiles_test.rb` (on or off, never toggle)
-- [ ] `test/helpers/hue_calls_helper_test.rb` (new: the controller and light ids the helpers render)
+- [x] `app/javascript/lib/hue_calls.js` (new: `asyncHueCall`, `directHueCall`; 202 starts the check-in, anything else frees the lights)
+- [x] `app/javascript/lib/light_intents.js` (new: free or pending per light, holds their elements, shared check-in timers, `GET /locks`)
+- [-] `app/javascript/lib/busy.js` (kept, see above)
+- [x] `app/javascript/lib/stream_actions.js` (`settle` raises `hue:settled`, which frees the lights)
+- [x] `app/javascript/lib/toasts.js` (new: shows a toast from the layout's template, including "still changing")
+- [x] `app/javascript/lib/light_preview.js` (`previewPower`, `snapshotLight`, `restoreLight`)
+- [x] `app/javascript/lib/requests.js` (renders any Turbo Stream reply whatever its status, takes `FormData` as fields; `patchAndRenderStreams` removed)
+- [x] `app/javascript/application.js` (frees lights when they settle)
+- [x] `app/javascript/controllers/async_hue_call_controller.js` (new: async forms, guesses power from the form, resets the form when bounced)
+- [x] `app/javascript/controllers/tile_controller.js` (`asyncHueCall`, sends `on` or `off`, a drag released while pending snaps back)
+- [x] `app/javascript/controllers/color_picker_controller.js` (`asyncHueCall`, snaps back while pending)
+- [x] `app/javascript/controllers/light_controller.js` (no preview while pending)
+- [x] `app/helpers/hue_calls_helper.rb` (`async_hue_form_with`; `async_hue_button_to` and `direct_hue_form_with` arrive with their first use in chunk 7)
+- [x] `app/views/layouts/application.html.erb` (the toast template)
+- [x] `app/views/lights/_pin.html.erb`, `_panel.html.erb` (async forms, the pin sends `on` or `off`)
+- [x] `app/services/house_commands/light_update.rb` (`TOGGLE` removed)
+- [x] `app/controllers/locks_controller.rb` (new: `GET /locks?light_ids[]=`)
+- [x] `config/routes.rb` (`/locks`)
+- [x] `config/locales/en.yml` (still changing)
+- [x] `app/assets/stylesheets/tiles.css` (the soft pulse on the tile and pin dot, floor lamp dot and panel switch; still for reduced motion)
+- [x] `test/controllers/locks_controller_test.rb` (new)
+- [x] `test/controllers/lights_controller_test.rb`, `pinned_light_test.rb`, `test/services/house_commands/light_update_test.rb` (on or off, the async forms, the toast template)
 
 Live check:
 
@@ -259,6 +263,8 @@ Everything else that talks to the bridge moves onto the two helpers.
 - [ ] `app/views/rooms/_head.html.erb` (`async_hue_form_with` with the room's light ids)
 - [ ] `app/views/rooms/_room.html.erb`, `app/views/scenes/_card.html.erb`, `app/views/scenes/show.html.erb` (`async_hue_button_to`)
 - [ ] `app/views/shared/_editor.html.erb` (`direct_hue_form_with`)
+- [ ] `app/helpers/hue_calls_helper.rb` (`async_hue_button_to`, `direct_hue_form_with`)
+- [ ] `app/javascript/controllers/direct_hue_call_controller.js` (new: direct forms)
 - [ ] `app/javascript/lib/floor/paint_brush.js` (`asyncHueCall`)
 - [ ] `app/javascript/lib/light_preview.js` (room guess: each light on or off, brightness estimate)
 - [ ] `app/controllers/concerns/toast_streams.rb` (`result_toast` removed if nothing uses it)
