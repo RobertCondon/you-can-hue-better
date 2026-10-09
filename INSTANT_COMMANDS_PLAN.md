@@ -112,11 +112,11 @@ Live check:
 
 The two in-memory pieces everything else stands on. Nothing calls them yet.
 
-- [ ] `app/services/hue/locks.rb` (new: `claim`, `release`, `locked?`, a `Set` behind a `Mutex`)
-- [ ] `app/services/hue/locks/claim.rb` (new: `Data` holding the claimed light ids)
-- [ ] `app/services/hue/call_timings.rb` (new: `measure`, `record`, `p95` per kind, floor, ceiling, default)
-- [ ] `test/services/hue/locks_test.rb` (new: claim, bounce, all or none, release, empty claim)
-- [ ] `test/services/hue/call_timings_test.rb` (new: default, floor, ceiling, rolling window)
+- [x] `app/services/hue/locks.rb` (new: `claim`, `release`, `locked?`, `locked_among`, a `Set` behind a `Mutex`)
+- [x] `app/services/hue/locks/claim.rb` (new: `Data` holding the claimed light ids)
+- [x] `app/services/hue/call_timings.rb` (new: `measure`, `record`, `p95_milliseconds` per kind; the ceiling is the bridge connection's open plus read timeouts, 8000 ms)
+- [x] `test/services/hue/locks_test.rb` (new: claim, bounce, all or none, release, empty claim, racing threads)
+- [x] `test/services/hue/call_timings_test.rb` (new: default, floor, ceiling, rolling window)
 
 Live check:
 
