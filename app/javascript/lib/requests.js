@@ -1,3 +1,5 @@
+import { hueTab, HUE_TAB_HEADER } from "lib/hue_tab"
+
 const CSRF_TOKEN_SELECTOR = 'meta[name="csrf-token"]'
 const GET = "GET"
 const POST = "POST"
@@ -19,6 +21,8 @@ function formDataFrom(fields) {
 export function request(method, url, { fields, accept } = {}) {
   const headers = { "X-CSRF-Token": csrfToken() }
   if (accept) headers.Accept = accept
+  const tab = hueTab()
+  if (tab) headers[HUE_TAB_HEADER] = tab
   return fetch(url, { method, headers, body: fields && formDataFrom(fields) })
 }
 

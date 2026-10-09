@@ -7,7 +7,7 @@ module HouseCommands
       @new_name = new_name.to_s.strip
     end
 
-    def call = @new_name == @record.name ? nil : super
+    def call_now = @new_name == @record.name ? nil : super
 
     private
 

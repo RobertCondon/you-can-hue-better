@@ -56,6 +56,8 @@ en:
       a_painted_light: A painted light
   toasts:
     not_responding: "%{light} isn't responding. Check it has power at the switch."
+    lights_busy: "%{target} is being changed from another device. Try again in a moment."
+    went_wrong: "Something went wrong changing %{target}. Try again."
   rooms:
     update:
       a_light_in: A light in %{room}

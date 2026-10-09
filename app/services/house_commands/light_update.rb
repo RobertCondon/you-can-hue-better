@@ -8,6 +8,8 @@ module HouseCommands
       @fields = fields
     end
 
+    def light_ids = [ @light.id ]
+
     private
 
     def activity

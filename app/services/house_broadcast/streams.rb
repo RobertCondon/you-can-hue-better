@@ -26,7 +26,17 @@ module HouseBroadcast
            .map { |spot| replace(Targets.floor_lamp(spot.light), "floors/light", spot:) }
     end
 
+    def lights_everywhere(house, light_ids, group_ids: [])
+      [
+        *room_changes(house, light_ids:, group_ids:),
+        *light_ids.filter_map { |light_id| house.light(light_id) }.flat_map { |light| light_details(light) },
+        *floor_lamps(house, light_ids)
+      ]
+    end
+
     def summary(house) = update(Targets::HOUSE_SUMMARY, "dashboard/summary", house:)
+
+    def toast(message) = update(Targets::FLASH, "shared/flash", message:)
 
     def scene_cards(scene_ids)
       Hue::Scene.for_cards.where(id: scene_ids.uniq).map { |scene| replace(Targets.scene_card(scene), "scenes/card", scene:) }

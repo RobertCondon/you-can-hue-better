@@ -1,14 +1,48 @@
 module HouseCommands
   class Command
-    def self.call(...) = new(...).call
+    NO_LIGHTS = [].freeze
 
-    def call
+    def self.call(...) = new(...).call_now
+
+    def call_now
+      claim = Hue::Locks.claim(light_ids) or return busy
       result = ActivityRecorder.record(**activity) { send_to_bridge }
       HouseBroadcast.changes(catch_up_mirror)
       result
+    ensure
+      Hue::Locks.release(claim)
     end
 
+    def call_later(tab: nil)
+      raise NotInstant, self.class.name if light_ids.empty?
+
+      claim = Hue::Locks.claim(light_ids) or return busy
+      hand_off(claim, ActivityRecorder.pending(**activity), tab)
+    rescue StandardError
+      Hue::Locks.release(claim)
+      raise
+    end
+
+    def deliver = send_to_bridge
+
+    def catch_up = catch_up_mirror
+
+    def light_ids = NO_LIGHTS
+
+    def kind = self.class.name.demodulize.underscore.to_sym
+
+    def target_name = activity[:target_name]
+
+    def unreachable_description = target_name
+
     private
+
+    def hand_off(claim, pending_activity, tab)
+      Dispatch.later(claim, kind) { Settlement.new(command: self, activity: pending_activity, tab:).settle }
+      Accepted.new(light_ids:, check_in_milliseconds: Hue::CallTimings.p95_milliseconds(kind))
+    end
+
+    def busy = Busy.new(light_ids:, target_name:)
 
     def catch_up_mirror
       Hue.wait_for_bridge

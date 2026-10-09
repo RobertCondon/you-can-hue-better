@@ -11,11 +11,13 @@
     <% end %>
     <link href="<%= ApplicationHelper::FONT_STYLESHEET %>" rel="stylesheet">
     <meta name="light-constants" content="<%= light_constants.to_json %>">
+    <meta name="hue-tab" content="<%= hue_tab %>">
     <style><%= light_colour_tokens %></style>
     <%= stylesheet_link_tag(*ApplicationHelper::STYLESHEETS, "data-turbo-track": "reload") %>
     <%= javascript_importmap_tags %>
   </head>
   <body>
+    <%= turbo_stream_from(*hue_tab_stream) %>
     <div id="<%= targets.flash %>">
       <%= render "shared/flash", message: flash[:alert] if flash[:alert] %>
       <%= render "shared/flash", message: flash[:notice], tone: ToastStreams::DONE_TONE if flash[:notice] %>

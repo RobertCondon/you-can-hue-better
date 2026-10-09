@@ -1,6 +1,8 @@
 require "test_helper"
+require "turbo/broadcastable/test_helper"
 
 class PinnedLightTest < ActionDispatch::IntegrationTest
+  include Turbo::Broadcastable::TestHelper
   setup { sync_mirror! }
 
   test "the dock sits at the top of the lights view and tiles pin into it" do
@@ -22,8 +24,11 @@ class PinnedLightTest < ActionDispatch::IntegrationTest
   end
 
   test "an update refreshes the pin too" do
-    patch light_path("l1"), params: { light: { brightness: "42" } }, as: :turbo_stream
-    assert_select "turbo-stream[action=replace][target=light_pin_l1] .pin__bar [data-level]", "42%"
+    streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) do
+      patch light_path("l1"), params: { light: { brightness: "42" } }, as: :turbo_stream
+    end
+    pin = streams.find { |stream| stream["target"] == "light_pin_l1" }
+    assert_equal "42%", pin.at_css(".pin__bar [data-level]").text.strip
   end
 
   test "the floor carries a dock for phones" do

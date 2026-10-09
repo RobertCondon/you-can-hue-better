@@ -150,27 +150,42 @@ Live check:
 ## Chunk 4: Running a command two ways, on single lights
 
 The server side end to end, switched on for `lights#update` only. Other actions keep calling
-`.call` until chunk 7. The browser is unchanged until chunk 6: the tile updates when the truth
-broadcast arrives, about 100 to 600 ms later, instead of from the reply.
+`.call` (now `call_now`) until chunk 7. The browser mostly stays as it is until chunk 6: the tile
+updates when the truth broadcast arrives, about 100 to 600 ms later, instead of from the reply.
 
-- [ ] `app/services/house_commands/command.rb` (`call_now`, `call_later`, `light_ids` defaulting to empty, `kind`)
-- [ ] `app/services/house_commands/accepted.rb` (new: `Data` with light ids and the check-in time)
-- [ ] `app/services/house_commands/busy.rb` (new: `Data` with light ids)
-- [ ] `app/services/house_commands/not_instant.rb` (new: raised when `call_later` has no lights)
-- [ ] `app/services/house_commands/dispatch.rb` (new: thread, executor wrap, timing, ensure release and `settle`)
-- [ ] `app/services/house_commands/settlement.rb` (new: the three endings)
-- [ ] `app/services/house_commands/light_update.rb` (`light_ids`, `kind`)
-- [ ] `app/services/house_broadcast.rb` (`settle`, `toast_to_tab`)
-- [ ] `app/services/house_broadcast/streams.rb` (settle and tab toast streams)
-- [ ] `app/controllers/concerns/hue_calls.rb` (new: `async_hue_call`, `direct_hue_call`, `LightsBusy`, 202 and 409 replies)
-- [ ] `app/controllers/concerns/toast_streams.rb` (toast messages shared with `Settlement`)
-- [ ] `app/controllers/lights_controller.rb` (`async_hue_call`)
-- [ ] `config/environments/test.rb` (`Dispatch` runs inline)
-- [ ] `config/locales/en.yml` (another device, still changing)
-- [ ] `test/services/house_commands/command_test.rb` (new: both modes, busy, release on error)
-- [ ] `test/services/house_commands/light_update_test.rb`
-- [ ] `test/services/house_commands/settlement_test.rb` (new: the three endings)
-- [ ] `test/controllers/lights_controller_test.rb` (202, 409 with the truth)
+The tab plumbing moved here from chunk 6, because `Settlement` needs it to send toasts only to
+the tab that pressed: each page gets a tab id and its own stream, and every request carries the
+id in `X-Hue-Tab`.
+
+- [x] `app/services/house_commands/command.rb` (`call_now`, `call_later`, `deliver`, `catch_up`, `light_ids` defaulting to none, `kind` from the class name, `target_name`, `unreachable_description`; `.call` runs `call_now`)
+- [x] `app/services/house_commands/accepted.rb` (new: `Data` with light ids and the check-in time)
+- [x] `app/services/house_commands/busy.rb` (new: `Data` with light ids and the target's name)
+- [x] `app/services/house_commands/not_instant.rb` (new: raised when `call_later` has no lights)
+- [x] `app/services/house_commands/lights_busy.rb` (new: raised by the controller helpers, rescued as the 409)
+- [x] `app/services/house_commands/dispatch.rb` (new: thread, reloader wrap, timing, ensure release and `settle`; inline in tests)
+- [x] `app/services/house_commands/settlement.rb` (new: the three endings, plus a "something went wrong" ending for bugs; always broadcasts the truth)
+- [x] `app/services/house_commands/light_update.rb` (`light_ids`)
+- [x] `app/services/house_commands/paint.rb`, `rename.rb` (their `call` overrides are now `call_now`)
+- [x] `app/services/toasts.rb` (new: toast wording shared by controllers and `Settlement`)
+- [x] `app/services/house_broadcast.rb` (`settle`, `toast_to_tab`, `tab_stream`, `send_streams` takes a stream)
+- [x] `app/services/house_broadcast/streams.rb` (`lights_everywhere`, `toast`)
+- [x] `app/services/house_broadcast/change_broadcast.rb` (uses `lights_everywhere`)
+- [x] `app/controllers/concerns/hue_calls.rb` (new: `async_hue_call`, `direct_hue_call`, the 202 with `Check-In-After`, the 409 with the truth and the busy toast)
+- [x] `app/controllers/concerns/toast_streams.rb` (uses `Toasts`)
+- [x] `app/controllers/lights_controller.rb` (`async_hue_call`)
+- [x] `app/controllers/floor_paints_controller.rb` (`call_now`)
+- [x] `app/helpers/hue_calls_helper.rb` (new: `hue_tab`, `hue_tab_stream`)
+- [x] `app/views/layouts/application.html.erb` (tab id meta and the tab's own `turbo_stream_from`)
+- [x] `app/javascript/lib/hue_tab.js` (new: the tab id and its header on every Turbo request)
+- [x] `app/javascript/lib/stream_actions.js` (new: `settle` raises a `hue:settled` event; chunk 6 listens to it)
+- [x] `app/javascript/lib/requests.js` (sends the tab id header)
+- [x] `app/javascript/application.js` (registers both)
+- [x] `config/environments/test.rb` (`Dispatch` runs inline)
+- [x] `config/locales/en.yml` (another device, something went wrong)
+- [x] `test/services/house_commands/command_test.rb` (new: both modes, busy, release on error, no lights)
+- [x] `test/services/house_commands/settlement_test.rb` (new: the endings)
+- [x] `test/controllers/lights_controller_test.rb` (202, truth then settle, 409, tab toasts)
+- [x] `test/controllers/pinned_light_test.rb` (the pin refresh is a broadcast now)
 
 Live check:
 
@@ -199,20 +214,17 @@ Live check:
 The pressing tab draws the guess, pulses, denies presses while pending, and speaks the same two
 names as the controllers.
 
-- [ ] `app/javascript/lib/hue_calls.js` (new: `asyncHueCall`, `directHueCall`, tab id header, 202, 409 and 200 handling)
+- [ ] `app/javascript/lib/hue_calls.js` (new: `asyncHueCall`, `directHueCall`, 202, 409 and 200 handling)
+- [ ] `app/javascript/lib/stream_actions.js` (`settle` frees the lights in `light_intents.js`)
 - [ ] `app/javascript/lib/light_intents.js` (new, replaces `lib/busy.js`: free or pending per light, pulse, bounce toast, check-in timer)
 - [ ] `app/javascript/lib/busy.js` (removed)
-- [ ] `app/javascript/lib/stream_actions.js` (new: the `settle` Turbo stream action)
-- [ ] `app/javascript/lib/requests.js` (sends the tab id header)
-- [ ] `app/javascript/application.js` (registers the stream actions)
 - [ ] `app/javascript/controllers/async_hue_call_controller.js` (new: async forms)
 - [ ] `app/javascript/controllers/direct_hue_call_controller.js` (new: direct forms)
 - [ ] `app/javascript/controllers/tile_controller.js` (`asyncHueCall`, sends `on` or `off`, denies drags while pending)
 - [ ] `app/javascript/controllers/color_picker_controller.js` (`asyncHueCall`, snaps back while pending)
 - [ ] `app/javascript/controllers/light_controller.js` (panel and pin forms through `async-hue-call`)
 - [ ] `app/javascript/controllers/toast_controller.js` (bounce toasts)
-- [ ] `app/helpers/hue_calls_helper.rb` (new: `async_hue_form_with`, `async_hue_button_to`, `direct_hue_form_with`)
-- [ ] `app/views/layouts/application.html.erb` (tab id meta and the tab's own `turbo_stream_from`)
+- [ ] `app/helpers/hue_calls_helper.rb` (adds `async_hue_form_with`, `async_hue_button_to`, `direct_hue_form_with`)
 - [ ] `app/views/lights/_light.html.erb`, `_pin.html.erb`, `_panel.html.erb` (async helpers, `on` or `off` not `toggle`)
 - [ ] `app/services/house_commands/light_update.rb` (`TOGGLE` removed)
 - [ ] `app/controllers/locks_controller.rb` (new: `GET /locks?light_ids=`)
