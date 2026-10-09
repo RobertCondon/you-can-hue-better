@@ -199,9 +199,9 @@ Live check:
 
 ## Chunk 5: The listener skips locked lights
 
-- [ ] `app/services/hue/mirror/listener/batch_handler.rb` (drops light and grouped light events for locked lights)
-- [ ] `app/services/hue/mirror/listener/locked_echo.rb` (new: maps a resource to its light ids)
-- [ ] `test/services/hue/mirror/listener_test.rb` (locked lights skipped)
+- [x] `app/services/hue/mirror/listener/batch_handler.rb` (drops light and grouped light events for locked lights)
+- [x] `app/services/hue/mirror/listener/locked_echo.rb` (new: a light event matches its own id, a room or zone event matches if any of its lights is locked)
+- [x] `test/services/hue/mirror/listener_test.rb` (locked lights and their rooms skipped, others applied)
 
 Live check:
 

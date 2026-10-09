@@ -18,6 +18,28 @@ class Hue::Mirror::ListenerTest < ActiveSupport::TestCase
     assert_equal "evt-9", Hue::ListenerState.current.last_event_id
   end
 
+  test "events for a light that is locked by a press are skipped, others still apply" do
+    claim = Hue::Locks.claim(%w[l1])
+    batch = [ { "id" => "evt-11", "creationtime" => "2026-10-06T10:00:00Z", "type" => "update",
+                "data" => [ { "type" => "light", "id" => "l1", "on" => { "on" => false } }, { "type" => "light", "id" => "l2", "on" => { "on" => true } } ] } ]
+    Hue::Mirror::Listener::BatchHandler.new(logger: SILENT_LOGGER).handle(batch)
+    assert Hue::Light.find("l1").on
+    assert Hue::Light.find("l2").on
+  ensure
+    Hue::Locks.release(claim)
+  end
+
+  test "a room's events are skipped while any of its lights is locked" do
+    claim = Hue::Locks.claim(%w[l2])
+    batch = [ { "id" => "evt-12", "creationtime" => "2026-10-06T10:00:00Z", "type" => "update",
+                "data" => [ { "type" => "grouped_light", "id" => "g1", "dimming" => { "brightness" => 5.0 } },
+                            { "type" => "grouped_light", "id" => "g2", "dimming" => { "brightness" => 5.0 } } ] } ]
+    Hue::Mirror::Listener::BatchHandler.new(logger: SILENT_LOGGER).handle(batch)
+    assert_equal [ 40.0, 5.0 ], [ Hue::Group.find("r1").brightness, Hue::Group.find("z1").brightness ]
+  ensure
+    Hue::Locks.release(claim)
+  end
+
   test "a structural change in a batch triggers a full sync" do
     batch = [ { "id" => "evt-10", "creationtime" => "2026-10-06T10:00:00Z", "type" => "add", "data" => [ { "type" => "room", "id" => "r9" } ] } ]
     previous_sync = Hue::ListenerState.current.full_sync_at
