@@ -1,4 +1,4 @@
-class CustomSceneState < ApplicationRecord
+class CustomSceneLight < ApplicationRecord
   belongs_to :custom_scene
   belongs_to :light, class_name: "Hue::Light"
 
@@ -8,7 +8,7 @@ end
 
 # == Schema Information
 #
-# Table name: custom_scene_states
+# Table name: custom_scene_lights
 #
 #  id              :integer          not null, primary key
 #  brightness      :decimal(5, 2)
@@ -23,9 +23,9 @@ end
 #
 # Indexes
 #
-#  index_custom_scene_states_on_custom_scene_id               (custom_scene_id)
-#  index_custom_scene_states_on_custom_scene_id_and_light_id  (custom_scene_id,light_id) UNIQUE
-#  index_custom_scene_states_on_light_id                      (light_id)
+#  index_custom_scene_lights_on_custom_scene_id               (custom_scene_id)
+#  index_custom_scene_lights_on_custom_scene_id_and_light_id  (custom_scene_id,light_id) UNIQUE
+#  index_custom_scene_lights_on_light_id                      (light_id)
 #
 # Foreign Keys
 #
