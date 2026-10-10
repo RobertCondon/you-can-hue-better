@@ -1,6 +1,5 @@
-class LightNamesController < ApplicationController
+class LightNamesController < ApiController
   include HueCalls
-  include HouseStreams
 
   NAME_FIELDS = %i[name nickname].freeze
 
@@ -8,19 +7,15 @@ class LightNamesController < ApplicationController
     light = Hue::Light.find(params[:light_id])
     fields = params.require(:light).permit(*NAME_FIELDS)
     direct_hue_call { HouseCommands::RenameLight.new(light, fields[:name]) } if fields.key?(:name)
-    HueExtensions::Light.set_nickname!(light.id, fields[:nickname]) if fields.key?(:nickname)
-    render_renamed(light)
+    rename_nickname(light, fields[:nickname]) if fields.key?(:nickname)
+    light.reload
+    render json: { id: light.id, name: light.name, nickname: HueExtensions::Light.find_by(id: light.id)&.nickname }
   end
 
   private
 
-  def render_renamed(light)
-    house = House.load(refresh: false)
-    respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: [ *turbo_streams_for(HouseBroadcast::Streams.room_changes(house, light_ids: [ light.id ])), turbo_stream.update(HouseBroadcast::Targets::EDITOR_ERROR, "") ]
-      end
-      format.html { redirect_to root_path }
-    end
+  def rename_nickname(light, nickname)
+    HueExtensions::Light.set_nickname!(light.id, nickname)
+    HouseBroadcast.changes(Hue::Mirror::Changes.new.tap { |changes| changes.lights_changed(light.id) })
   end
 end

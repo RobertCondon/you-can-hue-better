@@ -132,16 +132,23 @@ a 409 snapping the guess back, and a light press sent as nested JSON.
 
 Renames, nicknames and custom scenes answer JSON; their changes reach the page by broadcast.
 
-- [ ] `LightNamesController`, `RoomNamesController` (JSON; a nickname change broadcasts like a rename)
-- [ ] `CustomScenesController` (JSON only: `show`, `create` from the current look, `update`, `destroy`, each broadcasting the room)
-- [ ] `RoomsController#order` (stays 204)
-- [ ] `app/javascript/controllers/direct_hue_call_controller.js`, `editor_controller.js` (JSON errors into the editor)
-- [ ] `app/javascript/controllers/json_form_controller.js` (new)
-- [ ] `custom_scene_dialog_controller.js` (saves with `json-form`, closes on success)
-- [ ] Tests
+- [x] `LightNamesController`, `RoomNamesController` (`ApiController`; reply `{ id, name, nickname }`; a nickname change broadcasts like a rename; a name the bridge refuses is a 502 with its reason)
+- [x] `CustomScenesController` (`ApiController`, JSON only: `show`; `create` captures the room's current look when no lights are sent; `update`; `destroy` 204; each broadcasts the room)
+- [x] `app/views/custom_scenes/show.html.erb` (removed, decision 3)
+- [x] `app/views/html/custom_scenes/new.html.erb`, `edit.html.erb` (save, rename and delete go through `json-form`; delete asks first)
+- [x] `app/javascript/controllers/json_form_controller.js` (new: sends the form as JSON, raises `saved`, or writes the error into the form; can ask for confirmation first)
+- [x] `app/javascript/lib/hue_calls.js` (`directHueCall` sends JSON and hands back the reply)
+- [x] `app/javascript/controllers/direct_hue_call_controller.js`, `editor_controller.js` (the editor closes on success, or shows the error)
+- [x] `app/javascript/controllers/custom_scene_dialog_controller.js` (closes on `json-form:saved`; the Turbo hook is gone)
+- [x] `app/javascript/controllers/rooms_controller.js` (room order sent as JSON; `RoomsController#order` already answers 204 from chunk 3)
+- [x] `test/controllers/names_controller_test.rb`, `custom_scenes_controller_test.rb`, `html/custom_scenes_controller_test.rb` (JSON replies and the broadcasts)
 
-Live check: rename the Kitchen lamp on `/dev` and back, nickname a light, save, rename and delete a
-throwaway custom scene, reorder two rooms and put them back.
+Live check: save, rename and delete a throwaway custom scene; rename low-test-2 and back; set and
+clear a nickname through the editor; a rename the bridge refuses keeps the editor open with the
+reason; room order saves.
+
+The dev server needed a restart for this chunk: `app/serializers` is a new top-level folder, and
+Rails only picks those up when it boots.
 
 ## Chunk 5: The floor and visibility
 

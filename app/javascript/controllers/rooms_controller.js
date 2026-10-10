@@ -1,9 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
-import { patch } from "lib/requests"
+import { sendJson } from "lib/requests"
 
 const EDITING_CLASS = "is-editing"
 const ROOM_SELECTOR = ".room"
 const ROOM_IDS_FIELD = "ids[]"
+const PATCH = "PATCH"
 const EARLIER = -1
 const LATER = 1
 
@@ -39,6 +40,6 @@ export default class extends Controller {
   }
 
   saveOrder() {
-    return patch(this.urlValue, { [ROOM_IDS_FIELD]: this.sections().map(section => section.dataset.roomId) })
+    return sendJson(PATCH, this.urlValue, { [ROOM_IDS_FIELD]: this.sections().map(section => section.dataset.roomId) })
   }
 }

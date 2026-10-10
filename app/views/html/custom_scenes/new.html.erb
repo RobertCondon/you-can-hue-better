@@ -1,4 +1,4 @@
-<%= form_with url: custom_scenes_path, scope: :custom_scene, data: { action: "turbo:submit-end->custom-scene-dialog#submitted" } do |form| %>
+<%= form_with url: custom_scenes_path, scope: :custom_scene, data: { controller: "json-form", action: "submit->json-form#submit json-form:saved->custom-scene-dialog#close" } do |form| %>
   <p class="editor__title"><%= t(".title", room: @room.display_name) %></p>
   <p class="muted custom-scene__hint"><%= t(".hint") %></p>
   <ul class="custom-scene__lights">
@@ -15,7 +15,7 @@
     <%= form.text_field :name, required: true, maxlength: CustomSceneHelper::NAME_LENGTH, autocomplete: "off", data: { custom_scene_dialog_target: "name" } %>
   </label>
   <%= form.hidden_field :group_id, value: @room.id %>
-  <p id="<%= CustomScenesController::ERROR_TARGET %>" class="editor__error" role="alert"></p>
+  <p class="editor__error" role="alert" data-json-form-target="error"></p>
   <div class="editor__actions">
     <button type="button" class="btn" data-action="custom-scene-dialog#close"><%= t(".cancel") %></button>
     <button type="submit" class="btn btn--primary"><%= t(".save") %></button>

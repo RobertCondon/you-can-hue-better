@@ -16,7 +16,4 @@ export default class extends Controller {
     this.dialogTarget.close()
   }
 
-  submitted(event) {
-    if (event.detail.success) this.close()
-  }
 }

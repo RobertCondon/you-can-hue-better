@@ -23,7 +23,8 @@ export default class extends Controller {
   }
 
   submitted(event) {
-    if (event.detail.success) this.close()
+    if (event.detail.success) return this.close()
+    this.errorTarget.textContent = event.detail.error || ""
   }
 
   get firstField() {

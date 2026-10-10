@@ -17,6 +17,6 @@ class Html::CustomScenesControllerTest < ActionDispatch::IntegrationTest
     get edit_html_custom_scene_path(scene)
     assert_response :success
     assert_select "form[action='#{custom_scene_path(scene)}'] input[name='custom_scene[name]'][value=Reading]"
-    assert_select "form.custom-scene__delete[action='#{custom_scene_path(scene)}'][data-turbo-confirm] input[name=_method][value=delete]"
+    assert_select "form.custom-scene__delete[action='#{custom_scene_path(scene)}'][data-controller=json-form][data-json-form-confirm-value] input[name=_method][value=delete]"
   end
 end

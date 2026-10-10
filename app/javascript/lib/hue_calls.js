@@ -1,4 +1,4 @@
-import { request, renderStreams, sendJson, readJson, ACCEPT } from "lib/requests"
+import { sendJson, readJson } from "lib/requests"
 import { anyPending, markPending, free, checkInAfter } from "lib/light_intents"
 import { snapshotLight, restoreLight } from "lib/light_preview"
 import { showToast, showStillChanging, clearToasts } from "lib/toasts"
@@ -31,7 +31,8 @@ export async function asyncHueCall(url, fields, lightIds, { method = PATCH, gues
 }
 
 export async function directHueCall(url, fields, { method = PATCH } = {}) {
-  return renderStreams(await request(method, url, { fields, accept: ACCEPT.turboStream }))
+  const response = await sendJson(method, url, fields)
+  return { response, reply: await readJson(response) }
 }
 
 function undo(lightIds, before, message) {

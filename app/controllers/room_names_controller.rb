@@ -1,4 +1,4 @@
-class RoomNamesController < ApplicationController
+class RoomNamesController < ApiController
   include HueCalls
 
   NAME_FIELDS = %i[name nickname].freeze
@@ -7,19 +7,15 @@ class RoomNamesController < ApplicationController
     group = Hue::Group.find(params[:room_id])
     fields = params.require(:room).permit(*NAME_FIELDS)
     direct_hue_call { HouseCommands::RenameRoom.new(group, fields[:name]) } if fields.key?(:name)
-    HueExtensions::Group.set_nickname!(group.id, fields[:nickname]) if fields.key?(:nickname)
-    render_renamed(House.load(refresh: false).room(group.id))
+    rename_nickname(group, fields[:nickname]) if fields.key?(:nickname)
+    group.reload
+    render json: { id: group.id, name: group.name, nickname: HueExtensions::Group.find_by(id: group.id)&.nickname }
   end
 
   private
 
-  def render_renamed(room)
-    respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: [ turbo_stream.replace(HouseBroadcast::Targets.room_head(room), partial: "rooms/head", locals: { room: }),
-                               turbo_stream.update(HouseBroadcast::Targets::EDITOR_ERROR, "") ]
-      end
-      format.html { redirect_to root_path }
-    end
+  def rename_nickname(group, nickname)
+    HueExtensions::Group.set_nickname!(group.id, nickname)
+    HouseBroadcast.changes(Hue::Mirror::Changes.new.tap { |changes| changes.group_changed(group.id) })
   end
 end

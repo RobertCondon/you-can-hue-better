@@ -6,24 +6,26 @@ class CustomScenesControllerTest < ActionDispatch::IntegrationTest
 
   setup { sync_mirror! }
 
-  test "saving from the modal captures how the room's lights look right now" do
+  test "saving without lights captures how the room's lights look right now" do
     streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) do
-      post custom_scenes_path, params: { custom_scene: { name: "Reading", group_id: "r1" } }, as: :turbo_stream
+      post custom_scenes_path, params: { custom_scene: { name: "Reading", group_id: "r1" } }, as: :json
     end
-    assert_response :success
+    assert_response :created
+    assert_equal %w[l1 l2], response.parsed_body["lights"].map { |light| light["hue_light_id"] }.sort
     scene = CustomScene.sole
     assert_equal [ "Reading", "r1" ], [ scene.name, scene.group_id ]
     desk = scene.lights.find_by!(hue_light_id: "l1")
     assert_equal [ true, 80.0, 359, nil ], [ desk.on, desk.brightness.to_f, desk.mirek, desk.color_x ]
     refute scene.lights.find_by!(hue_light_id: "l2").on
-    assert_select "turbo-stream[action=replace][target=room_r1] .chip--custom", "Reading"
-    assert_includes streams.map { |stream| stream["target"] }, "room_r1"
+    room = streams.find { |stream| stream["target"] == "room_r1" }
+    assert_equal "Reading", room.at_css(".chip--custom").text.strip
   end
 
-  test "a scene with no name shows why in the modal" do
-    post custom_scenes_path, params: { custom_scene: { name: "", group_id: "r1" } }, as: :turbo_stream
+  test "a scene with no name says why" do
+    post custom_scenes_path, params: { custom_scene: { name: "", group_id: "r1" } }, as: :json
     assert_response :unprocessable_entity
-    assert_select "turbo-stream[action=update][target=custom_scene_error]", /Name can't be blank/
+    assert_equal "Name can't be blank", response.parsed_body["error"]
+    assert_equal [ "can't be blank" ], response.parsed_body.dig("errors", "name")
     assert_equal 0, CustomScene.count
   end
 
@@ -43,25 +45,25 @@ class CustomScenesControllerTest < ActionDispatch::IntegrationTest
   test "renaming from the modal updates the room everywhere" do
     scene = CustomScene.create!(name: "Reading", group_id: "r1", lights_attributes: [ { hue_light_id: "l1", brightness: 40 } ])
     streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) do
-      patch custom_scene_path(scene), params: { custom_scene: { name: "Late reading" } }, as: :turbo_stream
+      patch custom_scene_path(scene), params: { custom_scene: { name: "Late reading" } }, as: :json
     end
-    assert_equal "Late reading", scene.reload.name
-    assert_equal 1, scene.lights.count
-    assert_select "turbo-stream[action=replace][target=room_r1] .chip--custom", "Late reading"
-    assert_includes streams.map { |stream| stream["target"] }, "room_r1"
+    assert_equal "Late reading", response.parsed_body["name"]
+    assert_equal 1, scene.reload.lights.count
+    room = streams.find { |stream| stream["target"] == "room_r1" }
+    assert_equal "Late reading", room.at_css(".chip--custom").text.strip
   end
 
   test "deleting from the modal removes the scene and its chip" do
     scene = CustomScene.create!(name: "Reading", group_id: "r1", lights_attributes: [ { hue_light_id: "l1", brightness: 40 } ])
-    delete custom_scene_path(scene), as: :turbo_stream
+    streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) { delete custom_scene_path(scene), as: :json }
+    assert_response :no_content
     assert_equal 0, CustomScene.count
-    assert_select "turbo-stream[action=replace][target=room_r1]"
-    assert_select "turbo-stream[action=replace][target=room_r1] .chip--custom", 0
+    assert_empty streams.find { |stream| stream["target"] == "room_r1" }.css(".chip--custom")
   end
 
   test "a blank name on rename shows why in the modal" do
     scene = CustomScene.create!(name: "Reading", group_id: "r1", lights_attributes: [ { hue_light_id: "l1", brightness: 40 } ])
-    patch custom_scene_path(scene), params: { custom_scene: { name: "" } }, as: :turbo_stream
+    patch custom_scene_path(scene), params: { custom_scene: { name: "" } }, as: :json
     assert_response :unprocessable_entity
     assert_equal "Reading", scene.reload.name
   end

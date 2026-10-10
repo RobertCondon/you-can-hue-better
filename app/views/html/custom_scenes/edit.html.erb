@@ -1,14 +1,14 @@
-<%= form_with url: custom_scene_path(@scene), method: :patch, scope: :custom_scene, data: { action: "turbo:submit-end->custom-scene-dialog#submitted" } do |form| %>
+<%= form_with url: custom_scene_path(@scene), method: :patch, scope: :custom_scene, data: { controller: "json-form", action: "submit->json-form#submit json-form:saved->custom-scene-dialog#close" } do |form| %>
   <p class="editor__title"><%= t(".title", name: @scene.name) %></p>
   <label class="editor__field">
     <span><%= t(".name") %></span>
     <%= form.text_field :name, value: @scene.name, required: true, maxlength: CustomSceneHelper::NAME_LENGTH, autocomplete: "off" %>
   </label>
-  <p id="<%= CustomScenesController::ERROR_TARGET %>" class="editor__error" role="alert"></p>
+  <p class="editor__error" role="alert" data-json-form-target="error"></p>
   <div class="editor__actions">
     <button type="button" class="btn" data-action="custom-scene-dialog#close"><%= t(".cancel") %></button>
     <button type="submit" class="btn btn--primary"><%= t(".save") %></button>
   </div>
 <% end %>
 <%= button_to t(".delete"), custom_scene_path(@scene), method: :delete, class: "btn btn--danger",
-              form: { class: "custom-scene__delete", data: { turbo_confirm: t(".confirm_delete", name: @scene.name), action: "turbo:submit-end->custom-scene-dialog#submitted" } } %>
+              form: { class: "custom-scene__delete", data: { controller: "json-form", action: "submit->json-form#submit json-form:saved->custom-scene-dialog#close", json_form_confirm_value: t(".confirm_delete", name: @scene.name) } } %>

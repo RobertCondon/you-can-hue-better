@@ -13,7 +13,7 @@ class NamesControllerTest < ActionDispatch::IntegrationTest
 
   test "a rename waits for the bridge even while another device is changing that light" do
     claim = Hue::Locks.claim(%w[l1])
-    patch light_names_path("l1"), params: { light: { name: "Reading lamp" } }, as: :turbo_stream
+    patch light_names_path("l1"), params: { light: { name: "Reading lamp" } }, as: :json
     assert_response :success
     assert_includes hue.writes.map(&:first), :rename_light
   ensure
@@ -21,24 +21,26 @@ class NamesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "a light nickname shows as the name with the real name underneath" do
-    patch light_names_path("l1"), params: { light: { nickname: "  Reading light " } }, as: :turbo_stream
+    streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) do
+      patch light_names_path("l1"), params: { light: { nickname: "  Reading light " } }, as: :json
+    end
     assert_response :success
-    assert_equal "Reading light", HueExtensions::Light.find("l1").nickname
+    assert_equal({ "id" => "l1", "name" => "Desk lamp", "nickname" => "Reading light" }, response.parsed_body)
     assert_empty hue.writes, "nicknames never touch the bridge"
-    assert_select "turbo-stream[target=light_r1_l1] .tile__name", "Reading light"
-    assert_select "turbo-stream[target=light_r1_l1] .tile__realname", "Desk lamp"
-    assert_select "turbo-stream[target=light_z1_l1]", 1, "every section showing the light updates"
+    tile = streams.find { |stream| stream["target"] == "light_r1_l1" }
+    assert_equal [ "Reading light", "Desk lamp" ], [ tile.at_css(".tile__name").text.strip, tile.at_css(".tile__realname").text.strip ]
+    assert_includes streams.map { |stream| stream["target"] }, "light_z1_l1", "every section showing the light updates"
   end
 
   test "an empty nickname clears it" do
     HueExtensions::Light.set_nickname!("l1", "Old")
-    patch light_names_path("l1"), params: { light: { nickname: "" } }, as: :turbo_stream
+    streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) { patch light_names_path("l1"), params: { light: { nickname: "" } }, as: :json }
     assert_nil HueExtensions::Light.find("l1").nickname
-    assert_select "turbo-stream[target=light_r1_l1] .tile__realname", 0
+    assert_empty streams.find { |stream| stream["target"] == "light_r1_l1" }.css(".tile__realname")
   end
 
   test "renaming a light renames the bulb and its device on the bridge" do
-    patch light_names_path("l1"), params: { light: { name: "Lamp", nickname: "" } }, as: :turbo_stream
+    patch light_names_path("l1"), params: { light: { name: "Lamp", nickname: "" } }, as: :json
     assert_response :success
     assert_equal [ [ :rename_light, "l1", "Lamp" ], [ :rename_device, "d1", "Lamp" ] ], hue.writes
     assert_equal "Lamp", Hue::Light.find("l1").name
@@ -48,31 +50,33 @@ class NamesControllerTest < ActionDispatch::IntegrationTest
 
   test "a bridge rename reaches every open page, not just this one" do
     broadcasts = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) do
-      patch light_names_path("l1"), params: { light: { name: "Reading lamp" } }, as: :turbo_stream
+      patch light_names_path("l1"), params: { light: { name: "Reading lamp" } }, as: :json
     end
     assert_includes broadcasts.map { |stream| stream["target"] }, "light_r1_l1"
   end
 
   test "an unchanged name is not sent to the bridge" do
-    patch light_names_path("l1"), params: { light: { name: "Desk lamp", nickname: "x" } }, as: :turbo_stream
+    patch light_names_path("l1"), params: { light: { name: "Desk lamp", nickname: "x" } }, as: :json
     assert_empty hue.writes
   end
 
-  test "the bridge's rejection keeps the editor open with the reason" do
-    patch light_names_path("l1"), params: { light: { name: "x" * 33 } }, as: :turbo_stream
-    assert_response :unprocessable_entity
-    assert_select "turbo-stream[target=editor_error]", /maxLength/
+  test "the bridge's rejection comes back with the reason for the editor to show" do
+    patch light_names_path("l1"), params: { light: { name: "x" * 33 } }, as: :json
+    assert_response :bad_gateway
+    assert_match(/maxLength/, response.parsed_body["error"])
     assert_equal "Desk lamp", Hue::Light.find("l1").name
   end
 
   test "a room nickname shows with the real name above" do
-    patch room_names_path("r1"), params: { room: { nickname: "Office" } }, as: :turbo_stream
-    assert_select "turbo-stream[target=room_head_r1] h2", /Office/
-    assert_select "turbo-stream[target=room_head_r1] .room__realname", "Study"
+    streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) { patch room_names_path("r1"), params: { room: { nickname: "Office" } }, as: :json }
+    assert_equal({ "id" => "r1", "name" => "Study", "nickname" => "Office" }, response.parsed_body)
+    head = streams.find { |stream| stream["target"] == "room_head_r1" }
+    assert_match(/Office/, head.at_css("h2").text)
+    assert_equal "Study", head.at_css(".room__realname").text.strip
   end
 
   test "renaming a zone renames it on the bridge" do
-    patch room_names_path("z1"), params: { room: { name: "Night" } }, as: :turbo_stream
+    patch room_names_path("z1"), params: { room: { name: "Night" } }, as: :json
     assert_equal [ [ :rename_group, "zone", "z1", "Night" ] ], hue.writes
     assert_equal "Night", Hue::Group.find("z1").name
   end
