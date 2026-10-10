@@ -1,6 +1,5 @@
 class CustomScene < ApplicationRecord
   belongs_to :group, class_name: "Hue::Group", optional: true
-  belongs_to :hue_scene, class_name: "Hue::Scene", optional: true
   has_many :lights, class_name: "CustomSceneLight", dependent: :destroy
   has_many :hue_lights, through: :lights
   has_many :binding_steps, as: :scene, dependent: :destroy
@@ -19,15 +18,12 @@ end
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  group_id      :string
-#  hue_scene_id  :string
 #
 # Indexes
 #
-#  index_custom_scenes_on_group_id      (group_id)
-#  index_custom_scenes_on_hue_scene_id  (hue_scene_id)
+#  index_custom_scenes_on_group_id  (group_id)
 #
 # Foreign Keys
 #
-#  group_id      (group_id => hue_groups.id)
-#  hue_scene_id  (hue_scene_id => hue_scenes.id)
+#  group_id  (group_id => hue_groups.id)
 #

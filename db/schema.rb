@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_10_103815) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_10_105734) do
   create_table "activities", force: :cascade do |t|
     t.string "target_kind"
     t.string "target_id"
@@ -95,12 +95,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_103815) do
   create_table "custom_scenes", force: :cascade do |t|
     t.string "name", null: false
     t.string "group_id"
-    t.string "hue_scene_id"
     t.integer "transition_ms", default: 400, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["group_id"], name: "index_custom_scenes_on_group_id"
-    t.index ["hue_scene_id"], name: "index_custom_scenes_on_hue_scene_id"
   end
 
   create_table "cycle_states", force: :cascade do |t|
@@ -287,7 +285,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_103815) do
   add_foreign_key "custom_scene_lights", "custom_scenes"
   add_foreign_key "custom_scene_lights", "hue_lights", column: "light_id"
   add_foreign_key "custom_scenes", "hue_groups", column: "group_id"
-  add_foreign_key "custom_scenes", "hue_scenes"
   add_foreign_key "cycle_states", "control_bindings"
   add_foreign_key "floor_nets", "hue_groups", column: "group_id", on_delete: :cascade
   add_foreign_key "floor_objects", "hue_groups", column: "group_id", on_delete: :cascade
