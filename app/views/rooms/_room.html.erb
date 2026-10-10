@@ -1,11 +1,17 @@
 <section class="room room--<%= room.kind %>" id="<%= targets.room(room) %>" data-controller="room" data-room-id="<%= room.id %>">
   <%= render "rooms/head", room: %>
   <div class="room__body">
-    <% if room.scenes.any? %>
+    <% if room.lights.any? %>
       <div class="scenes">
         <% room.scenes.each do |scene| %>
-          <%= async_hue_button_to scene.name, activate_scene_path(scene.id), light_ids: scene.light_ids, class: "chip", form: { class: "chip-form" } %>
+          <%= async_hue_button_to scene.name, activate_scene_path(scene.id), light_ids: scene.light_ids, class: "chip", form: { class: "chip-form", data: scene_set_data(scene.targets) } %>
         <% end %>
+        <% room.custom_scenes.each do |scene| %>
+          <%= async_hue_button_to scene.name, custom_scene_activation_path(scene.id), light_ids: scene.light_ids, class: "chip chip--custom",
+                                  title: t(".your_scene", name: scene.name), form: { class: "chip-form", data: custom_scene_chip_data(scene) } %>
+        <% end %>
+        <button type="button" class="chip chip--add" data-action="custom-scene-dialog#open" data-custom-scene-dialog-url-param="<%= new_custom_scene_path(group_id: room.id) %>"
+                aria-label="<%= t(".save_scene", room: room.display_name) %>" title="<%= t(".save_scene", room: room.display_name) %>">+</button>
       </div>
     <% end %>
     <div class="tiles">

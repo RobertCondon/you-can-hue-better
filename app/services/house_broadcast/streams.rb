@@ -7,7 +7,9 @@ module HouseBroadcast
 
     module_function
 
-    def rooms(house) = house.rooms.map { |room| replace(Targets.room(room), "rooms/room", room:) }
+    def rooms(house) = house.rooms.map { |room| room(room) }
+
+    def room(room) = replace(Targets.room(room), "rooms/room", room:)
 
     def room_changes(house, light_ids:, group_ids: [])
       house.rooms.flat_map do |room|

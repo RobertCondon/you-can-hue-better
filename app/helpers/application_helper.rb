@@ -20,7 +20,7 @@ module ApplicationHelper
 
   def light_constants
     {
-      offTile: House::Glow::OFF_HEX, warmWhite: Hue::Color::WARM_WHITE_HEX, glowMinimum: House::Glow::MINIMUM_STRENGTH,
+      offTile: House::Glow::OFF_HEX, warmWhite: Hue::Color::WARM_WHITE_HEX, glowMinimum: House::Glow::MINIMUM_STRENGTH, tintStrength: House::LightTile::TINT_STRENGTH,
       lowestLevel: Hue::Api::Limits::LIT_BRIGHTNESS.min, highestLevel: Hue::Api::Limits::LIT_BRIGHTNESS.max,
       coolestMirek: Hue::Api::Limits::MIREK.min, warmestMirek: Hue::Api::Limits::MIREK.max
     }

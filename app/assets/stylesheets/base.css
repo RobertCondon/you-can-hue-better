@@ -37,9 +37,12 @@ h2 { font-size: clamp(20px, 2.4vw, 26px); }
 .btn--icon { width: 36px; height: 36px; padding: 0; display: inline-grid; place-items: center; color: var(--ink-soft); font-size: var(--text-xxs); }
 .btn--icon.is-on { color: var(--ink); border-color: var(--ink-soft); }
 .btn--primary { background: var(--ink); color: var(--page); border-color: var(--ink); }
+.btn--danger { color: var(--danger); background: var(--danger-surface); border-color: var(--danger-line); }
 
 .chip { padding: 6px 14px; font-size: var(--text-md); white-space: nowrap; }
 .chip-form { display: inline; margin: 0; flex: none; }
+.chip--custom { border-color: var(--ink-soft); font-weight: 500; -webkit-touch-callout: none; user-select: none; }
+.chip--add { padding-inline: 12px; color: var(--ink-soft); border-style: dashed; font-weight: 500; }
 
 input[type="range"] {
   -webkit-appearance: none; appearance: none;

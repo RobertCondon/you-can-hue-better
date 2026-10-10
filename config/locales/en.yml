@@ -59,7 +59,24 @@ en:
     lights_busy: "%{target} is being changed from another device. Try again in a moment."
     went_wrong: "Something went wrong changing %{target}. Try again."
     still_changing: "Still changing. Try again in a moment."
+  custom_scenes:
+    new:
+      title: New scene for %{room}
+      hint: Saves how these lights look right now.
+      name: Name
+      cancel: Cancel
+      save: Save
+    edit:
+      title: Edit %{name}
+      name: Name
+      cancel: Cancel
+      save: Save
+      delete: Delete scene
+      confirm_delete: Delete %{name}? This can't be undone.
   rooms:
+    room:
+      save_scene: Save how %{room} looks now as a scene
+      your_scene: "%{name}, a scene you saved. Hold to rename or delete"
     badges:
       zone: zone
       hidden: hidden

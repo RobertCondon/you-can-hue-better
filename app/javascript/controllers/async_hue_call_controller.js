@@ -1,13 +1,13 @@
 import { Controller } from "@hotwired/stimulus"
 import { asyncHueCall } from "lib/hue_calls"
-import { previewPower } from "lib/light_preview"
+import { previewPower, previewLevel, previewColour } from "lib/light_preview"
 
 const POWER_FIELDS = [ "light[on]", "room[on]" ]
 const TRUE = "true"
 const PENDING_CLASS = "is-pending"
 
 export default class extends Controller {
-  static values = { lightIds: Array }
+  static values = { lightIds: Array, targets: Array }
 
   async submit(event) {
     event.preventDefault()
@@ -26,8 +26,18 @@ export default class extends Controller {
   }
 
   guess(fields) {
+    if (this.targetsValue.length) return this.showTargets()
     const power = POWER_FIELDS.flatMap(name => fields.getAll(name)).at(-1)
     if (power === undefined) return
     for (const lightId of this.lightIdsValue) previewPower(lightId, power === TRUE)
+  }
+
+  showTargets() {
+    for (const { light_id: lightId, on, level, hex } of this.targetsValue) {
+      previewPower(lightId, on)
+      if (!on) continue
+      if (level) previewLevel(lightId, level)
+      if (hex) previewColour(lightId, hex)
+    }
   }
 }

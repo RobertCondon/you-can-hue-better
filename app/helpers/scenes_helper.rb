@@ -15,5 +15,9 @@ module ScenesHelper
 
   def scene_light_ids(scene) = scene.actions.map(&:light_id)
 
+  def scene_set_data(targets) = { async_hue_call_targets_value: targets }
+
+  def scene_targets(scene) = scene.actions.map { |action| House::SceneTarget.from_scene_action(action).to_h }
+
   def scene_light_name(action) = action.light.extension&.nickname.presence || action.light.name
 end

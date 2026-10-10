@@ -72,6 +72,8 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     get root_path
     assert_select "#room_head_r1 form.room__toggle[data-controller=async-hue-call][data-async-hue-call-light-ids-value*=l1]"
     assert_select "#room_r1 .scenes form.chip-form[data-controller=async-hue-call][data-async-hue-call-light-ids-value*=l2]"
+    scene_targets = JSON.parse(css_select("#room_r1 .scenes form.chip-form[action$='s1/activate']").sole["data-async-hue-call-targets-value"])
+    assert_equal %w[l1 l2], scene_targets.map { |target| target["light_id"] }.sort
   end
 
   test "recalls a scene" do

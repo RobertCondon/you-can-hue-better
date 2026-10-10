@@ -1,7 +1,7 @@
 class House
-  class Room < Data.define(:id, :name, :kind, :grouped_light_id, :lights, :scenes, :position, :nickname, :hidden)
-    def initialize(position: nil, nickname: nil, hidden: false, **attributes)
-      super(position:, nickname: nickname.presence, hidden: hidden == true, **attributes)
+  class Room < Data.define(:id, :name, :kind, :grouped_light_id, :lights, :scenes, :custom_scenes, :position, :nickname, :hidden)
+    def initialize(position: nil, nickname: nil, hidden: false, custom_scenes: [], **attributes)
+      super(position:, nickname: nickname.presence, hidden: hidden == true, custom_scenes:, **attributes)
     end
 
     def display_name = nickname || name

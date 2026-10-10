@@ -2,7 +2,7 @@ class CustomScene < ApplicationRecord
   belongs_to :group, class_name: "Hue::Group", optional: true
   has_many :lights, class_name: "CustomSceneLight", dependent: :destroy
   has_many :hue_lights, through: :lights
-  has_many :binding_steps, as: :scene, dependent: :destroy
+  has_many :binding_steps, class_name: "ControlBindingStep", as: :scene, dependent: :destroy
 
   accepts_nested_attributes_for :lights, allow_destroy: true
 
