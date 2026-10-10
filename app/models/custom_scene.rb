@@ -18,3 +18,26 @@ class CustomScene < ApplicationRecord
 
   def fits_one_group? = group.present? && (lights - group.lights).empty?
 end
+
+# == Schema Information
+#
+# Table name: custom_scenes
+#
+#  id            :integer          not null, primary key
+#  name          :string           not null
+#  transition_ms :integer          default(400), not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  group_id      :string
+#  hue_scene_id  :string
+#
+# Indexes
+#
+#  index_custom_scenes_on_group_id      (group_id)
+#  index_custom_scenes_on_hue_scene_id  (hue_scene_id)
+#
+# Foreign Keys
+#
+#  group_id      (group_id => hue_groups.id)
+#  hue_scene_id  (hue_scene_id => hue_scenes.id)
+#

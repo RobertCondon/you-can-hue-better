@@ -17,3 +17,29 @@ module Hue
     def xy = color_x && { x: color_x.to_f, y: color_y.to_f }
   end
 end
+
+# == Schema Information
+#
+# Table name: hue_lights
+#
+#  id         :string           not null, primary key
+#  brightness :decimal(5, 2)    default(0.0), not null
+#  color_x    :decimal(6, 4)
+#  color_y    :decimal(6, 4)
+#  id_v1      :string
+#  mirek      :integer
+#  name       :string           not null
+#  on         :boolean          default(FALSE), not null
+#  raw        :json             not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  device_id  :string           not null
+#
+# Indexes
+#
+#  index_hue_lights_on_device_id  (device_id)
+#
+# Foreign Keys
+#
+#  device_id  (device_id => hue_devices.id)
+#

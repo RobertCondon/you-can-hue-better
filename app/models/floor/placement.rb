@@ -19,3 +19,27 @@ class Floor
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: light_placements
+#
+#  id         :integer          not null, primary key
+#  x          :decimal(5, 2)    not null
+#  y          :decimal(5, 2)    not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  group_id   :string           not null
+#  light_id   :string           not null
+#
+# Indexes
+#
+#  index_light_placements_on_group_id               (group_id)
+#  index_light_placements_on_group_id_and_light_id  (group_id,light_id) UNIQUE
+#  index_light_placements_on_light_id               (light_id)
+#
+# Foreign Keys
+#
+#  group_id  (group_id => hue_groups.id) ON DELETE => cascade
+#  light_id  (light_id => hue_lights.id) ON DELETE => cascade
+#

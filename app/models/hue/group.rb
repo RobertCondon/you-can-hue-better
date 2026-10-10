@@ -23,3 +23,23 @@ module Hue
     def display_name = extension&.nickname.presence || name
   end
 end
+
+# == Schema Information
+#
+# Table name: hue_groups
+#
+#  id               :string           not null, primary key
+#  any_on           :boolean          default(FALSE), not null
+#  brightness       :decimal(5, 2)    default(0.0), not null
+#  id_v1            :string
+#  kind             :string           not null
+#  name             :string           not null
+#  raw              :json             not null
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  grouped_light_id :string
+#
+# Indexes
+#
+#  index_hue_groups_on_grouped_light_id  (grouped_light_id)
+#

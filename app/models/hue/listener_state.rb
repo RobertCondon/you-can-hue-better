@@ -20,3 +20,17 @@ module Hue
     def mirror_current_as_of = [ last_event_at, full_sync_at ].compact.max
   end
 end
+
+# == Schema Information
+#
+# Table name: hue_listener_states
+#
+#  id            :integer          not null, primary key
+#  connected_at  :datetime
+#  full_sync_at  :datetime
+#  heartbeat_at  :datetime
+#  last_event_at :datetime
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  last_event_id :string
+#

@@ -52,3 +52,23 @@ class Floor
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: floor_nets
+#
+#  id         :integer          not null, primary key
+#  label      :string
+#  points     :json             not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  group_id   :string
+#
+# Indexes
+#
+#  index_floor_nets_on_group_id  (group_id)
+#
+# Foreign Keys
+#
+#  group_id  (group_id => hue_groups.id) ON DELETE => cascade
+#

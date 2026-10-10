@@ -24,3 +24,20 @@ module HueExtensions
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: hue_extensions_groups
+#
+#  id           :string           not null, primary key
+#  floor_aspect :decimal(4, 2)    default(1.0), not null
+#  hidden       :boolean          default(FALSE), not null
+#  nickname     :string
+#  position     :integer
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#
+# Foreign Keys
+#
+#  id  (id => hue_groups.id) ON DELETE => cascade
+#

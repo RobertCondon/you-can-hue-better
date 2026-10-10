@@ -40,3 +40,28 @@ class Floor
     def circle? = kind == CIRCLE
   end
 end
+
+# == Schema Information
+#
+# Table name: floor_objects
+#
+#  id         :integer          not null, primary key
+#  h          :decimal(5, 2)    not null
+#  kind       :string           not null
+#  label      :string
+#  rotation   :integer          default(0), not null
+#  w          :decimal(5, 2)    not null
+#  x          :decimal(5, 2)    not null
+#  y          :decimal(5, 2)    not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  group_id   :string           not null
+#
+# Indexes
+#
+#  index_floor_objects_on_group_id  (group_id)
+#
+# Foreign Keys
+#
+#  group_id  (group_id => hue_groups.id) ON DELETE => cascade
+#

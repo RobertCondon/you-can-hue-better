@@ -62,3 +62,29 @@ class ControlBinding < ApplicationRecord
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: control_bindings
+#
+#  id          :integer          not null, primary key
+#  action      :string           not null
+#  enabled     :boolean          default(TRUE), not null
+#  gesture     :string           not null
+#  settings    :json             not null
+#  target_type :string
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  control_id  :string           not null
+#  target_id   :string
+#
+# Indexes
+#
+#  index_control_bindings_on_control_id                 (control_id)
+#  index_control_bindings_on_control_id_and_gesture     (control_id,gesture) UNIQUE
+#  index_control_bindings_on_target_type_and_target_id  (target_type,target_id)
+#
+# Foreign Keys
+#
+#  control_id  (control_id => hue_controls.id)
+#

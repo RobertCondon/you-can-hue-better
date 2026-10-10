@@ -40,3 +40,33 @@ module Hue
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: hue_scenes
+#
+#  id                  :string           not null, primary key
+#  active              :string           default("inactive"), not null
+#  auto_dynamic        :boolean          default(FALSE), not null
+#  id_v1               :string
+#  kind                :string           default("scene"), not null
+#  last_actions_update :datetime
+#  last_recalled_at    :datetime
+#  name                :string           not null
+#  palette             :json             not null
+#  raw                 :json             not null
+#  speed               :decimal(4, 3)
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  group_id            :string           not null
+#  image_id            :string
+#
+# Indexes
+#
+#  index_hue_scenes_on_group_id  (group_id)
+#  index_hue_scenes_on_image_id  (image_id)
+#
+# Foreign Keys
+#
+#  group_id  (group_id => hue_groups.id)
+#

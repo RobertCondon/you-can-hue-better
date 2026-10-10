@@ -14,3 +14,19 @@ module Hue
     validates :kind, inclusion: { in: KINDS }
   end
 end
+
+# == Schema Information
+#
+# Table name: hue_devices
+#
+#  id              :string           not null, primary key
+#  battery_percent :integer
+#  id_v1           :string
+#  kind            :string           default("other"), not null
+#  name            :string           not null
+#  product_name    :string
+#  raw             :json             not null
+#  reachable       :boolean          default(TRUE), not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#

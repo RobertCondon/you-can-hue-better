@@ -21,3 +21,23 @@ class CycleState < ApplicationRecord
 
   def steps = @steps ||= control_binding.steps.to_a
 end
+
+# == Schema Information
+#
+# Table name: cycle_states
+#
+#  id                 :integer          not null, primary key
+#  last_pressed_at    :datetime
+#  position           :integer          default(0), not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  control_binding_id :integer          not null
+#
+# Indexes
+#
+#  index_cycle_states_on_control_binding_id  (control_binding_id) UNIQUE
+#
+# Foreign Keys
+#
+#  control_binding_id  (control_binding_id => control_bindings.id)
+#

@@ -23,3 +23,28 @@ class Activity < ApplicationRecord
 
   def settle!(outcome) = update!(result: outcome)
 end
+
+# == Schema Information
+#
+# Table name: activities
+#
+#  id               :integer          not null, primary key
+#  action           :string
+#  payload          :json
+#  result           :string
+#  source           :string           default("dashboard"), not null
+#  target_kind      :string
+#  target_name      :string
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  control_event_id :integer
+#  target_id        :string
+#
+# Indexes
+#
+#  index_activities_on_control_event_id  (control_event_id)
+#
+# Foreign Keys
+#
+#  control_event_id  (control_event_id => control_events.id)
+#

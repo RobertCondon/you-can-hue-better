@@ -10,3 +10,17 @@ class BridgePairing < ApplicationRecord
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: bridge_pairings
+#
+#  id         :integer          not null, primary key
+#  app_key    :string           not null
+#  bridge     :string           not null
+#  client_key :string
+#  paired_at  :datetime         not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  bridge_id  :string
+#

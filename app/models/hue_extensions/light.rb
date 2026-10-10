@@ -16,3 +16,20 @@ module HueExtensions
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: hue_extensions_lights
+#
+#  id         :string           not null, primary key
+#  hidden     :boolean          default(FALSE), not null
+#  icon       :string
+#  nickname   :string
+#  on_floor   :boolean          default(TRUE), not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Foreign Keys
+#
+#  id  (id => hue_lights.id) ON DELETE => cascade
+#
