@@ -292,6 +292,6 @@ Live check:
 
 ## Chunk 8: Docs
 
-- [ ] `README.md` (how a press works now, `async_hue_call` and `direct_hue_call`, the browser names)
-- [ ] `DB_DESIGN.md` (activity result values: pending, ok, not responding, error, cut short)
-- [ ] `INSTANT_COMMANDS_PLAN.md` (this file: everything ticked)
+- [x] `README.md` (how a press works now, `async_hue_call` and `direct_hue_call`, the browser names)
+- [x] `docs/DB_DESIGN.md` (activity result values: pending, ok, not responding, error, cut short)
+- [x] `INSTANT_COMMANDS_PLAN.md` (this file: everything ticked)

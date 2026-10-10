@@ -41,7 +41,9 @@ status, renaming on the bridge itself, and a visibility list: hide rooms or ligh
 
 ## How it fits together
 
-The bridge is the source of truth. The app keeps a mirror of it and never guesses.
+The bridge is the source of truth. The app keeps a mirror of it, and the mirror only ever holds what
+the bridge has said. The one guess is in the browser tab that pressed: it shows the press straight
+away, and the bridge's answer replaces it a moment later.
 
 - **Talking to the bridge** (`app/services/hue/api/`): `Hue::Api::Client` exposes one resource class per
   bridge resource (`client.lights.update`, `client.scenes.recall`, …) over a persistent connection.
@@ -62,16 +64,36 @@ The bridge is the source of truth. The app keeps a mirror of it and never guesse
   how a light's colour and brightness tint a tile, a scene dot and a lamp on the floor.
 - **The floor** (`app/models/floor.rb`, `app/models/floor/`): the plan, its coordinates and geometry, and
   its three tables (`Floor::Placement`, `Floor::Item` for walls and furniture, `Floor::Net` for outlines).
-- **Commands** (`app/services/house_commands/`): everything that changes the house is one command
-  answering `.call`. `HouseCommands::Command` runs the same steps for each: log it (`ActivityRecorder`), send it,
-  catch the mirror up, and broadcast.
-  Controllers pick a command and render.
+- **Commands** (`app/services/house_commands/`): everything that changes the house is one command.
+  `HouseCommands::Command` runs it one of two ways, and the controller says which with a block that
+  builds it (`HueCalls`):
+  - `async_hue_call` (lights, rooms, scenes, paint) answers 202 straight away. `call_later` claims the
+    command's lights in `Hue::Locks`, logs the press as pending, and `HouseCommands::Dispatch` sends it
+    on its own thread. `HouseCommands::Settlement` settles the log row (ok, not responding, or the
+    bridge's error), sends any toast to the tab that pressed, broadcasts the truth, then frees the
+    lights with a `settle` message. Nothing is retried.
+  - `direct_hue_call` (renames) waits for the bridge and the action renders the result, as before.
+
+  A press on a light that is still being changed is refused, never queued: the controller answers 409
+  with the light's real state and a "being changed from another device" toast. `Hue::CallTimings`
+  keeps the P95 of recent calls per kind of command; the 202 carries it as `Check-In-After`, the time
+  after which a tab that missed `settle` asks `GET /locks`. Actions that never talk to the bridge stay
+  plain Rails. `INSTANT_COMMANDS_PLAN.md` is the plan this was built from.
 - **Live pages**: every change, from this app, the Hue app or a wall switch, reaches open pages as
   Turbo Streams. `HouseBroadcast::Streams` builds each update once, for both a controller's reply and
   the broadcast, and `HouseBroadcast::Targets` names the elements they replace. An update aimed at something under the pointer waits until it is released
-  (`app/javascript/lib/busy.js`).
+  (`app/javascript/lib/busy.js`). Each page also has its own stream, so a toast about a press reaches
+  only the tab that made it. While a press holds a light, the listener skips that light's bridge
+  events, so a late echo of the previous press can't flicker the tile.
 - **Front end**: Stimulus controllers in `app/javascript/controllers/`, with shared maths and helpers in
-  `app/javascript/lib/` (colour, the floor's camera, geometry and light). Colours and limits the
+  `app/javascript/lib/` (colour, the floor's camera, geometry and light). `lib/requests.js` is the only
+  place that calls `fetch`. Presses use the same two names as the controllers: `asyncHueCall` and
+  `directHueCall` in `lib/hue_calls.js`, and forms built with `async_hue_form_with`,
+  `async_hue_button_to` or `direct_hue_form_with` (the `async-hue-call` and `direct-hue-call`
+  controllers). `lib/light_intents.js` tracks which lights are pending in this tab: they pulse, refuse
+  taps and drags with a "still changing" toast, and take the truth in one go when they settle. Tiles,
+  pins and floor lamps carry their lit and off looks from Ruby, so the guess looks exactly like the
+  real thing. Colours and limits the
   browser shares with Ruby arrive from Ruby in the page head (`lib/light_constants.js`). The floor's controller wires
   the page to the classes in `lib/floor/`, one per job. Stylesheets are one file per part of the page,
   with shared values in `tokens.css`. Every piece of visible text is in `config/locales/en.yml`.

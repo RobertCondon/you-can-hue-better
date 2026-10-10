@@ -198,6 +198,8 @@ control_events                    every press and turn, forever (cheap: a few hu
 
 activities                        one row per command sent to the bridge
   target_kind, target_id, target_name, action, payload, result
+  result            string       pending while an instant press is with the bridge, then ok,
+                                 not responding, the bridge's error, or "cut short by a restart"
   source            string       dashboard | remote | schedule | api
   control_event_id  integer FK null
 
