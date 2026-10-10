@@ -7,7 +7,7 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
 
   test "turns a whole room off via its grouped light, straight away" do
     streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) do
-      patch room_path("r1"), params: { room: { on: "false" } }, as: :turbo_stream
+      patch room_path("r1"), params: { room: { on: "false" } }, as: :json
     end
     assert_response :accepted
     assert_equal [ [ :grouped_light, "g1", { on: { on: false } } ] ], hue.writes
@@ -19,16 +19,16 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
 
   test "a room with a light another device is changing bounces whole" do
     claim = Hue::Locks.claim(%w[l2])
-    patch room_path("r1"), params: { room: { on: "false" } }, as: :turbo_stream
+    patch room_path("r1"), params: { room: { on: "false" } }, as: :json
     assert_response :conflict
     assert_empty hue.writes
-    assert_select "turbo-stream[action=update][target=flash]", /Study is being changed from another device/
+    assert_match(/Study is being changed from another device/, response.parsed_body["error"])
   ensure
     Hue::Locks.release(claim)
   end
 
   test "a room's brightness dims only the lights that are on" do
-    patch room_path("r1"), params: { room: { brightness: "50" } }, as: :turbo_stream
+    patch room_path("r1"), params: { room: { brightness: "50" } }, as: :json
     assert_response :accepted
     assert_equal [ [ :light, "l1", { on: { on: true }, dimming: { brightness: 50.0 } } ] ], hue.writes
     assert_equal [ "Study", "brightness 50%", "ok" ], [ Activity.last.target_name, Activity.last.action, Activity.last.result ]
@@ -36,13 +36,13 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
 
   test "a room that is all off turns on at the chosen brightness" do
     Hue::Light.where(id: %w[l1 l2]).update_all(on: false)
-    patch room_path("r1"), params: { room: { brightness: "30" } }, as: :turbo_stream
+    patch room_path("r1"), params: { room: { brightness: "30" } }, as: :json
     assert_equal [ [ :grouped_light, "g1", { on: { on: true }, dimming: { brightness: 30.0 } } ] ], hue.writes
   end
 
   test "a room's brightness bounces whole while any of its lights is being changed" do
     claim = Hue::Locks.claim(%w[l2])
-    patch room_path("r1"), params: { room: { brightness: "50" } }, as: :turbo_stream
+    patch room_path("r1"), params: { room: { brightness: "50" } }, as: :json
     assert_response :conflict
     assert_empty hue.writes
   ensure
@@ -77,7 +77,7 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "recalls a scene" do
-    post activate_scene_path("s1"), as: :turbo_stream
+    post activate_scene_path("s1"), as: :json
     assert_response :success
     assert_equal [ [ :scene, "s1", "active" ] ], hue.writes
     assert_equal "Relax in Study", Activity.last.target_name

@@ -27,7 +27,7 @@ class PinnedLightTest < ActionDispatch::IntegrationTest
 
   test "an update refreshes the pin too" do
     streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) do
-      patch light_path("l1"), params: { light: { brightness: "42" } }, as: :turbo_stream
+      patch light_path("l1"), params: { light: { brightness: "42" } }, as: :json
     end
     pin = streams.find { |stream| stream["target"] == "light_pin_l1" }
     assert_equal "42%", pin.at_css(".pin__bar [data-level]").text.strip

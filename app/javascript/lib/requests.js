@@ -8,6 +8,8 @@ const PATCH = "PATCH"
 const DELETE = "DELETE"
 
 export const ACCEPT = { turboStream: "text/vnd.turbo-stream.html", html: "text/html", json: "application/json" }
+const BRACKETED_NAME = /[^[\]]+/g
+const SKIPPED_FIELDS = new Set(["_method", "authenticity_token"])
 
 const csrfToken = () => document.querySelector(CSRF_TOKEN_SELECTOR).content
 
@@ -26,6 +28,32 @@ export function request(method, url, { fields, accept } = {}) {
   const tab = hueTab()
   if (tab) headers[HUE_TAB_HEADER] = tab
   return fetch(url, { method, headers, body: fields && formDataFrom(fields) })
+}
+
+function nestedFields(fields) {
+  const nested = {}
+  for (const [name, value] of fields instanceof FormData ? fields.entries() : Object.entries(fields)) {
+    if (SKIPPED_FIELDS.has(name)) continue
+    const path = name.match(BRACKETED_NAME)
+    const parent = path.slice(0, -1).reduce((node, key) => (node[key] ??= {}), nested)
+    parent[path.at(-1)] = value
+  }
+  return nested
+}
+
+export function sendJson(method, url, fields = {}) {
+  const tab = hueTab()
+  const headers = { "X-CSRF-Token": csrfToken(), Accept: ACCEPT.json, "Content-Type": ACCEPT.json }
+  if (tab) headers[HUE_TAB_HEADER] = tab
+  return fetch(url, { method, headers, body: JSON.stringify(nestedFields(fields)) })
+}
+
+export async function readJson(response) {
+  try {
+    return await response.json()
+  } catch {
+    return {}
+  }
 }
 
 export const post = (url, fields, options = {}) => request(POST, url, { ...options, fields })

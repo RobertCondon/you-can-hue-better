@@ -1,4 +1,4 @@
-class RoomsController < ApplicationController
+class RoomsController < ApiController
   include HueCalls
 
   ROOM_FIELDS = %i[on brightness].freeze

@@ -108,17 +108,25 @@ open the new and edit custom scene modals.
 
 Everything that goes through `async_hue_call` answers JSON.
 
-- [ ] `app/controllers/api_controller.rb` (new)
-- [ ] `app/controllers/concerns/json_errors.rb` (new: 404, 409, 422, 502 and a missing bridge as in the table)
-- [ ] `app/javascript/lib/requests.js` (`sendJson`, `readJson`)
-- [ ] `app/controllers/concerns/hue_calls.rb` (202 and 409 as JSON; no Turbo Streams in replies)
-- [ ] `LightsController#update`, `RoomsController#update`, `ScenesController#activate` and `#play`, `FloorPaintsController#create`, `CustomSceneActivationsController#create` (inherit `ApiController`)
-- [ ] `app/javascript/lib/hue_calls.js` (JSON; a 409 restores the snapshot and shows the toast)
-- [ ] `app/javascript/controllers/async_hue_call_controller.js` (sends JSON from the form's fields)
-- [ ] Controller tests: JSON replies, and the truth arriving by broadcast
+- [x] `app/controllers/api_controller.rb` (new: JSON only; with no bridge set up it answers 503 instead of redirecting)
+- [x] `app/controllers/concerns/json_errors.rb` (new: 404, 409, 422 and 502 as in the table)
+- [x] `app/services/house_commands/nothing_to_send.rb` (new: "nothing to change", "nothing to paint" and "no lights" are a 422, not a bridge error)
+- [x] `app/controllers/concerns/hue_calls.rb` (202 is `{ light_ids, check_in_ms }`; busy raises for `JsonErrors`; no Turbo Streams, no `Check-In-After` header)
+- [x] `LightsController`, `RoomsController`, `ScenesController`, `FloorPaintsController`, `CustomSceneActivationsController` (inherit `ApiController`)
+- [x] `LightNamesController` (includes `HouseStreams` itself until chunk 4, since `HueCalls` no longer does)
+- [x] `app/javascript/lib/requests.js` (`sendJson` turns bracketed field names into nested JSON; `readJson`)
+- [x] `app/javascript/lib/hue_calls.js` (`asyncHueCall` sends JSON; a 409 or any error puts the tiles back from the copy saved before the guess and shows the error as a toast; a 202 clears old toasts. `directHueCall` stays on Turbo until chunk 4)
+- [x] `app/javascript/lib/toasts.js` (`clearToasts`)
+- [x] `app/javascript/controllers/async_hue_call_controller.js` (sends the form's real method)
+- [x] `config/locales/en.yml` (the no-bridge message)
+- [x] `test/controllers/api_errors_test.rb` (new), and the light, room, scene, paint and custom scene press tests check JSON
 
-Live check: a light, the Mud pit slider and power, low-test-1 and low-test-2, two tabs pressing
-the same light (the second gets the toast and snaps back).
+`ApplicationController` keeps its HTML behaviour (redirect to setup, bridge errors as Turbo Stream
+toasts) for the controllers chunks 4 and 5 haven't moved yet; chunk 6 moves it into
+`Html::ApplicationController`.
+
+Live check: low-test-1 and low-test-2 from two tabs at once (the second gets a 409 and the toast),
+a 409 snapping the guess back, and a light press sent as nested JSON.
 
 ## Chunk 4: Direct changes and edits
 
@@ -151,6 +159,7 @@ Live check: add, move and delete a floor object and a net; move a lamp; hide and
 
 - [ ] Remove what nothing uses any more: Turbo form handlers (`turbo:submit-end`), reply-only stream helpers, `format.html` branches
 - [ ] `HouseStreams` and `ToastStreams` only build broadcasts
+- [ ] `ApplicationController`'s HTML behaviour (redirect to setup, Turbo Stream bridge errors, browser and importmap checks) moves into `Html::ApplicationController`
 - [ ] One test that every non-`Html::` controller only answers JSON
 
 ## Chunk 7: Docs

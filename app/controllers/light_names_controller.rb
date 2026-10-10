@@ -1,5 +1,6 @@
 class LightNamesController < ApplicationController
   include HueCalls
+  include HouseStreams
 
   NAME_FIELDS = %i[name nickname].freeze
 

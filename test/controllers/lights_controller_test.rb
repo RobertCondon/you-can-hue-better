@@ -8,7 +8,7 @@ class LightsControllerTest < ActionDispatch::IntegrationTest
 
   setup { sync_mirror! }
 
-  def press(light_id, fields) = patch light_path(light_id), params: { light: fields }, headers: { HueCalls::TAB_HEADER => TAB }, as: :turbo_stream
+  def press(light_id, fields) = patch light_path(light_id), params: { light: fields }, headers: { HueCalls::TAB_HEADER => TAB }, as: :json
 
   def tab_broadcasts(&) = capture_turbo_stream_broadcasts(HouseBroadcast.tab_stream(TAB), &)
 
@@ -16,8 +16,8 @@ class LightsControllerTest < ActionDispatch::IntegrationTest
     press("l1", on: "false")
     assert_response :accepted
     assert_equal [ [ :light, "l1", { on: { on: false } } ] ], hue.writes
-    assert_includes Hue::CallTimings::FLOOR_MILLISECONDS..Hue::CallTimings::CEILING_MILLISECONDS, response.headers[HueCalls::CHECK_IN_HEADER].to_i
-    assert_select "turbo-stream[action=replace]", 0
+    assert_equal %w[l1], response.parsed_body["light_ids"]
+    assert_includes Hue::CallTimings::FLOOR_MILLISECONDS..Hue::CallTimings::CEILING_MILLISECONDS, response.parsed_body["check_in_ms"]
   end
 
   test "the truth goes to every tab, then the lights settle" do
@@ -63,13 +63,12 @@ class LightsControllerTest < ActionDispatch::IntegrationTest
     assert_match(/Desk lamp isn't responding/, toasts.sole.to_html)
   end
 
-  test "a light another device is changing bounces with the truth and a message" do
+  test "a light another device is changing bounces with a message" do
     claim = Hue::Locks.claim(%w[l1])
     press("l1", on: "false")
     assert_response :conflict
     assert_empty hue.writes
-    assert_select "turbo-stream[action=replace][target=light_r1_l1]"
-    assert_select "turbo-stream[action=update][target=flash]", /Desk lamp is being changed from another device/
+    assert_equal({ "error" => "Desk lamp is being changed from another device. Try again in a moment.", "light_ids" => %w[l1] }, response.parsed_body)
   ensure
     Hue::Locks.release(claim)
   end

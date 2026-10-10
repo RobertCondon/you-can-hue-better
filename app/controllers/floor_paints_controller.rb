@@ -1,4 +1,4 @@
-class FloorPaintsController < ApplicationController
+class FloorPaintsController < ApiController
   include HueCalls
 
   def create

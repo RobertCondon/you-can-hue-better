@@ -75,7 +75,7 @@ class CustomScenesControllerTest < ActionDispatch::IntegrationTest
 
   test "pressing a custom scene moves its lights there straight away" do
     scene = CustomScene.create!(name: "Reading", group_id: "r1", lights_attributes: [ { hue_light_id: "l1", brightness: 40, mirek: 366 } ])
-    post custom_scene_activation_path(scene), as: :turbo_stream
+    post custom_scene_activation_path(scene), as: :json
     assert_response :accepted
     assert_equal [ [ :light, "l1", { on: { on: true }, dynamics: { duration: 400 }, dimming: { brightness: 40.0 }, color_temperature: { mirek: 366 } } ] ], hue.writes
   end

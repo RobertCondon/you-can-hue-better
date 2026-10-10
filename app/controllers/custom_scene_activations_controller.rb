@@ -1,4 +1,4 @@
-class CustomSceneActivationsController < ApplicationController
+class CustomSceneActivationsController < ApiController
   include HueCalls
 
   def create

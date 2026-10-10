@@ -1,4 +1,4 @@
-class ScenesController < ApplicationController
+class ScenesController < ApiController
   include HueCalls
 
   def floor_state

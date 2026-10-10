@@ -8,7 +8,7 @@ module HouseCommands
     end
 
     def check_request!
-      raise Hue::Error, I18n.t("house_commands.custom_scene_recall.no_lights") if light_ids.empty?
+      raise NothingToSend, I18n.t("house_commands.custom_scene_recall.no_lights") if light_ids.empty?
     end
 
     def light_ids = @light_ids ||= @custom_scene.lights.map(&:hue_light_id)

@@ -1,4 +1,4 @@
-class LightsController < ApplicationController
+class LightsController < ApiController
   include HueCalls
 
   COMMAND_FIELDS = %i[on brightness color x y mirek].freeze

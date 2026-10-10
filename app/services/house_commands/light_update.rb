@@ -30,7 +30,7 @@ module HouseCommands
       return { on: { on: true }, color: { xy: { x: cie(@fields[:x]), y: cie(@fields[:y]) } } } if @fields[:x].present? && @fields[:y].present?
       return { on: { on: true }, color_temperature: { mirek: @fields[:mirek].to_i.clamp(Hue::Api::Limits::MIREK) } } if @fields[:mirek].present?
 
-      raise Hue::Error, I18n.t("house_commands.light_update.nothing_to_change")
+      raise NothingToSend, I18n.t("house_commands.light_update.nothing_to_change")
     end
 
     def description

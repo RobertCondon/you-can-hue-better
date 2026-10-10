@@ -5,6 +5,7 @@ import { previewPower, previewLevel, previewColour } from "lib/light_preview"
 const POWER_FIELDS = [ "light[on]", "room[on]" ]
 const TRUE = "true"
 const PENDING_CLASS = "is-pending"
+const METHOD_FIELD = "_method"
 
 export default class extends Controller {
   static values = { lightIds: Array, targets: Array }
@@ -14,7 +15,8 @@ export default class extends Controller {
     const form = this.element
     const fields = new FormData(form, event.submitter)
     form.classList.add(PENDING_CLASS)
-    const accepted = await asyncHueCall(form.action, fields, this.lightIdsValue, { method: form.method.toUpperCase(), guess: () => this.guess(fields) })
+    const method = (fields.get(METHOD_FIELD) || form.method).toUpperCase()
+    const accepted = await asyncHueCall(form.action, fields, this.lightIdsValue, { method, guess: () => this.guess(fields) })
     if (!accepted) {
       form.classList.remove(PENDING_CLASS)
       form.reset()

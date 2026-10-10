@@ -29,6 +29,6 @@ class HouseCommands::LightUpdateTest < ActiveSupport::TestCase
   end
 
   test "nothing to change is an error the person sees" do
-    assert_raises(Hue::Error) { update_with({}) }
+    assert_raises(HouseCommands::NothingToSend) { update_with({}) }
   end
 end

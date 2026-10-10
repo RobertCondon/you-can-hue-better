@@ -90,6 +90,8 @@ en:
   floor:
     net:
       house_label: House
+  api:
+    no_bridge: No bridge is set up yet. Pair one on the setup page.
   toasts:
     a_painted_light: A painted light
     a_light_in: A light in %{room}

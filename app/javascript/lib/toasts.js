@@ -10,4 +10,9 @@ export function showToast(message) {
   document.getElementById(toastTemplate.dataset.toastTarget)?.replaceChildren(toast)
 }
 
+export function clearToasts() {
+  const toastTemplate = template()
+  if (toastTemplate) document.getElementById(toastTemplate.dataset.toastTarget)?.replaceChildren()
+}
+
 export const showStillChanging = () => showToast(template()?.dataset.stillChanging)

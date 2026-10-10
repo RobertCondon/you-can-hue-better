@@ -25,7 +25,7 @@ module HouseCommands
     def painted_light_ids = @painted_light_ids ||= Hue::Light.where(id: @strokes.map(&:light_id).uniq).pluck(:id)
 
     def check_request!
-      raise Hue::Error, I18n.t("house_commands.paint.nothing_to_paint") if painted_light_ids.empty?
+      raise NothingToSend, I18n.t("house_commands.paint.nothing_to_paint") if painted_light_ids.empty?
     end
 
     def light_ids = painted_light_ids

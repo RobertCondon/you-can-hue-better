@@ -30,10 +30,10 @@ end
 class RoomSwitchToastTest < ActionDispatch::IntegrationTest
   setup { sync_mirror! }
 
-  test "switching a room off clears the toast and asks nothing more" do
-    patch room_path("r1"), params: { room: { on: "false" } }, as: :turbo_stream
-    assert_response :success
-    assert_select "turbo-stream[action=update][target=flash] template", text: ""
+  test "switching a room off answers with its lights and nothing more" do
+    patch room_path("r1"), params: { room: { on: "false" } }, as: :json
+    assert_response :accepted
+    assert_equal %w[l1 l2], response.parsed_body["light_ids"].sort
     assert_equal "off", Activity.last.action
   end
 end

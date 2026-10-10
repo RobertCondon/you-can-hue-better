@@ -34,7 +34,7 @@ class ScenesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "play recalls the palette and refreshes the card" do
-    streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) { post play_scene_path("s1"), as: :turbo_stream }
+    streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) { post play_scene_path("s1"), as: :json }
     assert_response :accepted
     assert_equal [ [ :scene, "s1", "dynamic_palette" ] ], hue.writes
     assert_includes streams.map { |stream| stream["target"] }, "scene_card_s1"
