@@ -8,7 +8,11 @@ module HouseCommands
     MIREK_KEY = "mirek"
 
     Stroke = Data.define(:light_id, :hex, :mirek) do
-      def change = mirek.present? ? Hue::Api::LightChange.white(mirek) : Hue::Api::LightChange.colour(hex)
+      def payload
+        return { on: { on: true }, color_temperature: { mirek: mirek.to_i.clamp(Hue::Api::Limits::MIREK) } } if mirek.present?
+
+        { on: { on: true }, color: { xy: Hue::Color.hex_to_xy(hex) } }
+      end
     end
 
     def initialize(raw_strokes)
@@ -36,7 +40,7 @@ module HouseCommands
     end
 
     def send_to_bridge
-      Hue::Api::CommandResult.combine(painted_strokes.map { |stroke| Hue.client.lights.update(stroke.light_id, stroke.change.to_payload) })
+      Hue::Api::CommandResult.combine(painted_strokes.map { |stroke| Hue.client.lights.update(stroke.light_id, stroke.payload) })
     end
 
     def catch_up_mirror

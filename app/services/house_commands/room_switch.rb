@@ -2,7 +2,7 @@ module HouseCommands
   class RoomSwitch < Command
     def initialize(group, on:)
       @group = group
-      @change = Hue::Api::LightChange.power(on)
+      @on = on
     end
 
     def light_ids = @light_ids ||= @group.lights.pluck(:id)
@@ -12,9 +12,11 @@ module HouseCommands
     private
 
     def activity
-      { target_kind: @group.kind, target_id: @group.id, target_name: @group.name, action: @change.description, payload: @change.to_payload }
+      { target_kind: @group.kind, target_id: @group.id, target_name: @group.name, action: @on ? "on" : "off", payload: }
     end
 
-    def send_to_bridge = Hue.client.grouped_lights.update(@group.grouped_light_id, @change.to_payload)
+    def send_to_bridge = Hue.client.grouped_lights.update(@group.grouped_light_id, payload)
+
+    def payload = { on: { on: @on } }
   end
 end
