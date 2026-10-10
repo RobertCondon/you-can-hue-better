@@ -1,6 +1,6 @@
 <button type="button" class="<%= lamp_classes(spot) %>"
         id="<%= targets.floor_lamp(spot.light) %>" data-light-id="<%= spot.light.id %>" data-rooms="<%= spot.room_ids.join(" ") %>" data-floor-target="light"
-        style="<%= lamp_style(spot) %>"
+        style="<%= lamp_style(spot) %>" <%= tag.attributes(data: power_looks(spot.light) { |look| lamp_style(spot.with(light: look)) }) %>
         data-action="pointerdown->floor#down pointermove->floor#move pointerup->floor#up pointercancel->floor#up keydown->floor#nudge click->floor#openLight"
         data-floor-panel-url-param="<%= panel_light_path(spot.light.id) %>"
         aria-label="<%= lamp_label(spot) %>">

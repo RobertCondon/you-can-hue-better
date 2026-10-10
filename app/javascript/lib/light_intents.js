@@ -7,6 +7,8 @@ const LOCKS_PATH = "/locks"
 const LIGHT_IDS_PARAM = "light_ids[]"
 const checkInTimers = new Map()
 
+export const FREED_EVENT = "hue:freed"
+
 const elementsShowing = lightId => document.querySelectorAll(`[data-light-id="${lightId}"]`)
 
 export const isPending = lightId => checkInTimers.has(lightId)
@@ -24,7 +26,8 @@ export function markPending(lightIds) {
 }
 
 export function free(lightIds) {
-  for (const lightId of lightIds.filter(isPending)) {
+  const freeing = lightIds.filter(isPending)
+  for (const lightId of freeing) {
     const timer = checkInTimers.get(lightId)
     checkInTimers.delete(lightId)
     if (![...checkInTimers.values()].includes(timer)) clearTimeout(timer)
@@ -33,6 +36,7 @@ export function free(lightIds) {
       release(element)
     }
   }
+  if (freeing.length) document.dispatchEvent(new CustomEvent(FREED_EVENT, { detail: { lightIds: freeing } }))
 }
 
 export function checkInAfter(lightIds, milliseconds) {

@@ -8,6 +8,10 @@ module HouseCommands
       @mode = mode
     end
 
+    def light_ids = @light_ids ||= @scene.actions.pluck(:light_id)
+
+    def unreachable_description = Toasts.a_light_in(@scene.group.name)
+
     private
 
     def activity
@@ -16,6 +20,8 @@ module HouseCommands
     end
 
     def send_to_bridge = Hue.client.scenes.recall(@scene.id, action: @mode)
+
+    def catch_up_mirror = super.tap { |changes| changes.scene_changed(@scene.id) }
 
     def activity_action = ACTIVITY_ACTIONS.fetch(@mode)
   end

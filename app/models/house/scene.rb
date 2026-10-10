@@ -1,4 +1,4 @@
 class House
-  class Scene < Data.define(:id, :name, :group_id)
+  class Scene < Data.define(:id, :name, :group_id, :light_ids)
   end
 end

@@ -5,6 +5,10 @@ module HouseCommands
       @change = Hue::Api::LightChange.power(on)
     end
 
+    def light_ids = @light_ids ||= @group.lights.pluck(:id)
+
+    def unreachable_description = Toasts.a_light_in(@group.name)
+
     private
 
     def activity

@@ -1,5 +1,5 @@
 <dialog class="editor" data-editor-target="dialog">
-  <%= form_with url: "#", method: :patch, data: { editor_target: "form", action: "turbo:submit-end->editor#submitted" } do |form| %>
+  <%= direct_hue_form_with url: "#", method: :patch, data: { editor_target: "form", action: "direct-hue-call:end->editor#submitted" } do |form| %>
     <p class="editor__title" data-editor-target="title"></p>
     <% if bridge_names %>
       <label class="editor__field">

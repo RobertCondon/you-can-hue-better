@@ -20,11 +20,13 @@ module HouseCommands
 
     def painted_light_ids = @painted_light_ids ||= Hue::Light.where(id: @strokes.map(&:light_id).uniq).pluck(:id)
 
-    def call_now
+    def check_request!
       raise Hue::Error, I18n.t("house_commands.paint.nothing_to_paint") if painted_light_ids.empty?
-
-      super
     end
+
+    def light_ids = painted_light_ids
+
+    def unreachable_description = Toasts.a_painted_light
 
     private
 

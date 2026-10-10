@@ -1,10 +1,11 @@
 class RoomsController < ApplicationController
-  include HouseStreams
+  include HueCalls
 
   def update
-    group = Hue::Group.find(params[:id])
-    result = HouseCommands::RoomSwitch.call(group, on: ActiveModel::Type::Boolean.new.cast(params.require(:room)[:on]))
-    render_house_sections(toast: result_toast(result, t(".a_light_in", room: group.name)))
+    async_hue_call do
+      group = Hue::Group.find(params[:id])
+      HouseCommands::RoomSwitch.new(group, on: ActiveModel::Type::Boolean.new.cast(params.require(:room)[:on]))
+    end
   end
 
   def order

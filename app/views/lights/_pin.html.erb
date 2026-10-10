@@ -1,5 +1,5 @@
 <div class="<%= class_names("pin", light.lit? ? LightsHelper::ON_CLASS : LightsHelper::OFF_CLASS) %>" id="<%= targets.light_pin(light) %>" data-light-id="<%= light.id %>" data-brightness="<%= light.brightness.round %>"
-     style="<%= pin_style(light) %>"
+     style="<%= pin_style(light) %>" <%= tag.attributes(data: power_looks(light) { |look| pin_style(look) }) %>
      data-controller="light pinned"
      data-action="pointerdown->pinned#swipeStart pointermove->pinned#swipeMove pointerup->pinned#swipeEnd pointercancel->pinned#swipeEnd click->pinned#guard:capture">
   <div class="pin__bar">

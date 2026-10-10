@@ -1,5 +1,5 @@
 class ScenesController < ApplicationController
-  include HouseStreams
+  include HueCalls
 
   def index
     @rooms = House.load(refresh: false).rooms
@@ -25,8 +25,6 @@ class ScenesController < ApplicationController
   private
 
   def recall(mode)
-    scene = Hue::Scene.recallable.find(params[:id])
-    result = HouseCommands::SceneRecall.call(scene, mode)
-    render_house_sections(toast: result_toast(result, t("rooms.update.a_light_in", room: scene.group.name)), scene_ids: [ scene.id ])
+    async_hue_call { HouseCommands::SceneRecall.new(Hue::Scene.recallable.find(params[:id]), mode) }
   end
 end

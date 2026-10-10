@@ -1,10 +1,12 @@
 class RoomNamesController < ApplicationController
+  include HueCalls
+
   NAME_FIELDS = %i[name nickname].freeze
 
   def update
     group = Hue::Group.find(params[:room_id])
     fields = params.require(:room).permit(*NAME_FIELDS)
-    HouseCommands::RenameRoom.call(group, fields[:name]) if fields.key?(:name)
+    direct_hue_call { HouseCommands::RenameRoom.new(group, fields[:name]) } if fields.key?(:name)
     HueExtensions::Group.set_nickname!(group.id, fields[:nickname]) if fields.key?(:nickname)
     render_renamed(House.load(refresh: false).room(group.id))
   end

@@ -1,6 +1,8 @@
 require "test_helper"
+require "turbo/broadcastable/test_helper"
 
 class FloorPaintsControllerTest < ActionDispatch::IntegrationTest
+  include Turbo::Broadcastable::TestHelper
   setup { sync_mirror! }
 
   test "the floor has a Paint toggle, the tray with whites and colours, and scene chips carry their palette" do
@@ -16,15 +18,17 @@ class FloorPaintsControllerTest < ActionDispatch::IntegrationTest
   test "Apply sends one command per light and refreshes the painted lamps" do
     hue.writes.clear
     strokes = [ { light_id: "l1", hex: "#ff0000" }, { light_id: "l2", mirek: 370 } ]
-    post floor_paint_path, params: { strokes: strokes.to_json }, as: :turbo_stream
-    assert_response :success
+    streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) do
+      post floor_paint_path, params: { strokes: strokes.to_json }, as: :turbo_stream
+    end
+    assert_response :accepted
 
     sent = hue.writes.select { |write| write.first == :light }.to_h { |_kind, light_id, changes| [ light_id, changes ] }
     assert_equal({ on: { on: true }, color: { xy: Hue::Color.hex_to_xy("#ff0000") } }, sent["l1"])
     assert_equal({ on: { on: true }, color_temperature: { mirek: 370 } }, sent["l2"])
 
-    assert_select "turbo-stream[action=replace][target=floor_light_l1]"
-    assert_equal "paint 2", Activity.last.action
+    assert_includes streams.map { |stream| stream["target"] }, "floor_light_l1"
+    assert_equal [ "paint 2", "ok" ], [ Activity.last.action, Activity.last.result ]
   end
 
   test "a white is kept within the range bulbs accept" do

@@ -5,6 +5,7 @@ module HouseCommands
     def self.call(...) = new(...).call_now
 
     def call_now
+      check_request!
       claim = Hue::Locks.claim(light_ids) or return busy
       result = ActivityRecorder.record(**activity) { send_to_bridge }
       HouseBroadcast.changes(catch_up_mirror)
@@ -14,6 +15,7 @@ module HouseCommands
     end
 
     def call_later(tab: nil)
+      check_request!
       raise NotInstant, self.class.name if light_ids.empty?
 
       claim = Hue::Locks.claim(light_ids) or return busy
@@ -26,6 +28,8 @@ module HouseCommands
     def deliver = send_to_bridge
 
     def catch_up = catch_up_mirror
+
+    def check_request! = nil
 
     def light_ids = NO_LIGHTS
 

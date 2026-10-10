@@ -14,6 +14,12 @@ module LightsHelper
 
   def pin_style(light) = css_variables(hue: light.hex, ink: light.tile_text_hex, fill: "#{light.fill_pct}%")
 
+  def power_looks(light, &style)
+    on_light = light.with(on: true)
+    off_light = light.with(on: false)
+    { on_style: style.call(on_light), off_style: style.call(off_light), on_level: on_light.brightness_label, off_level: off_light.brightness_label }
+  end
+
   def scene_light_style(light) = css_variables(tile: light.tile_hex, ink: light.tile_text_hex, hue: light.hex)
 
   def slider_level(light) = light.lit? ? light.brightness.round : House::Light::UNLIT_LEVEL

@@ -1,6 +1,8 @@
 import { hold, release } from "lib/busy"
 import { styleNumber, roomIdsOf, snapshotAppearance, restoreAppearance } from "lib/floor/element_style"
-import { post, renderStreams, ACCEPT } from "lib/requests"
+import { asyncHueCall } from "lib/hue_calls"
+import { anyPending } from "lib/light_intents"
+import { showStillChanging } from "lib/toasts"
 
 const RECENT_STORAGE_KEY = "floor.recent"
 const RECENT_LIMIT = 8
@@ -20,6 +22,7 @@ const GREEN_HOUR = 8
 const BLUE_HOUR = 4
 const MAX_CHANNEL = 255
 const HEX_BASE = 16
+const POST = "POST"
 
 function hueToHex(hueDegrees) {
   const channel = startHour => {
@@ -135,23 +138,30 @@ export class FloorPaintBrush {
       restoreAppearance(lamp, original)
       release(lamp)
     }
-    this.originalAppearances = {}
-    this.strokes = {}
-    if (this.floor.hasPaintStatusTarget) this.renderStatus()
-    this.floor.lightCanvas.scheduleRedraw()
+    this.forgetStrokes()
   }
 
   async apply() {
     const strokes = Object.values(this.strokes)
     if (!strokes.length) return
-    this.floor.paintApplyTarget.disabled = true
-    const response = await post(this.floor.paintUrlValue, { strokes: JSON.stringify(strokes) }, { accept: ACCEPT.turboStream })
-    this.floor.paintApplyTarget.disabled = false
-    if (!response.ok) return
-    rememberColours(strokes.map(stroke => stroke.hex))
+    const lightIds = strokes.map(stroke => stroke.light_id)
+    if (anyPending(lightIds)) return showStillChanging()
     this.floor.preview.end()
-    this.clear()
-    await renderStreams(response)
+    this.keepStrokesAsGuess()
+    rememberColours(strokes.map(stroke => stroke.hex))
     this.renderRecent()
+    await asyncHueCall(this.floor.paintUrlValue, { strokes: JSON.stringify(strokes) }, lightIds, { method: POST })
+  }
+
+  keepStrokesAsGuess() {
+    for (const lamp of this.floor.lightTargets) if (this.originalAppearances[lamp.dataset.lightId]) release(lamp)
+    this.forgetStrokes()
+  }
+
+  forgetStrokes() {
+    this.originalAppearances = {}
+    this.strokes = {}
+    if (this.floor.hasPaintStatusTarget) this.renderStatus()
+    this.floor.lightCanvas.scheduleRedraw()
   }
 }

@@ -11,6 +11,20 @@ class TileGrammarTest < ActionDispatch::IntegrationTest
     assert_select "#light_r1_l1 .tile__fill"
     assert_select "#light_r1_l2.is-off[style*='--fill: 0%']"
   end
+
+  test "every tile, pin and floor lamp carries its lit look and its off look for the browser's guess" do
+    get root_path
+    looks = css_select("#light_r1_l1").sole
+    assert_includes looks["data-on-style"], "--fill: 80%"
+    assert_includes looks["data-off-style"], "--fill: 0%"
+    assert_equal [ "80%", "Off" ], [ looks["data-on-level"], looks["data-off-level"] ]
+
+    get pin_light_path("l1")
+    assert_select "#light_pin_l1[data-on-style][data-off-style][data-off-level=Off]"
+
+    get floor_path
+    assert_select "#floor_light_l1[data-on-style*='--bri'][data-off-style*='--bri: 0']"
+  end
 end
 
 class RoomSwitchToastTest < ActionDispatch::IntegrationTest

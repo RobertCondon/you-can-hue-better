@@ -17,7 +17,7 @@ class House
     private
 
     def recallable_scenes
-      Hue::Scene.arrange(@group.scenes.select(&:recallable?)).map { |scene| Scene.new(id: scene.id, name: scene.name, group_id: @group.id) }
+      Hue::Scene.arrange(@group.scenes.select(&:recallable?)).map { |scene| Scene.new(id: scene.id, name: scene.name, group_id: @group.id, light_ids: scene.actions.map(&:light_id)) }
     end
   end
 end

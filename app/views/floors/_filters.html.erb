@@ -15,12 +15,12 @@
       <% room_scenes.each do |scene| %>
         <button type="button" class="chip chip--scene" aria-pressed="false" data-floor-target="sceneChip"
                 data-floor-url-param="<%= floor_state_scene_path(scene.id) %>" data-floor-set-url-param="<%= activate_scene_path(scene.id) %>"
-                data-floor-palette-param="<%= scene.palette_hexes.to_json %>" data-action="floor#pickScene"
+                data-floor-palette-param="<%= scene.palette_hexes.to_json %>" data-floor-light-ids-param="<%= scene_light_ids(scene).to_json %>" data-action="floor#pickScene"
                 style="<%= palette_style(scene.palette_hexes) %>">
           <%= scene.display_name %>
         </button>
       <% end %>
-      <%= form_with url: "#", method: :post, class: "chip-form", data: { floor_target: "setForm" }, html: { hidden: true } do |form| %>
+      <%= async_hue_form_with url: "#", method: :post, class: "chip-form", light_ids: [], data: { floor_target: "setForm" }, html: { hidden: true } do |form| %>
         <%= form.button t(".set_scene"), class: "chip chip--primary" %>
       <% end %>
     </div>

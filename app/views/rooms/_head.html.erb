@@ -14,7 +14,7 @@
     <button type="button" class="btn btn--icon" data-action="rooms#moveUp" aria-label="<%= t(".move_up", room: room.display_name) %>">▲</button>
     <button type="button" class="btn btn--icon" data-action="rooms#moveDown" aria-label="<%= t(".move_down", room: room.display_name) %>">▼</button>
   </div>
-  <%= form_with url: room_path(room.id), method: :patch, class: "room__toggle" do |form| %>
+  <%= async_hue_form_with url: room_path(room.id), method: :patch, class: "room__toggle", light_ids: room.lights.map(&:id) do |form| %>
     <input type="hidden" name="room[on]" value="<%= room_power_target_state(room) %>">
     <button type="submit" class="<%= class_names("btn btn--icon", LightsHelper::ON_CLASS => room.any_on?) %>" aria-label="<%= room_power_label(room) %>" title="<%= room_power_title(room) %>">
       <%= render "shared/icons/power" %>

@@ -1,6 +1,7 @@
 <article class="<%= class_names("tile", light_state_class(light)) %>" id="<%= targets.light_tile(room, light) %>"
          style="<%= tile_style(light) %>"
          data-controller="tile" data-tile-url-value="<%= light_path(light.id) %>" data-light-id="<%= light.id %>" data-brightness="<%= light.brightness.round %>"
+         <%= tag.attributes(data: power_looks(light) { |look| tile_style(look) }) %>
          data-action="pointerdown->tile#down pointermove->tile#move pointerup->tile#up pointercancel->tile#up click->tile#guard:capture">
   <span class="tile__fill" aria-hidden="true"></span>
   <button type="button" class="tile__icon" data-action="tile#toggle" aria-pressed="<%= light.lit? %>" aria-label="<%= light_power_label(light) %>">

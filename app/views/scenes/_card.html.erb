@@ -15,9 +15,9 @@
     <% end %>
   <% end %>
   <div class="scene-card__actions">
-    <%= button_to t(".set"), activate_scene_path(scene.id), class: "chip", form: { class: "chip-form" } %>
+    <%= async_hue_button_to t(".set"), activate_scene_path(scene.id), light_ids: scene_light_ids(scene), class: "chip", form: { class: "chip-form" } %>
     <% if scene.dynamic? %>
-      <%= button_to t(".play"), play_scene_path(scene.id), class: "chip", form: { class: "chip-form" } %>
+      <%= async_hue_button_to t(".play"), play_scene_path(scene.id), light_ids: scene_light_ids(scene), class: "chip", form: { class: "chip-form" } %>
     <% end %>
   </div>
 </article>

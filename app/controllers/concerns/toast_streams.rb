@@ -6,10 +6,4 @@ module ToastStreams
   def message_toast(message) = turbo_stream.update(HouseBroadcast::Targets::FLASH, partial: "shared/flash", locals: { message: })
 
   def cleared_toast = turbo_stream.update(HouseBroadcast::Targets::FLASH, "")
-
-  def unreachable_message(light_description) = Toasts.not_responding(light_description)
-
-  def result_toast(result, light_description)
-    result.unreachable_lights? ? message_toast(unreachable_message(light_description)) : cleared_toast
-  end
 end

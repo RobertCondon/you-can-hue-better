@@ -23,7 +23,7 @@ class House
       raise if Hue::Light.none?
     end
 
-    def mirror_groups = Hue::Group.where(kind: ROOM_KINDS).includes(:extension, scenes: :extension, lights: [ :extension, :device ])
+    def mirror_groups = Hue::Group.where(kind: ROOM_KINDS).includes(:extension, scenes: [ :extension, :actions ], lights: [ :extension, :device ])
 
     def mirror_lights = Hue::Light.includes(:extension, :device)
 

@@ -4,7 +4,7 @@
     <% if room.scenes.any? %>
       <div class="scenes">
         <% room.scenes.each do |scene| %>
-          <%= button_to scene.name, activate_scene_path(scene.id), class: "chip", form: { class: "chip-form" } %>
+          <%= async_hue_button_to scene.name, activate_scene_path(scene.id), light_ids: scene.light_ids, class: "chip", form: { class: "chip-form" } %>
         <% end %>
       </div>
     <% end %>

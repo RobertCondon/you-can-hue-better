@@ -6,8 +6,8 @@
     <h1><%= @scene.display_name %></h1>
   </div>
   <div class="house__meta">
-    <%= button_to t("scenes.card.set"), activate_scene_path(@scene.id), class: "btn", form: { class: "chip-form" } %>
-    <% if @scene.dynamic? %><%= button_to t("scenes.card.play"), play_scene_path(@scene.id), class: "btn", form: { class: "chip-form" } %><% end %>
+    <%= async_hue_button_to t("scenes.card.set"), activate_scene_path(@scene.id), light_ids: scene_light_ids(@scene), class: "btn", form: { class: "chip-form" } %>
+    <% if @scene.dynamic? %><%= async_hue_button_to t("scenes.card.play"), play_scene_path(@scene.id), light_ids: scene_light_ids(@scene), class: "btn", form: { class: "chip-form" } %><% end %>
     <%= render "shared/nav", current: :scenes %>
   </div>
 </header>

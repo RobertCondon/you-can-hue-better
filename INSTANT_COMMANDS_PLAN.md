@@ -252,25 +252,30 @@ Live check:
 
 Everything else that talks to the bridge moves onto the two helpers.
 
-- [ ] `app/services/house_commands/room_switch.rb` (`light_ids`, `kind`)
-- [ ] `app/services/house_commands/scene_recall.rb` (`light_ids`, `kind`)
-- [ ] `app/services/house_commands/paint.rb` (`light_ids`, `kind`)
-- [ ] `app/controllers/rooms_controller.rb` (`async_hue_call`)
-- [ ] `app/controllers/scenes_controller.rb` (`async_hue_call` for `activate` and `play`)
-- [ ] `app/controllers/floor_paints_controller.rb` (`async_hue_call`)
-- [ ] `app/controllers/light_names_controller.rb` (`direct_hue_call`)
-- [ ] `app/controllers/room_names_controller.rb` (`direct_hue_call`)
-- [ ] `app/views/rooms/_head.html.erb` (`async_hue_form_with` with the room's light ids)
-- [ ] `app/views/rooms/_room.html.erb`, `app/views/scenes/_card.html.erb`, `app/views/scenes/show.html.erb` (`async_hue_button_to`)
-- [ ] `app/views/shared/_editor.html.erb` (`direct_hue_form_with`)
-- [ ] `app/helpers/hue_calls_helper.rb` (`async_hue_button_to`, `direct_hue_form_with`)
-- [ ] `app/javascript/controllers/direct_hue_call_controller.js` (new: direct forms)
-- [ ] `app/javascript/lib/floor/paint_brush.js` (`asyncHueCall`)
-- [ ] `app/javascript/lib/light_preview.js` (room guess: each light on or off, brightness estimate)
-- [ ] `app/controllers/concerns/toast_streams.rb` (`result_toast` removed if nothing uses it)
-- [ ] `test/controllers/rooms_controller_test.rb`, `scenes_controller_test.rb`, `floor_paints_controller_test.rb`, `names_controller_test.rb`
-
-The browser code has no automated tests today (there is no system test setup), so chunks 6 and 7 lean on their live checks.
+- [x] `app/services/house_commands/command.rb` (`check_request!`, run before either mode)
+- [x] `app/services/house_commands/room_switch.rb` (`light_ids`, "A light in …" when one isn't responding)
+- [x] `app/services/house_commands/scene_recall.rb` (`light_ids` from the scene's actions, refreshes the scene card when it settles)
+- [x] `app/services/house_commands/paint.rb` (`light_ids`, the empty paint check moved to `check_request!`)
+- [x] `app/services/toasts.rb`, `config/locales/en.yml` ("A light in …" and "A painted light" moved under `toasts`)
+- [x] `app/controllers/rooms_controller.rb`, `scenes_controller.rb`, `floor_paints_controller.rb` (`async_hue_call`)
+- [x] `app/controllers/light_names_controller.rb`, `room_names_controller.rb` (`direct_hue_call`)
+- [x] `app/controllers/concerns/house_streams.rb`, `toast_streams.rb` (`render_house_sections`, `result_toast` and `unreachable_message` removed, nothing uses them)
+- [x] `app/helpers/hue_calls_helper.rb` (`async_hue_button_to`, `direct_hue_form_with`; both join any existing Stimulus controller and actions)
+- [x] `app/helpers/scenes_helper.rb` (`scene_light_ids`)
+- [x] `app/models/house/scene.rb`, `room_builder.rb`, `loader.rb` (a room's scenes carry their light ids)
+- [x] `app/views/rooms/_head.html.erb` (`async_hue_form_with` with the room's light ids)
+- [x] `app/views/rooms/_room.html.erb`, `app/views/scenes/_card.html.erb`, `app/views/scenes/show.html.erb` (`async_hue_button_to`)
+- [x] `app/views/floors/_filters.html.erb`, `app/javascript/lib/floor/scene_preview.js` (the floor's Set scene form is async and takes the chosen scene's lights)
+- [x] `app/views/shared/_editor.html.erb` (`direct_hue_form_with`, closes on `direct-hue-call:end`)
+- [x] `app/javascript/controllers/direct_hue_call_controller.js` (new: direct forms, raises `end` with whether it worked)
+- [x] `app/javascript/controllers/async_hue_call_controller.js` (guesses room power too, pulses its own button until its lights are freed)
+- [x] `app/javascript/lib/light_intents.js` (raises `hue:freed` whenever lights are freed)
+- [x] `app/javascript/lib/floor/paint_brush.js` (`asyncHueCall`; the painted strokes stay on as the guess)
+- [x] `app/assets/stylesheets/tiles.css` (the pulse on the room power button and scene chips)
+- [x] `app/helpers/lights_helper.rb`, `app/views/lights/_light.html.erb`, `_pin.html.erb`, `app/views/floors/_light.html.erb` (each carries its lit look and its off look, drawn by the same Ruby as the real one)
+- [x] `app/javascript/lib/light_preview.js` (`previewPower` swaps to the matching look, so a light turning on shows its usual brightness and colour straight away)
+- [x] `test/controllers/tiles_test.rb` (both looks are rendered)
+- [x] `test/controllers/rooms_controller_test.rb`, `scenes_controller_test.rb`, `floor_paints_controller_test.rb`, `names_controller_test.rb`, `pinned_light_test.rb`
 
 Live check:
 

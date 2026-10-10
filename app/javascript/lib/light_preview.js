@@ -36,9 +36,12 @@ export function previewColour(lightId, hex) {
 
 export function previewPower(lightId, on) {
   for (const element of elementsShowing(lightId)) {
+    const look = on ? { style: element.dataset.onStyle, level: element.dataset.onLevel } : { style: element.dataset.offStyle, level: element.dataset.offLevel }
+    if (look.style !== undefined) element.setAttribute("style", look.style)
+    else element.style.setProperty("--fill", on ? `${element.dataset.brightness}%` : NO_FILL)
     element.classList.toggle(ON_CLASS, on)
     element.classList.toggle(OFF_CLASS, !on)
-    element.style.setProperty("--fill", on ? `${element.dataset.brightness}%` : NO_FILL)
+    if (look.level !== undefined) for (const levelLabel of element.querySelectorAll(LEVEL_SELECTOR)) levelLabel.textContent = look.level
   }
 }
 

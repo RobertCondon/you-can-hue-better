@@ -6,6 +6,20 @@ class NamesControllerTest < ActionDispatch::IntegrationTest
 
   setup { sync_mirror! }
 
+  test "the rename editor sends through the direct form controller and closes when it ends" do
+    get root_path
+    assert_select "dialog.editor form[data-controller=direct-hue-call][data-action*='submit->direct-hue-call#submit'][data-action*='direct-hue-call:end->editor#submitted']"
+  end
+
+  test "a rename waits for the bridge even while another device is changing that light" do
+    claim = Hue::Locks.claim(%w[l1])
+    patch light_names_path("l1"), params: { light: { name: "Reading lamp" } }, as: :turbo_stream
+    assert_response :success
+    assert_includes hue.writes.map(&:first), :rename_light
+  ensure
+    Hue::Locks.release(claim)
+  end
+
   test "a light nickname shows as the name with the real name underneath" do
     patch light_names_path("l1"), params: { light: { nickname: "  Reading light " } }, as: :turbo_stream
     assert_response :success

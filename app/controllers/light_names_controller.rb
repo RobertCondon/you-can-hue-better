@@ -1,12 +1,12 @@
 class LightNamesController < ApplicationController
-  include HouseStreams
+  include HueCalls
 
   NAME_FIELDS = %i[name nickname].freeze
 
   def update
     light = Hue::Light.find(params[:light_id])
     fields = params.require(:light).permit(*NAME_FIELDS)
-    HouseCommands::RenameLight.call(light, fields[:name]) if fields.key?(:name)
+    direct_hue_call { HouseCommands::RenameLight.new(light, fields[:name]) } if fields.key?(:name)
     HueExtensions::Light.set_nickname!(light.id, fields[:nickname]) if fields.key?(:nickname)
     render_renamed(light)
   end

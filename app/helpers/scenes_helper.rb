@@ -13,5 +13,7 @@ module ScenesHelper
 
   def scene_dot_hex(action) = action.on ? House::Glow.hex(action.hex, action.brightness) : House::Glow::OFF_HEX
 
+  def scene_light_ids(scene) = scene.actions.map(&:light_id)
+
   def scene_light_name(action) = action.light.extension&.nickname.presence || action.light.name
 end

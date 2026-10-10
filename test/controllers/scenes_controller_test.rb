@@ -1,6 +1,8 @@
 require "test_helper"
+require "turbo/broadcastable/test_helper"
 
 class ScenesControllerTest < ActionDispatch::IntegrationTest
+  include Turbo::Broadcastable::TestHelper
   setup { sync_mirror! }
 
   test "the scenes page lists cards per room with a dot per light" do
@@ -32,11 +34,11 @@ class ScenesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "play recalls the palette and refreshes the card" do
-    post play_scene_path("s1"), as: :turbo_stream
-    assert_response :success
+    streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) { post play_scene_path("s1"), as: :turbo_stream }
+    assert_response :accepted
     assert_equal [ [ :scene, "s1", "dynamic_palette" ] ], hue.writes
-    assert_select "turbo-stream[action=replace][target=scene_card_s1]"
-    assert_equal "play", Activity.last.action
+    assert_includes streams.map { |stream| stream["target"] }, "scene_card_s1"
+    assert_equal [ "play", "ok" ], [ Activity.last.action, Activity.last.result ]
   end
 
   test "a nickname shows on the card" do

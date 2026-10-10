@@ -24,7 +24,7 @@ export class FloorScenePreview {
     this.muteOutsideChosenRoom()
   }
 
-  async pickScene(chip, { url, setUrl, palette }) {
+  async pickScene(chip, { url, setUrl, palette, lightIds }) {
     const alreadyShowing = chip.getAttribute("aria-pressed") === "true"
     this.end()
     this.muteOutsideChosenRoom()
@@ -41,6 +41,7 @@ export class FloorScenePreview {
     const setForm = chip.closest(CHIP_ROW_SELECTOR).querySelector(SET_FORM_SELECTOR)
     if (setForm) {
       setForm.action = setUrl
+      setForm.dataset.asyncHueCallLightIdsValue = JSON.stringify(lightIds || [])
       setForm.hidden = false
     }
   }
