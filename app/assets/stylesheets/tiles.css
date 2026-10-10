@@ -46,11 +46,11 @@
 .tile.is-unreachable .tile__level { color: var(--danger); opacity: 1; font-size: var(--text-xs); line-height: 1.2; max-width: 5.5em; }
 
 .tile.is-pending .tile__dot, .pin.is-pending .tile__dot, .floor__lamp.is-pending .floor__dot,
-.light-panel.is-pending .switch__track, .room__toggle.is-pending .btn, .chip-form.is-pending button { animation: pending-breath 1.6s ease-in-out infinite; }
+.light-panel.is-pending .switch__track, .room__toggle.is-pending .btn, .chip-form.is-pending button, .room__dim.is-pending input { animation: pending-breath 1.6s ease-in-out infinite; }
 @keyframes pending-breath { 50% { opacity: 0.45; } }
 
 @media (prefers-reduced-motion: reduce) {
   .tile__fill, .chevron { transition: none; }
   .tile.is-pending .tile__dot, .pin.is-pending .tile__dot, .floor__lamp.is-pending .floor__dot,
-  .light-panel.is-pending .switch__track, .room__toggle.is-pending .btn, .chip-form.is-pending button { animation: none; opacity: 0.7; }
+  .light-panel.is-pending .switch__track, .room__toggle.is-pending .btn, .chip-form.is-pending button, .room__dim.is-pending input { animation: none; opacity: 0.7; }
 }

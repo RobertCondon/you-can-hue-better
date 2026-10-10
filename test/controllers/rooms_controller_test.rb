@@ -27,6 +27,47 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     Hue::Locks.release(claim)
   end
 
+  test "a room's brightness dims only the lights that are on" do
+    patch room_path("r1"), params: { room: { brightness: "50" } }, as: :turbo_stream
+    assert_response :accepted
+    assert_equal [ [ :light, "l1", { on: { on: true }, dimming: { brightness: 50.0 } } ] ], hue.writes
+    assert_equal [ "Study", "brightness 50%", "ok" ], [ Activity.last.target_name, Activity.last.action, Activity.last.result ]
+  end
+
+  test "a room that is all off turns on at the chosen brightness" do
+    Hue::Light.where(id: %w[l1 l2]).update_all(on: false)
+    patch room_path("r1"), params: { room: { brightness: "30" } }, as: :turbo_stream
+    assert_equal [ [ :grouped_light, "g1", { on: { on: true }, dimming: { brightness: 30.0 } } ] ], hue.writes
+  end
+
+  test "a room's brightness bounces whole while any of its lights is being changed" do
+    claim = Hue::Locks.claim(%w[l2])
+    patch room_path("r1"), params: { room: { brightness: "50" } }, as: :turbo_stream
+    assert_response :conflict
+    assert_empty hue.writes
+  ensure
+    Hue::Locks.release(claim)
+  end
+
+  test "each room has a brightness slider at the average of its lit lights" do
+    get root_path
+    assert_select "#room_head_r1 form.room__dim[data-controller~=async-hue-call][data-controller~=room-brightness] input[type=range][name='room[brightness]'][value='80']"
+    assert_select "#room_head_r1 form.room__dim output", "80%"
+  end
+
+  test "the slider greys out at the average when the lit lights are at different levels" do
+    Hue::Light.find("l2").update!(on: true, brightness: 40)
+    Hue::Device.find("d2").update!(reachable: true)
+    get root_path
+    assert_select "#room_head_r1 form.room__dim.is-mixed input[type=range][value='60']"
+    assert_select "#room_head_r1 form.room__dim output", "~60%"
+  end
+
+  test "the slider is not grey when every lit light is at the same level" do
+    get root_path
+    assert_select "#room_head_r1 form.room__dim:not(.is-mixed)"
+  end
+
   test "the room's power button and scene chips go through the async form controller with their lights" do
     get root_path
     assert_select "#room_head_r1 form.room__toggle[data-controller=async-hue-call][data-async-hue-call-light-ids-value*=l1]"

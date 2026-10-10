@@ -23,7 +23,9 @@ device. A tile's icon switches the light, a sideways drag across it dims, and it
 docked at the top of the page with a slider and colour swatch that stays while the room scrolls.
 Swipe the bar to move to the next light; tap it to unfold rename and the colour wheel, which only
 offers colours the bulb can actually make. Edit arranges rooms, and the order is shared by every
-device. Names set here are nicknames this app shows; the bridge's name sits beside them.
+device. Names set here are nicknames this app shows; the bridge's name sits beside them. Each room's
+header has a power button and a brightness slider, which dims the lights that are on, or turns the
+whole room on at that level when it is all off.
 
 **Scenes** (`/scenes`) shows each room's scenes as cards with a dot per light and the palette behind,
 with Set and Play. A scene's page draws it on the floor plan.

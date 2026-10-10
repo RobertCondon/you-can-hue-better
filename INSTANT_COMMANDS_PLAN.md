@@ -295,3 +295,21 @@ Live check:
 - [x] `README.md` (how a press works now, `async_hue_call` and `direct_hue_call`, the browser names)
 - [x] `docs/DB_DESIGN.md` (activity result values: pending, ok, not responding, error, cut short)
 - [x] `INSTANT_COMMANDS_PLAN.md` (this file: everything ticked)
+
+## Chunk 9: Room brightness
+
+A slider under each room's header. It dims only the lights that are on; if the whole room is off,
+every light turns on at that level. When the lit lights are at different levels it sits greyed at
+their average, and sliding it sets them all to the new level. It goes through `async_hue_call` like any other press.
+
+- [x] `app/services/house_commands/room_brightness.rb` (new: one command per lit light, or the room's grouped light when all are off; locks every light in the room)
+- [x] `app/controllers/rooms_controller.rb` (`room[brightness]` picks `RoomBrightness`, `room[on]` picks `RoomSwitch`)
+- [x] `app/models/house/room.rb` (`lit_lights`, `level` as the average of the lit lights, `mixed_brightness?` when they differ, `brightness_label` with "~" when mixed)
+- [x] `app/helpers/rooms_helper.rb` (`MIXED_CLASS`)
+- [x] `app/views/rooms/_head.html.erb` (the slider, an async form with the room's lights)
+- [x] `app/javascript/controllers/room_brightness_controller.js` (new: previews the level on the lights it will change, holds the room's header so a broadcast can't swap the slider mid-drag, lets go once the lights are freed)
+- [x] `app/assets/stylesheets/rooms.css`, `tiles.css` (the slider row, hidden when the room is collapsed; greyed when mixed; its pulse)
+- [x] `config/locales/en.yml` (the slider's label)
+- [x] `test/controllers/rooms_controller_test.rb` (lit lights only, all off, bouncing, the slider, mixed and even)
+- [x] `app/services/house_commands/settlement.rb` (no "isn't responding" toast when one of the press's lights was already showing as not responding; the log still says not responding)
+- [x] `test/services/house_commands/settlement_test.rb` (the quiet case)

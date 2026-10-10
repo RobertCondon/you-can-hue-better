@@ -1,4 +1,6 @@
 module RoomsHelper
+  MIXED_CLASS = "is-mixed"
+
   def room_badges(room, badge_class: "room__kind")
     badges = []
     badges << t("rooms.badges.zone") if room.kind == Hue::Group::ZONE

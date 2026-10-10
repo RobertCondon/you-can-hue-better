@@ -11,6 +11,21 @@ class House
     def on_count = visible_lights.count(&:lit?)
     def any_on? = on_count.positive?
     def all_on? = visible_lights.all?(&:lit?)
+    def lit_lights = visible_lights.select(&:lit?)
+
+    def level
+      return Light::UNLIT_LEVEL if lit_lights.empty?
+
+      (lit_lights.sum(&:brightness) / lit_lights.size).round.clamp(Hue::Api::Limits::LIT_BRIGHTNESS)
+    end
+
+    def mixed_brightness? = lit_lights.map { |light| light.brightness.round }.uniq.size > 1
+
+    def brightness_label
+      return I18n.t("house.light.off") unless any_on?
+
+      I18n.t(mixed_brightness? ? "house.room.mixed_level" : "house.light.level", level:)
+    end
 
     def summary
       return I18n.t("house.room.all_off") if on_count.zero?

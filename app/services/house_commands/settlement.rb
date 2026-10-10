@@ -7,10 +7,11 @@ module HouseCommands
     end
 
     def settle
+      already_silent = any_light_already_silent?
       result = @command.deliver
       unreachable = result.unreachable_lights?
       @activity.settle!(unreachable ? Activity::UNREACHABLE : Activity::OK)
-      toast(Toasts.not_responding(@command.unreachable_description)) if unreachable
+      toast(Toasts.not_responding(@command.unreachable_description)) if unreachable && !already_silent
     rescue Hue::Error => error
       @activity.settle!(error.message)
       toast(error.message)
@@ -25,6 +26,8 @@ module HouseCommands
     private
 
     def toast(message) = HouseBroadcast.toast_to_tab(@tab, message)
+
+    def any_light_already_silent? = Hue::Light.where(id: @command.light_ids).joins(:device).where(device: { reachable: false }).exists?
 
     def broadcast_truth
       changes = caught_up_changes

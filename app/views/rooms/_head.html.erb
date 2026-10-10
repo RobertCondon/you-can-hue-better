@@ -20,4 +20,13 @@
       <%= render "shared/icons/power" %>
     </button>
   <% end %>
+  <% if room.visible_lights.any? %>
+    <%= async_hue_form_with url: room_path(room.id), method: :patch, class: class_names("room__dim", RoomsHelper::MIXED_CLASS => room.mixed_brightness?), light_ids: room.lights.map(&:id),
+                            data: { controller: "room-brightness", action: "hue:freed@document->room-brightness#freed" } do |form| %>
+      <label class="sr-only" for="room_bri_<%= room.id %>"><%= t(".brightness_of", room: room.display_name) %></label>
+      <input type="range" id="room_bri_<%= room.id %>" name="room[brightness]" min="<%= Hue::Api::Limits::LIT_BRIGHTNESS.min %>" max="<%= Hue::Api::Limits::LIT_BRIGHTNESS.max %>"
+             value="<%= room.level %>" data-action="input->room-brightness#preview change->room-brightness#submit">
+      <output for="room_bri_<%= room.id %>" data-room-brightness-target="level"><%= room.brightness_label %></output>
+    <% end %>
+  <% end %>
 </div>

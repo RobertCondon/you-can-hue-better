@@ -31,6 +31,14 @@ class HouseCommands::SettlementTest < ActiveSupport::TestCase
     assert_match(/isn't responding/, toasts.sole.to_html)
   end
 
+  test "a light that was already showing as not responding is logged but doesn't warn again" do
+    Hue::Device.find("d1").update!(reachable: false)
+    hue.unpowered_light_ids << "l1"
+    activity, toasts = settle
+    assert activity.unreachable?
+    assert_empty toasts
+  end
+
   test "a rejection logs the reason, warns, and still broadcasts the truth" do
     hue.rejection_for_writes = "link button not pressed"
     house = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) { @activity, @toasts = settle }

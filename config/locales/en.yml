@@ -36,6 +36,7 @@ en:
       all_off: All off
       all_on: All on
       some_on: "%{on} of %{total} on"
+      mixed_level: "~%{level}%"
   activerecord:
     errors:
       models:
@@ -69,6 +70,7 @@ en:
       title_on: Turn room on
     head:
       rename: Rename
+      brightness_of: Brightness of %{room}
       move_up: Move %{room} up
       move_down: Move %{room} down
   house_commands:
