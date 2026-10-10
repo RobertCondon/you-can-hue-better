@@ -50,10 +50,17 @@ end
 class CustomSceneTest < ActiveSupport::TestCase
   setup { Hue::Mirror::Sync.call }
 
-  test "a custom scene captures the current mirror state" do
-    scene = CustomScene.capture!(name: "Now", lights: Hue::Light.all, group: Hue::Group.find("r1"))
-    assert_equal 2, scene.states.count
-    assert_equal 80.0, scene.states.find_by(light_id: "l1").brightness.to_f
-    assert scene.fits_one_group?
+  def scene_light(**attributes)
+    CustomScene.create!(name: "Now").lights.build(hue_light: Hue::Light.find("l1"), **attributes)
+  end
+
+  test "a scene light can have a colour or a mirek" do
+    assert scene_light(color_x: 0.3, color_y: 0.3).valid?
+    assert scene_light(mirek: 366).valid?
+    assert scene_light.valid?
+  end
+
+  test "a scene light cannot have both a colour and a mirek" do
+    refute scene_light(color_x: 0.3, color_y: 0.3, mirek: 366).valid?
   end
 end

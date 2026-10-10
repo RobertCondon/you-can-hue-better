@@ -1,9 +1,18 @@
 class CustomSceneLight < ApplicationRecord
   belongs_to :custom_scene
-  belongs_to :light, class_name: "Hue::Light"
+  belongs_to :hue_light, class_name: "Hue::Light", foreign_key: :light_id
 
   validates :brightness, numericality: { in: Hue::Api::Limits::BRIGHTNESS }, allow_nil: true
   validates :light_id, uniqueness: { scope: :custom_scene_id }
+  validate :colour_or_mirek
+
+  private
+
+  def colour_or_mirek
+    return if mirek.nil? || (color_x.nil? && color_y.nil?)
+
+    errors.add(:base, "can have a colour or a mirek, not both")
+  end
 end
 
 # == Schema Information
