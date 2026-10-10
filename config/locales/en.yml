@@ -80,6 +80,8 @@ en:
       nothing_to_paint: Nothing to paint
     scene_recall:
       target: "%{scene} in %{room}"
+    custom_scene_recall:
+      no_lights: This scene has no lights to set
   time:
     formats:
       clock: "%H:%M"

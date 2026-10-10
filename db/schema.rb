@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_10_105734) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_10_134548) do
   create_table "activities", force: :cascade do |t|
     t.string "target_kind"
     t.string "target_id"
@@ -79,7 +79,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_105734) do
 
   create_table "custom_scene_lights", force: :cascade do |t|
     t.integer "custom_scene_id", null: false
-    t.string "light_id", null: false
+    t.string "hue_light_id", null: false
     t.boolean "on", default: true, null: false
     t.decimal "brightness", precision: 5, scale: 2
     t.decimal "color_x", precision: 6, scale: 4
@@ -87,9 +87,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_105734) do
     t.integer "mirek"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["custom_scene_id", "light_id"], name: "index_custom_scene_lights_on_custom_scene_id_and_light_id", unique: true
+    t.index ["custom_scene_id", "hue_light_id"], name: "index_custom_scene_lights_on_custom_scene_id_and_hue_light_id", unique: true
     t.index ["custom_scene_id"], name: "index_custom_scene_lights_on_custom_scene_id"
-    t.index ["light_id"], name: "index_custom_scene_lights_on_light_id"
+    t.index ["hue_light_id"], name: "index_custom_scene_lights_on_hue_light_id"
   end
 
   create_table "custom_scenes", force: :cascade do |t|
@@ -283,7 +283,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_105734) do
   add_foreign_key "control_events", "control_bindings"
   add_foreign_key "control_events", "hue_controls", column: "control_id"
   add_foreign_key "custom_scene_lights", "custom_scenes"
-  add_foreign_key "custom_scene_lights", "hue_lights", column: "light_id"
+  add_foreign_key "custom_scene_lights", "hue_lights"
   add_foreign_key "custom_scenes", "hue_groups", column: "group_id"
   add_foreign_key "cycle_states", "control_bindings"
   add_foreign_key "floor_nets", "hue_groups", column: "group_id", on_delete: :cascade

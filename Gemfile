@@ -9,6 +9,7 @@ gem "turbo-rails"
 gem "stimulus-rails"
 gem "solid_cable"
 gem "bootsnap", require: false
+gem "alba"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 group :development, :test do

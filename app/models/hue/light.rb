@@ -3,7 +3,7 @@ module Hue
     belongs_to :device
     has_many :group_lights, dependent: :destroy
     has_many :groups, through: :group_lights
-    has_many :custom_scene_lights, class_name: "::CustomSceneLight", dependent: :destroy
+    has_many :custom_scene_lights, class_name: "::CustomSceneLight", foreign_key: :hue_light_id, dependent: :destroy
     has_one :extension, class_name: "::HueExtensions::Light", foreign_key: :id, inverse_of: :hue_light, dependent: :destroy
 
     validates :name, presence: true

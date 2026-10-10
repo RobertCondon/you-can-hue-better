@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   get "dev", to: "dashboard#dev"
   get "up", to: "rails/health#show", as: :rails_health_check
   resource :setup, only: [ :show, :create ], controller: "setup"
+  resources :custom_scenes, only: [ :show, :create, :update ] do
+    resource :activation, only: :create, controller: "custom_scene_activations"
+  end
 
   resources :lights, only: :update do
     member do

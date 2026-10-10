@@ -4,6 +4,8 @@ class CustomScene < ApplicationRecord
   has_many :hue_lights, through: :lights
   has_many :binding_steps, as: :scene, dependent: :destroy
 
+  accepts_nested_attributes_for :lights, allow_destroy: true
+
   validates :name, presence: true
   validates :transition_ms, numericality: { greater_than_or_equal_to: 0 }
 end
