@@ -2,7 +2,7 @@
 <%= turbo_stream_from HouseBroadcast::STREAM %>
 <header class="house">
   <div>
-    <p class="muted"><%= link_to t("scenes.index.title"), scenes_path, class: "muted" %> / <%= @scene.group.display_name %></p>
+    <p class="muted"><%= link_to t("html.scenes.index.title"), scenes_path, class: "muted" %> / <%= @scene.group.display_name %></p>
     <h1><%= @scene.display_name %></h1>
   </div>
   <div class="house__meta">

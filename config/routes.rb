@@ -1,8 +1,13 @@
 Rails.application.routes.draw do
-  root "dashboard#show"
-  get "dev", to: "dashboard#dev"
   get "up", to: "rails/health#show", as: :rails_health_check
-  resource :setup, only: [ :show, :create ], controller: "setup"
+
+  scope module: :html do
+    root "dashboard#show"
+    get "dev", to: "dashboard#dev"
+    resource :setup, only: [ :show, :create ], controller: "setup"
+    resource :floor, only: :show
+    resources :scenes, only: [ :index, :show ]
+  end
   resources :custom_scenes, only: [ :new, :show, :create, :edit, :update, :destroy ] do
     resource :activation, only: :create, controller: "custom_scene_activations"
   end
@@ -22,7 +27,7 @@ Rails.application.routes.draw do
 
   resources :locks, only: :index
 
-  resources :scenes, only: [ :index, :show ] do
+  resources :scenes, only: [] do
     member do
       post :activate
       post :play
@@ -33,7 +38,8 @@ Rails.application.routes.draw do
   patch "visibility/lights/:id", to: "visibility#light", as: :light_visibility
   patch "visibility/rooms/:id", to: "visibility#room", as: :room_visibility
 
-  resource :floor, only: [ :show, :update ] do
+  patch "floor", to: "floors#update"
+  resource :floor, only: [] do
     resources :objects, only: :create, controller: "floor_objects"
     resources :nets, only: :create, controller: "floor_nets"
     resource :paint, only: :create, controller: "floor_paints"

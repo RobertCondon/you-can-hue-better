@@ -10,4 +10,5 @@ Rails.application.configure do
   config.action_controller.allow_forgery_protection = false
   config.active_support.deprecation = :stderr
   config.action_controller.raise_on_missing_callback_actions = true
+  config.i18n.raise_on_missing_translations = true
 end

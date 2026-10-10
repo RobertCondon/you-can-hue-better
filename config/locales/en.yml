@@ -1,28 +1,52 @@
 en:
-  setup:
-    show:
-      source:
-        environment: from the environment
-        paired: paired here
-        file: from config/hue.json
-        none: not connected
-      title: Connect to your bridge
-      connected_html: Connected to the bridge at %{bridge} %{source}.
-      pairing_again: Pairing again replaces the stored key.
-      pairing_again_environment: Pairing again replaces the stored key but not the environment's.
-      heading: Connect to your Hue bridge
-      explanation: The app needs a key from the bridge. Pressing its button lets it hand one out.
-      bridge_address: Bridge address
-      address_placeholder: 192.168.0.44
-      bridges_found: Bridges found
-      found: Found on your network by Philips' discovery service.
-      not_found: Not found automatically. It is in the Hue app under Settings → My Hue system → the bridge, or on your router's device list.
-      press_button: Press the round button on top of the bridge.
-      then_connect: 'Within %{seconds} seconds, press this:'
-      connect: I've pressed the button, connect
-    create:
-      connected: Connected to the bridge at %{address}.
-      connected_without_sync: 'Connected to the bridge at %{address}, but the first sync failed: %{reason}'
+  html:
+    dashboard:
+      show:
+        title: Lights
+      dev:
+        title: Lights (dev)
+        recent_changes: Recent changes
+        no_changes: Nothing yet. Tap a light to get started.
+        recent_presses: Recent presses
+      unreachable:
+        title: Bridge unreachable
+        heading: Can't reach the Hue bridge
+        advice_html: Check the bridge is powered on and this machine is on the same wifi, then %{try_again}.
+        try_again: try again
+    floors:
+      show:
+        title: Floor
+    scenes:
+      index:
+        title: Scenes
+      show:
+        floor_caption_html: 'The house with this scene: lights it doesn''t set are greyed out. %{arrange}.'
+        arrange_floor: Arrange the floor
+        each_light: What each light does
+    setup:
+      show:
+        source:
+          environment: from the environment
+          paired: paired here
+          file: from config/hue.json
+          none: not connected
+        title: Connect to your bridge
+        connected_html: Connected to the bridge at %{bridge} %{source}.
+        pairing_again: Pairing again replaces the stored key.
+        pairing_again_environment: Pairing again replaces the stored key but not the environment's.
+        heading: Connect to your Hue bridge
+        explanation: The app needs a key from the bridge. Pressing its button lets it hand one out.
+        bridge_address: Bridge address
+        address_placeholder: 192.168.0.44
+        bridges_found: Bridges found
+        found: Found on your network by Philips' discovery service.
+        not_found: Not found automatically. It is in the Hue app under Settings → My Hue system → the bridge, or on your router's device list.
+        press_button: Press the round button on top of the bridge.
+        then_connect: 'Within %{seconds} seconds, press this:'
+        connect: I've pressed the button, connect
+      create:
+        connected: Connected to the bridge at %{address}.
+        connected_without_sync: 'Connected to the bridge at %{address}, but the first sync failed: %{reason}'
   hue:
     control:
       button_label: "%{device} button %{number}"
@@ -125,18 +149,6 @@ en:
       dev: dev
       edit: Edit
       done: Done
-    show:
-      title: Lights
-    dev:
-      title: Lights (dev)
-      recent_changes: Recent changes
-      no_changes: Nothing yet. Tap a light to get started.
-      recent_presses: Recent presses
-    unreachable:
-      title: Bridge unreachable
-      heading: Can't reach the Hue bridge
-      advice_html: Check the bridge is powered on and this machine is on the same wifi, then %{try_again}.
-      try_again: try again
     presses:
       none: No presses heard yet.
       with_steps: "%{gesture} %{steps} steps"
@@ -190,15 +202,7 @@ en:
       also_in: also in %{rooms}
       set: Set
       play: Play
-    index:
-      title: Scenes
-    show:
-      floor_caption_html: 'The house with this scene: lights it doesn''t set are greyed out. %{arrange}.'
-      arrange_floor: Arrange the floor
-      each_light: What each light does
   floors:
-    show:
-      title: Floor
     floor:
       close: Close
       shapes:

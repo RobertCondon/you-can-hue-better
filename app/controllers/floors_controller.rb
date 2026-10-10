@@ -1,11 +1,4 @@
 class FloorsController < ApplicationController
-  def show
-    @house = House.load(refresh: false)
-    @floor = Floor.live(@house)
-    @rooms = @house.rooms
-    @scenes = Hue::Scene.by_room
-  end
-
   def update
     place_light if params[:light_id].present?
     reshape_floor if params[:aspect].present?
