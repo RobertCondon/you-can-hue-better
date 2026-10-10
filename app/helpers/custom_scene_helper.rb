@@ -8,6 +8,6 @@ module CustomSceneHelper
   ].join(" ").freeze
 
   def custom_scene_chip_data(scene)
-    { controller: HOLD_CONTROLLER, action: HOLD_ACTIONS, custom_scene_dialog_url_param: edit_custom_scene_path(scene.id), **scene_set_data(scene.targets) }
+    { controller: HOLD_CONTROLLER, action: HOLD_ACTIONS, custom_scene_dialog_url_param: edit_html_custom_scene_path(scene.id), **scene_set_data(scene.targets) }
   end
 end

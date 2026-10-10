@@ -60,7 +60,7 @@ class FloorLightPanelTest < ActionDispatch::IntegrationTest
 
   test "a lamp opens its live panel; the floor carries the popover and the rename dialog" do
     get floor_path
-    assert_select "#floor_light_l1[data-action~='click->floor#openLight'][data-floor-panel-url-param='#{panel_light_path("l1")}']"
+    assert_select "#floor_light_l1[data-action~='click->floor#openLight'][data-floor-panel-url-param='#{panel_html_light_path("l1")}']"
     assert_select ".floor-wrap .floor__popover[hidden] [data-floor-target=popoverBody]"
     assert_select "main[data-controller=editor] .editor input[data-editor-target=nickname]"
     assert_select "main .editor input[data-editor-target=name]", 0, "nicknames only, like the everyday view"
@@ -83,7 +83,7 @@ class FloorUnreachableTest < ActionDispatch::IntegrationTest
     assert_select "#light_r1_l1.is-off.is-unreachable .tile__level", "Not responding"
     get floor_path
     assert_select "#floor_light_l1.is-off.is-unreachable[style*='--bri: 0']"
-    get panel_light_path("l1")
+    get panel_html_light_path("l1")
     assert_select ".light-panel__notice", /Not responding.*on at 80%/
     get floor_state_scene_path("s1"), as: :json
     assert_equal 0, response.parsed_body.find { |state| state["light_id"] == "l1" }["bri"], "a scene preview can't light a bulb with no power"

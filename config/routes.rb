@@ -8,15 +8,21 @@ Rails.application.routes.draw do
     resource :floor, only: :show
     resources :scenes, only: [ :index, :show ]
   end
-  resources :custom_scenes, only: [ :new, :show, :create, :edit, :update, :destroy ] do
+  namespace :html do
+    resources :lights, only: [] do
+      member do
+        get :panel
+        get :pin
+      end
+    end
+    resources :custom_scenes, only: [ :new, :edit ]
+  end
+
+  resources :custom_scenes, only: [ :show, :create, :update, :destroy ] do
     resource :activation, only: :create, controller: "custom_scene_activations"
   end
 
   resources :lights, only: :update do
-    member do
-      get :panel
-      get :pin
-    end
     resource :names, only: :update, controller: "light_names"
   end
 

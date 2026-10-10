@@ -10,7 +10,7 @@
           <%= async_hue_button_to scene.name, custom_scene_activation_path(scene.id), light_ids: scene.light_ids, class: "chip chip--custom",
                                   title: t(".your_scene", name: scene.name), form: { class: "chip-form", data: custom_scene_chip_data(scene) } %>
         <% end %>
-        <button type="button" class="chip chip--add" data-action="custom-scene-dialog#open" data-custom-scene-dialog-url-param="<%= new_custom_scene_path(group_id: room.id) %>"
+        <button type="button" class="chip chip--add" data-action="custom-scene-dialog#open" data-custom-scene-dialog-url-param="<%= new_html_custom_scene_path(group_id: room.id) %>"
                 aria-label="<%= t(".save_scene", room: room.display_name) %>" title="<%= t(".save_scene", room: room.display_name) %>">+</button>
       </div>
     <% end %>

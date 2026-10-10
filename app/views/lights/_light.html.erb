@@ -8,7 +8,7 @@
     <span class="tile__dot"><%= render "lights/icon", icon: light.icon %></span>
   </button>
   <button type="button" class="tile__open" data-action="light-panel#toggle"
-          data-light-panel-id-param="<%= light.id %>" data-light-panel-pin-url-param="<%= pin_light_path(light.id) %>" data-light-panel-room-param="<%= room.id %>"
+          data-light-panel-id-param="<%= light.id %>" data-light-panel-pin-url-param="<%= pin_html_light_path(light.id) %>" data-light-panel-room-param="<%= room.id %>"
           aria-expanded="false" aria-controls="<%= targets.light_dock %>">
     <span class="tile__names">
       <span class="tile__name"><%= light.display_name %><% if light.hidden? %> <span class="tile__badge"><%= t("rooms.badges.hidden") %></span><% end %></span>

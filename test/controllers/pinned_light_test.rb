@@ -8,11 +8,11 @@ class PinnedLightTest < ActionDispatch::IntegrationTest
   test "the dock sits at the top of the lights view and tiles pin into it" do
     get root_path
     assert_select "main[data-controller=light-panel] > .dock#light_dock[hidden][data-light-panel-target=dock]"
-    assert_select "#light_r1_l1 .tile__open[data-light-panel-pin-url-param='#{pin_light_path("l1")}'][data-light-panel-room-param=r1][aria-controls=light_dock]"
+    assert_select "#light_r1_l1 .tile__open[data-light-panel-pin-url-param='#{pin_html_light_path("l1")}'][data-light-panel-room-param=r1][aria-controls=light_dock]"
   end
 
   test "a pin is a bar plus the folded panel" do
-    get pin_light_path("l1")
+    get pin_html_light_path("l1")
     assert_response :success
     assert_select "#light_pin_l1[data-controller~=pinned][data-controller~=light][style*='--fill: 80%']"
     assert_select "#light_pin_l1 .pin__bar .pin__icon[aria-pressed=true] svg.ico"

@@ -7,16 +7,6 @@ class CustomScenesController < ApplicationController
 
   rescue_from ActiveRecord::RecordInvalid, with: :render_invalid
 
-  def new
-    @room = House.load(refresh: false).room(params.require(:group_id)) or raise ActiveRecord::RecordNotFound
-    render layout: false
-  end
-
-  def edit
-    @scene = CustomScene.find(params[:id])
-    render layout: false
-  end
-
   def show
     @scene = CustomScene.includes(:lights).find(params[:id])
     respond_to do |format|

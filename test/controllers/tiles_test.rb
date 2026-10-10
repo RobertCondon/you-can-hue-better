@@ -19,7 +19,7 @@ class TileGrammarTest < ActionDispatch::IntegrationTest
     assert_includes looks["data-off-style"], "--fill: 0%"
     assert_equal [ "80%", "Off" ], [ looks["data-on-level"], looks["data-off-level"] ]
 
-    get pin_light_path("l1")
+    get pin_html_light_path("l1")
     assert_select "#light_pin_l1[data-on-style][data-off-style][data-off-level=Off]"
 
     get floor_path

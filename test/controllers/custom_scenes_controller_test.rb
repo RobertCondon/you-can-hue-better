@@ -6,15 +6,6 @@ class CustomScenesControllerTest < ActionDispatch::IntegrationTest
 
   setup { sync_mirror! }
 
-  test "the new scene modal shows the room's lights as they are and asks for a name" do
-    get new_custom_scene_path(group_id: "r1")
-    assert_response :success
-    assert_select "form[action='#{custom_scenes_path}'] input[name='custom_scene[name]'][required]"
-    assert_select "input[type=hidden][name='custom_scene[group_id]'][value=r1]"
-    assert_select ".custom-scene__light", 2
-    assert_select ".custom-scene__light", /Desk lamp\s*80%/
-  end
-
   test "saving from the modal captures how the room's lights look right now" do
     streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) do
       post custom_scenes_path, params: { custom_scene: { name: "Reading", group_id: "r1" } }, as: :turbo_stream
@@ -43,18 +34,10 @@ class CustomScenesControllerTest < ActionDispatch::IntegrationTest
     assert_equal [ "Bright", "Relax", "Reading", "+" ], chips
     scene = CustomScene.sole
     assert_select "#room_r1 form.chip-form[action$='/activation'][data-controller~=async-hue-call][data-controller~=scene-hold] .chip--custom", "Reading"
-    assert_select "#room_r1 form.chip-form[data-action*='scene-hold:edit->custom-scene-dialog#open'][data-custom-scene-dialog-url-param='#{edit_custom_scene_path(scene)}']"
+    assert_select "#room_r1 form.chip-form[data-action*='scene-hold:edit->custom-scene-dialog#open'][data-custom-scene-dialog-url-param='#{edit_html_custom_scene_path(scene)}']"
     targets = JSON.parse(css_select("#room_r1 form.chip-form[action$='/activation']").sole["data-async-hue-call-targets-value"])
     assert_equal [ { "light_id" => "l1", "on" => true, "level" => 40, "hex" => Hue::Color.mirek_to_hex(366) } ], targets
-    assert_select "#room_r1 .chip--add[data-action='custom-scene-dialog#open'][data-custom-scene-dialog-url-param='#{new_custom_scene_path(group_id: "r1")}']"
-  end
-
-  test "holding a custom scene opens it to rename or delete" do
-    scene = CustomScene.create!(name: "Reading", group_id: "r1", lights_attributes: [ { hue_light_id: "l1", brightness: 40 } ])
-    get edit_custom_scene_path(scene)
-    assert_response :success
-    assert_select "form[action='#{custom_scene_path(scene)}'] input[name='custom_scene[name]'][value=Reading]"
-    assert_select "form.custom-scene__delete[action='#{custom_scene_path(scene)}'][data-turbo-confirm] input[name=_method][value=delete]"
+    assert_select "#room_r1 .chip--add[data-action='custom-scene-dialog#open'][data-custom-scene-dialog-url-param='#{new_html_custom_scene_path(group_id: "r1")}']"
   end
 
   test "renaming from the modal updates the room everywhere" do

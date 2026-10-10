@@ -91,18 +91,18 @@ Live check: every page answers 200 at its old address with no missing text: `/`,
 
 ## Chunk 2: Fragments
 
-Everything the browser loads into a page moves into `Html::` with an `/html` prefix (decision 1).
+Everything the browser loads into a page moves into `Html::` under `/html` (decision 1). The floor
+item fragment moves to chunk 5, where the floor editor first needs it.
 
-- [ ] `app/controllers/html/lights_controller.rb` (`panel`, `pin`, moved from `LightsController`)
-- [ ] `app/controllers/html/custom_scenes_controller.rb` (`new`, `edit`, moved from `CustomScenesController`)
-- [ ] `app/controllers/html/floor_objects_controller.rb` (new `show`: one floor item's HTML, for the editor to insert)
-- [ ] `config/routes.rb` (the `/html` fragment routes)
-- [ ] `app/javascript/controllers/light_panel_controller.js`, `lib/floor/lamp_panel.js`, `custom_scene_dialog_controller.js` (new URLs)
-- [ ] Views and helpers that build those URLs
-- [ ] Tests move to `test/controllers/html/`
+- [x] `app/controllers/html/lights_controller.rb` (`panel`, `pin`, moved from `LightsController`, which keeps `update`)
+- [x] `app/controllers/html/custom_scenes_controller.rb` (`new`, `edit`, moved from `CustomScenesController`)
+- [x] `app/views/html/custom_scenes/new.html.erb`, `edit.html.erb` (moved; their keys move under `html:`)
+- [x] `config/routes.rb` (`namespace :html`: `/html/lights/:id/panel`, `/html/lights/:id/pin`, `/html/custom_scenes/new`, `/html/custom_scenes/:id/edit`)
+- [x] `app/views/lights/_light.html.erb`, `app/views/floors/_light.html.erb`, `app/views/rooms/_room.html.erb`, `app/helpers/custom_scene_helper.rb` (the new URL helpers; the JavaScript reads URLs from the markup, so it doesn't change)
+- [x] `test/controllers/html/lights_controller_test.rb`, `custom_scenes_controller_test.rb` (the fragment tests move here)
 
-Live check: open a light's panel and pin it, open the floor's lamp panel, open the new and edit
-custom scene modals.
+Live check: pin a light from its tile, open the floor's lamp panel at desktop and phone width, and
+open the new and edit custom scene modals.
 
 ## Chunk 3: Presses
 
@@ -137,7 +137,8 @@ throwaway custom scene, reorder two rooms and put them back.
 
 ## Chunk 5: The floor and visibility
 
-- [ ] `FloorsController#update`, `FloorObjectsController`, `FloorNetsController` (JSON; creating an object returns JSON, then the editor loads its fragment from chunk 2)
+- [ ] `app/controllers/html/floor_objects_controller.rb` (new `show`: one floor item's HTML, for the editor to insert)
+- [ ] `FloorsController#update`, `FloorObjectsController`, `FloorNetsController` (JSON; creating an object returns JSON, then the editor loads its fragment)
 - [ ] `VisibilityController` (JSON, broadcasts everything; no redirect)
 - [ ] `app/javascript/lib/floor/layout_editor.js`, `net_editor.js` (JSON replies)
 - [ ] `app/javascript/controllers/autosave_controller.js` (becomes `json-form`)

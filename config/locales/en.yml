@@ -47,6 +47,20 @@ en:
       create:
         connected: Connected to the bridge at %{address}.
         connected_without_sync: 'Connected to the bridge at %{address}, but the first sync failed: %{reason}'
+    custom_scenes:
+      new:
+        title: New scene for %{room}
+        hint: Saves how these lights look right now.
+        name: Name
+        cancel: Cancel
+        save: Save
+      edit:
+        title: Edit %{name}
+        name: Name
+        cancel: Cancel
+        save: Save
+        delete: Delete scene
+        confirm_delete: Delete %{name}? This can't be undone.
   hue:
     control:
       button_label: "%{device} button %{number}"
@@ -83,20 +97,6 @@ en:
     lights_busy: "%{target} is being changed from another device. Try again in a moment."
     went_wrong: "Something went wrong changing %{target}. Try again."
     still_changing: "Still changing. Try again in a moment."
-  custom_scenes:
-    new:
-      title: New scene for %{room}
-      hint: Saves how these lights look right now.
-      name: Name
-      cancel: Cancel
-      save: Save
-    edit:
-      title: Edit %{name}
-      name: Name
-      cancel: Cancel
-      save: Save
-      delete: Delete scene
-      confirm_delete: Delete %{name}? This can't be undone.
   rooms:
     room:
       save_scene: Save how %{room} looks now as a scene
