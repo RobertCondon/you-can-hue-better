@@ -180,5 +180,5 @@ Live check: every page loads, a press guesses and pulses, the locks check-in ans
 
 ## Chunk 7: Docs
 
-- [ ] `README.md` (the split, the reply table, where new endpoints go)
-- [ ] `API_SPLIT_PLAN.md` (this file: everything ticked)
+- [x] `README.md` (the split, the reply table, where new endpoints go)
+- [x] `API_SPLIT_PLAN.md` (this file: everything ticked)

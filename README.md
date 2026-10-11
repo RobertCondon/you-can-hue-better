@@ -49,8 +49,8 @@ away, and the bridge's answer replaces it a moment later.
 
 - **Talking to the bridge** (`app/services/hue/api/`): `Hue::Api::Client` exposes one resource class per
   bridge resource (`client.lights.update`, `client.scenes.recall`, …) over a persistent connection.
-  `Hue::Api::Payloads` read every field of the bridge's JSON, and `Hue::Api::LightChange` writes the one
-  thing the app sends most: what a light should do. `Hue::Api::Limits` holds the bridge's ranges.
+  `Hue::Api::Payloads` read every field of the bridge's JSON; each command builds the JSON it sends as a
+  plain hash. `Hue::Api::Limits` holds the bridge's ranges.
   `Hue::Pairing` finds the bridge and gets a key. `Hue::Color` converts between hex and CIE xy.
 - **The mirror** (`app/models/hue/`, tables `hue_*`; `app/services/hue/mirror/`): a cache of bridge
   state. `Hue::Mirror::Sync` rebuilds it in steps, one per table. `Hue::Mirror::Listener`, a thread a
@@ -66,6 +66,31 @@ away, and the bridge's answer replaces it a moment later.
   how a light's colour and brightness tint a tile, a scene dot and a lamp on the floor.
 - **The floor** (`app/models/floor.rb`, `app/models/floor/`): the plan, its coordinates and geometry, and
   its three tables (`Floor::Placement`, `Floor::Item` for walls and furniture, `Floor::Net` for outlines).
+- **Controllers: a JSON API and the HTML** (`app/controllers/`, `app/controllers/html/`): every action
+  that changes something is a JSON API at its usual path, on `ApiController`. Everything that renders
+  HTML, whole pages and the fragments the browser loads into them, is in the `Html::` namespace on
+  `Html::ApplicationController`, with the same controller names (`LightsController#update` is the API,
+  `Html::LightsController#panel` the fragment). Pages keep their URLs (`/`, `/dev`, `/floor`,
+  `/scenes`, `/setup`); fragments live under `/html` (`/html/lights/:id/panel`,
+  `/html/custom_scenes/new`, `/html/floor_objects/:id`). A reply never carries HTML: the page learns
+  what is true from broadcasts. Setup is the one plain HTML form, since it runs before there is a
+  bridge. `test/controllers/controller_split_test.rb` keeps every routed controller on the right side.
+  `JsonErrors` gives every API the same replies:
+
+  | Situation | Status | Body |
+  |---|---|---|
+  | A press is accepted | 202 | `{ "light_ids": [...], "check_in_ms": 180 }` |
+  | A direct change is done | 200 | the resource as JSON |
+  | A record is created | 201 | the record as JSON |
+  | A record is deleted, or there is nothing to return | 204 | none |
+  | The lights are being changed from another device | 409 | `{ "error": "...", "light_ids": [...] }` |
+  | A record doesn't save, or there is nothing to send | 422 | `{ "error": "...", "errors": { ... } }` |
+  | The bridge refuses or can't be reached | 502 | `{ "error": "..." }` |
+  | Not found | 404 | `{ "error": "..." }` |
+  | No bridge set up yet | 503 | `{ "error": "..." }` |
+
+  A new endpoint that changes something goes on `ApiController` at the resource's path; a new page or
+  fragment goes in `Html::`. `API_SPLIT_PLAN.md` is the plan this was built from.
 - **Commands** (`app/services/house_commands/`): everything that changes the house is one command.
   `HouseCommands::Command` runs it one of two ways, and the controller says which with a block that
   builds it (`HueCalls`):
@@ -74,26 +99,29 @@ away, and the bridge's answer replaces it a moment later.
     on its own thread. `HouseCommands::Settlement` settles the log row (ok, not responding, or the
     bridge's error), sends any toast to the tab that pressed, broadcasts the truth, then frees the
     lights with a `settle` message. Nothing is retried.
-  - `direct_hue_call` (renames) waits for the bridge and the action renders the result, as before.
+  - `direct_hue_call` (renames) waits for the bridge, then the action answers with the resource.
 
-  A press on a light that is still being changed is refused, never queued: the controller answers 409
-  with the light's real state and a "being changed from another device" toast. `Hue::CallTimings`
-  keeps the P95 of recent calls per kind of command; the 202 carries it as `Check-In-After`, the time
-  after which a tab that missed `settle` asks `GET /locks`. Actions that never talk to the bridge stay
-  plain Rails. `INSTANT_COMMANDS_PLAN.md` is the plan this was built from.
+  A press on a light that is still being changed is refused, never queued: the API answers 409 with
+  a "being changed from another device" message. `Hue::CallTimings` keeps the P95 of recent calls
+  per kind of command; the 202 carries it as `check_in_ms`, the time after which a tab that missed
+  `settle` asks `GET /locks`. `INSTANT_COMMANDS_PLAN.md` is the plan this was built from.
 - **Live pages**: every change, from this app, the Hue app or a wall switch, reaches open pages as
-  Turbo Streams. `HouseBroadcast::Streams` builds each update once, for both a controller's reply and
-  the broadcast, and `HouseBroadcast::Targets` names the elements they replace. An update aimed at something under the pointer waits until it is released
+  Turbo Streams over the house stream, and only that way. `HouseBroadcast::Streams` builds each
+  update, and `HouseBroadcast::Targets` names the elements they replace. An update aimed at something under the pointer waits until it is released
   (`app/javascript/lib/busy.js`). Each page also has its own stream, so a toast about a press reaches
   only the tab that made it. While a press holds a light, the listener skips that light's bridge
   events, so a late echo of the previous press can't flicker the tile.
 - **Front end**: Stimulus controllers in `app/javascript/controllers/`, with shared maths and helpers in
   `app/javascript/lib/` (colour, the floor's camera, geometry and light). `lib/requests.js` is the only
-  place that calls `fetch`. Presses use the same two names as the controllers: `asyncHueCall` and
-  `directHueCall` in `lib/hue_calls.js`, and forms built with `async_hue_form_with`,
-  `async_hue_button_to` or `direct_hue_form_with` (the `async-hue-call` and `direct-hue-call`
-  controllers). `lib/light_intents.js` tracks which lights are pending in this tab: they pulse, refuse
-  taps and drags with a "still changing" toast, and take the truth in one go when they settle. Tiles,
+  place that calls `fetch`: changes go out as JSON with `sendJson` (bracketed form names become nested
+  JSON), fragments come in with `getHtml`. Presses use the same two names as the controllers:
+  `asyncHueCall` and `directHueCall` in `lib/hue_calls.js`, and forms built with
+  `async_hue_form_with`, `async_hue_button_to` or `direct_hue_form_with` (the `async-hue-call` and
+  `direct-hue-call` controllers). Edits that don't touch the bridge, like custom scene names and
+  visibility, use the `json-form` controller, which writes any error into the form.
+  `lib/light_intents.js` tracks which lights are pending in this tab: they pulse, refuse taps and
+  drags with a "still changing" toast, and take the truth in one go when they settle. A refused press
+  puts the tiles back from a copy saved just before the guess, and shows the reason as a toast. Tiles,
   pins and floor lamps carry their lit and off looks from Ruby, so the guess looks exactly like the
   real thing. Colours and limits the
   browser shares with Ruby arrive from Ruby in the page head (`lib/light_constants.js`). The floor's controller wires
