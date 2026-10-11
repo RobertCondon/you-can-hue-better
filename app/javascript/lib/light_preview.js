@@ -32,10 +32,9 @@ export function previewLevel(lightId, level) {
 
 export function previewColour(lightId, hex) {
   for (const element of elementsShowing(lightId)) {
-    const { highestLevel, offTile, glowMinimum, tintStrength } = lightConstants()
-    const level = Number(element.dataset.brightness) || highestLevel
+    const { offTile, fillStrength, tintStrength } = lightConstants()
     element.style.setProperty("--hue", hex)
-    element.style.setProperty("--fillc", mixHex(offTile, hex, glowMinimum + (1 - glowMinimum) * level / highestLevel))
+    element.style.setProperty("--fillc", mixHex(offTile, hex, fillStrength))
     element.style.setProperty("--tile", mixHex(offTile, hex, tintStrength))
     showAsOn(element)
   }

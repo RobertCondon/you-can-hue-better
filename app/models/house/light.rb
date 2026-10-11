@@ -6,7 +6,7 @@ class House
     UNLIT_LEVEL = 0
     GLOW_DECIMAL_PLACES = 2
 
-    delegate :tile_hex, :tint_hex, :tile_text_hex, :fill_pct, :name_ink, :level_ink, to: :tile
+    delegate :tile_hex, :tint_hex, :fill_hex, :tile_text_hex, :fill_pct, to: :tile
 
     def initialize(gamut: nil, mirek: nil, mirek_valid: false, nickname: nil, reachable: true, archetype: nil, hidden: false, on_floor: true, icon_override: nil, **attributes)
       super(

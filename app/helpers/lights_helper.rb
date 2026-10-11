@@ -10,8 +10,7 @@ module LightsHelper
   def light_switch_label(light) = t("lights.power.switch", light: light.display_name)
 
   def tile_style(light)
-    css_variables(tile: light.tint_hex, fillc: light.tile_hex, fill: "#{light.fill_pct}%", hue: light.hex,
-                  ink: light.tile_text_hex, name_ink: light.name_ink, level_ink: light.level_ink)
+    css_variables(tile: light.tint_hex, fillc: light.fill_hex, fill: "#{light.fill_pct}%", hue: light.hex)
   end
 
   def pin_style(light) = css_variables(hue: light.hex, ink: light.tile_text_hex, fill: "#{light.fill_pct}%")

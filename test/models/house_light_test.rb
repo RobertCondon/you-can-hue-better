@@ -35,13 +35,13 @@ class House::LightTest < ActiveSupport::TestCase
     assert_equal "strip", light(archetype: "candle_bulb", icon_override: "strip").icon
   end
 
-  test "inks follow what sits under the label" do
+  test "a tile's fill is one muted shade of the light's colour at any brightness" do
     bright = light(brightness: 95, xy: { x: 0.45, y: 0.41 })
     dim = bright.with(brightness: 10)
-    assert_equal bright.tile_text_hex, bright.name_ink, "name sits on a wide pale fill"
-    assert_equal bright.tile_text_hex, bright.level_ink
-    assert_equal House::LightTile::LIGHT_INK, dim.name_ink, "name sits on the dark tint"
-    assert_equal House::LightTile::LIGHT_INK, dim.level_ink
+    assert_equal bright.fill_hex, dim.fill_hex
+    refute_equal House::Glow::OFF_HEX, bright.fill_hex
+    assert_operator Hue::Color.luminance(bright.fill_hex), :<, 0.2, "dark enough for the light text on it"
+    assert_equal House::Glow::OFF_HEX, bright.with(on: false).fill_hex
   end
 
   test "a bulb the bridge cannot reach is not lit, whatever the bridge stored" do
