@@ -20,6 +20,7 @@ class PinnedLightTest < ActionDispatch::IntegrationTest
     assert_select "#light_sheet_l1 .light-sheet__close[data-action='pinned#close']"
     assert_select "#light_sheet_l1 form.light-sheet__dim input[type=range][value='80']"
     assert_select "#light_sheet_l1 form.light-sheet__dim output", "80%"
+    assert_select "#light_sheet_l1 form.light-sheet__dim[data-controller~=drag-range] input[data-drag-range-target=input]"
     assert_select "#light_sheet_l1 #light_panel_l1[data-controller~=color-picker]"
     assert_select "#light_sheet_l1[data-controller~=sheet-drag][data-action*='sheet-drag:dismiss->pinned#close'] > .sheet-handle[data-action*='pointerdown->sheet-drag#start']"
   end

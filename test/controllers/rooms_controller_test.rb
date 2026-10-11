@@ -54,6 +54,7 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#room_card_r1 form.room-card__dim[data-controller~=async-hue-call][data-controller~=room-brightness] input[type=range][name='room[brightness]'][value='80']"
     assert_select "#room_card_r1 form.room-card__dim output", "80%"
     assert_select "#room_card_r1 form.room-card__dim[style='--fill: 80%']"
+    assert_select "#room_card_r1 form.room-card__dim[data-controller~=drag-range] input[data-drag-range-target=input]"
   end
 
   test "each room card has a switch and a dot per light" do

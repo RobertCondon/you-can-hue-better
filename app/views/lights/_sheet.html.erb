@@ -20,10 +20,11 @@
       <%= render "shared/icons/chevron" %>
     </button>
   </div>
-  <%= async_hue_form_with url: light_path(light.id), method: :patch, class: "light-sheet__dim", light_ids: [ light.id ] do |form| %>
+  <%= async_hue_form_with url: light_path(light.id), method: :patch, class: "light-sheet__dim", light_ids: [ light.id ],
+                          data: { controller: "drag-range", action: "pointerdown->drag-range#down pointermove->drag-range#move pointerup->drag-range#up pointercancel->drag-range#up" } do |form| %>
     <label class="sr-only" for="sheet_bri_<%= light.id %>"><%= t(".brightness_of", light: light.display_name) %></label>
     <input type="range" id="sheet_bri_<%= light.id %>" name="light[brightness]" min="<%= Hue::Api::Limits::LIT_BRIGHTNESS.min %>" max="<%= Hue::Api::Limits::LIT_BRIGHTNESS.max %>"
-           value="<%= slider_level(light) %>" data-action="input->light#preview change->light#submit">
+           value="<%= slider_level(light) %>" data-drag-range-target="input" data-action="input->light#preview change->light#submit">
     <output for="sheet_bri_<%= light.id %>" data-level><%= light.brightness_label %></output>
   <% end %>
   <%= render "lights/panel", light: %>

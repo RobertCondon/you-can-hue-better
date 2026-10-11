@@ -17,7 +17,7 @@ export default class extends Controller {
 
   down(event) {
     if (event.button !== PRIMARY_BUTTON && event.pointerType === MOUSE) return
-    this.dragOrigin = { x: event.clientX, y: event.clientY }
+    this.dragOrigin = { x: event.clientX, y: event.clientY, level: this.element.classList.contains(ON_CLASS) ? Number(this.element.dataset.brightness) : 0 }
     this.dragging = false
   }
 
@@ -75,8 +75,10 @@ export default class extends Controller {
     return this.element.dataset.lightId
   }
 
+  // Nudge from where the light was by how far the finger has moved, rather than jumping to it.
   levelAt(clientX) {
-    const bounds = this.element.getBoundingClientRect(), { lowestLevel, highestLevel } = lightConstants()
-    return Math.min(highestLevel, Math.max(lowestLevel, Math.round((clientX - bounds.left) / bounds.width * highestLevel)))
+    const { width } = this.element.getBoundingClientRect(), { lowestLevel, highestLevel } = lightConstants()
+    const level = this.dragOrigin.level + (clientX - this.dragOrigin.x) / width * highestLevel
+    return Math.min(highestLevel, Math.max(lowestLevel, Math.round(level)))
   }
 }
