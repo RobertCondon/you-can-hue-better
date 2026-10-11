@@ -109,8 +109,10 @@ en:
     power:
       switch: "%{room} power"
     card:
-      rename: Rename
       brightness_of: Brightness of %{room}
+    row:
+      go_to: Go to %{room}
+      rename: Rename
       move_up: Move %{room} up
       move_down: Move %{room} down
   house_commands:
@@ -149,6 +151,8 @@ en:
       edit: Edit
       done: Done
       rooms: Rooms
+      all_rooms: All rooms
+      close_all_rooms: Close all rooms
     presses:
       none: No presses heard yet.
       with_steps: "%{gesture} %{steps} steps"

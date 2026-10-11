@@ -59,7 +59,7 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
   test "each room card has a switch and a dot per light" do
     get root_path
     assert_select "#room_card_r1 .room-card__switch[role=switch][aria-checked=true]"
-    assert_select "#room_card_r1 .room-card__dot[data-light-id]", 2
+    assert_select "#room_card_r1 .room-dots__dot[data-light-id]", 2
   end
 
   test "the slider greys out at the average when the lit lights are at different levels" do

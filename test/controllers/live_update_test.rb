@@ -14,6 +14,8 @@ class LiveUpdateTest < ActionDispatch::IntegrationTest
     assert_includes targets, "floor_light_l1"
     assert_includes targets, "light_pin_l1"
     assert_includes targets, "room_card_r1"
+    assert_includes targets, "room_tab_r1"
+    assert_includes targets, "room_row_r1"
   end
 
   test "a room action broadcasts too" do

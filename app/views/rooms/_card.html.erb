@@ -15,13 +15,7 @@
       </button>
     <% end %>
   </div>
-  <% if room.lights.any? %>
-    <div class="room-card__dots" aria-hidden="true">
-      <% room.lights.each do |light| %>
-        <span class="<%= class_names("room-card__dot", light_state_class(light)) %>" data-light-id="<%= light.id %>" data-brightness="<%= light.brightness.round %>" style="<%= css_variables(hue: light.hex) %>"></span>
-      <% end %>
-    </div>
-  <% end %>
+  <%= render "rooms/dots", room: room if room.lights.any? %>
   <% if room.visible_lights.any? %>
     <%= async_hue_form_with url: room_path(room.id), method: :patch, class: class_names("room-card__dim", RoomsHelper::MIXED_CLASS => room.mixed_brightness?), light_ids: room.lights.map(&:id),
                             html: { style: css_variables(fill: "#{room.any_on? ? room.level : 0}%") },
@@ -32,11 +26,4 @@
       <output for="room_bri_<%= room.id %>" data-room-brightness-target="level"><%= room.brightness_label %></output>
     <% end %>
   <% end %>
-  <div class="room-card__editing">
-    <button type="button" class="btn btn--small"
-            data-action="editor#open" data-editor-url-param="<%= room_names_path(room.id) %>" data-editor-kind-param="room"
-            data-editor-title-param="<%= room.name %>" data-editor-name-param="<%= room.name %>" data-editor-nickname-param="<%= room.nickname %>"><%= t(".rename") %></button>
-    <button type="button" class="btn btn--icon" data-action="rooms#moveUp" aria-label="<%= t(".move_up", room: room.display_name) %>">▲</button>
-    <button type="button" class="btn btn--icon" data-action="rooms#moveDown" aria-label="<%= t(".move_down", room: room.display_name) %>">▼</button>
-  </div>
 </section>

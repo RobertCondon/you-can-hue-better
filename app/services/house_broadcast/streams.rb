@@ -11,7 +11,9 @@ module HouseBroadcast
 
     def room(room) = [ *room_summary(room), replace(Targets.room_body(room), "rooms/body", room:) ]
 
-    def room_summary(room) = [ replace(Targets.room_card(room), "rooms/card", room:), replace(Targets.room_tab(room), "rooms/tab", room:) ]
+    def room_summary(room)
+      [ replace(Targets.room_card(room), "rooms/card", room:), replace(Targets.room_tab(room), "rooms/tab", room:), replace(Targets.room_row(room), "rooms/row", room:) ]
+    end
 
     def room_changes(house, light_ids:, group_ids: [])
       house.rooms.flat_map do |room|

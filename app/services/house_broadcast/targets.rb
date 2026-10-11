@@ -19,6 +19,7 @@ module HouseBroadcast
     def room_card(room) = "room_card_#{room.id}"
     def room_body(room) = "room_body_#{room.id}"
     def room_tab(room) = "room_tab_#{room.id}"
+    def room_row(room) = "room_row_#{room.id}"
     def light_tile(room, light) = "light_#{room.id}_#{light.id}"
     def light_panel(light) = "light_panel_#{light.id}"
     def light_pin(light) = "light_pin_#{light.id}"

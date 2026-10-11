@@ -3,18 +3,22 @@
   <div class="house__meta">
     <div id="<%= targets.listener_status %>"><%= render "dashboard/status", state: %></div>
     <div id="<%= targets.house_summary %>"><%= render "dashboard/summary", house: %></div>
-    <button type="button" class="btn btn--small" data-action="rooms#toggleEditing" data-rooms-target="editButton" aria-pressed="false"><%= t(".edit") %></button>
     <%= render "shared/nav", current: :lights %>
   </div>
 </header>
 
-<main class="lights" data-controller="light-panel room-pager" data-rooms-target="list"
+<main class="lights" data-controller="light-panel room-pager all-rooms" data-rooms-target="list"
       data-action="pinned:close->light-panel#close pinned:swipe->light-panel#swipe keydown.esc@window->light-panel#escape room-pager:changed->light-panel#close rooms:moved->room-pager#follow">
   <div class="light-dock" id="<%= targets.light_dock %>" data-light-panel-target="dock" hidden></div>
-  <div class="room-tabs" role="tablist" aria-label="<%= t(".rooms") %>" data-room-pager-target="tabs">
-    <% house.rooms.each do |room| %>
-      <%= render "rooms/tab", room: %>
-    <% end %>
+  <div class="room-tabbar">
+    <div class="room-tabs" role="tablist" aria-label="<%= t(".rooms") %>" data-room-pager-target="tabs">
+      <% house.rooms.each do |room| %>
+        <%= render "rooms/tab", room: %>
+      <% end %>
+    </div>
+    <button type="button" class="room-tabbar__all" data-action="all-rooms#open" aria-haspopup="dialog" aria-label="<%= t(".all_rooms") %>">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true"><rect x="2" y="2" width="6" height="6" rx="1.5"/><rect x="10" y="2" width="6" height="6" rx="1.5"/><rect x="2" y="10" width="6" height="6" rx="1.5"/><rect x="10" y="10" width="6" height="6" rx="1.5"/></svg>
+    </button>
   </div>
   <div class="room-pager" data-room-pager-target="pager" data-action="scroll->room-pager#scrolled">
     <% house.rooms.each do |room| %>
@@ -29,6 +33,21 @@
   <% house.rooms.each_with_index do |room, index| %>
     <%= render "rooms/body", room:, hidden: index.positive? %>
   <% end %>
+  <dialog class="all-rooms" aria-labelledby="all_rooms_title" data-all-rooms-target="dialog" data-action="click->all-rooms#closeFromBackdrop">
+    <div class="all-rooms__sheet">
+      <span class="all-rooms__handle" aria-hidden="true"></span>
+      <div class="all-rooms__head">
+        <h2 id="all_rooms_title"><%= t(".all_rooms") %></h2>
+        <button type="button" class="btn btn--small" data-action="rooms#toggleEditing" data-rooms-target="editButton" aria-pressed="false"><%= t(".edit") %></button>
+        <button type="button" class="light-sheet__close" data-action="all-rooms#close" aria-label="<%= t(".close_all_rooms") %>"><%= render "shared/icons/chevron" %></button>
+      </div>
+      <div class="all-rooms__list">
+        <% house.rooms.each do |room| %>
+          <%= render "rooms/row", room: %>
+        <% end %>
+      </div>
+    </div>
+  </dialog>
 </main>
 <%= render "shared/editor", bridge_names: dev %>
 <%= render "shared/custom_scene_dialog" %>

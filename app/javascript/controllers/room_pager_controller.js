@@ -7,7 +7,7 @@ const STEERING_MS = 700
 const TAB_INSET = 16
 
 export default class extends Controller {
-  static targets = ["pager", "card", "tab", "tabs", "body", "dot"]
+  static targets = ["pager", "card", "tab", "tabs", "body", "dot", "row"]
 
   connect() {
     const remembered = this.cardTargets.findIndex(card => card.dataset.roomId === this.rememberedRoomId())
@@ -34,6 +34,7 @@ export default class extends Controller {
     this.roomId = this.cardTargets[index]?.dataset.roomId
     this.bodyTargets.forEach(body => this.showBody(body))
     this.tabTargets.forEach(tab => this.markTab(tab))
+    this.rowTargets.forEach(row => this.markRow(row))
     this.dotTargets.forEach((dot, dotIndex) => dot.classList.toggle(CURRENT_CLASS, dotIndex === index))
     this.revealTab()
     this.remember(this.roomId)
@@ -48,12 +49,20 @@ export default class extends Controller {
     if (this.roomId) this.markTab(tab)
   }
 
+  rowTargetConnected(row) {
+    if (this.roomId) this.markRow(row)
+  }
+
   showBody(body) {
     body.hidden = body.dataset.roomId !== this.roomId
   }
 
   markTab(tab) {
     tab.setAttribute("aria-selected", String(tab.dataset.roomId === this.roomId))
+  }
+
+  markRow(row) {
+    row.classList.toggle(CURRENT_CLASS, row.dataset.roomId === this.roomId)
   }
 
   follow() {

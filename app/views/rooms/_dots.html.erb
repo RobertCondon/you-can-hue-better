@@ -1,0 +1,5 @@
+<div class="room-dots" aria-hidden="true">
+  <% room.lights.each do |light| %>
+    <span class="<%= class_names("room-dots__dot", light_state_class(light)) %>" data-light-id="<%= light.id %>" data-brightness="<%= light.brightness.round %>" style="<%= css_variables(hue: light.hex) %>"></span>
+  <% end %>
+</div>

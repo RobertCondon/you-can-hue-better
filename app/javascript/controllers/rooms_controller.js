@@ -3,7 +3,8 @@ import { sendJson } from "lib/requests"
 
 const EDITING_CLASS = "is-editing"
 const CARD_SELECTOR = ".room-card"
-const ROOM_PIECES_SELECTOR = ".room-tab, .room__body"
+const ROOM_SELECTOR = "[data-room-id]"
+const ROOM_PIECES_SELECTOR = ".room-tab, .room__body, .room-row"
 const ROOM_IDS_FIELD = "ids[]"
 const PATCH = "PATCH"
 const EARLIER = -1
@@ -21,14 +22,19 @@ export default class extends Controller {
   }
 
   moveUp(event) {
-    this.move(event.target.closest(CARD_SELECTOR), EARLIER)
+    this.move(this.cardFor(event.target), EARLIER)
   }
 
   moveDown(event) {
-    this.move(event.target.closest(CARD_SELECTOR), LATER)
+    this.move(this.cardFor(event.target), LATER)
   }
 
-  // The card, its tab and its body all move, so every row keeps the same order.
+  cardFor(button) {
+    const roomId = button.closest(ROOM_SELECTOR).dataset.roomId
+    return this.cards().find(card => card.dataset.roomId === roomId)
+  }
+
+  // The card, its tab, its body and its row in All rooms all move, so everything keeps the same order.
   move(card, direction) {
     const cards = this.cards()
     const neighbour = cards[cards.indexOf(card) + direction]

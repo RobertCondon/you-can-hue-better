@@ -1,0 +1,27 @@
+<div class="<%= class_names("room-row", LightsHelper::ON_CLASS => room.any_on?) %>" id="<%= targets.room_row(room) %>" data-room-id="<%= room.id %>"
+     data-room-pager-target="row" style="<%= css_variables(fill: "#{room.any_on? ? room.level : 0}%") %>">
+  <button type="button" class="room-row__go" data-action="room-pager#select all-rooms#close" data-room-pager-room-param="<%= room.id %>"
+          aria-label="<%= t(".go_to", room: room.display_name) %>"></button>
+  <div class="room-row__head">
+    <span class="room-row__names">
+      <% if room.nicknamed? %><small class="room-card__realname"><%= room.name %></small><% end %>
+      <strong><%= room.display_name %><%= room_badges(room, badge_class: "room-card__kind") %></strong>
+      <span class="room-row__summary"><%= room.summary %><% if room.any_on? %> · <%= room.brightness_label %><% end %></span>
+    </span>
+    <%= async_hue_form_with url: room_path(room.id), method: :patch, class: "room-card__toggle room-row__toggle", light_ids: room.lights.map(&:id) do |form| %>
+      <input type="hidden" name="room[on]" value="<%= room_power_target_state(room) %>">
+      <button type="submit" class="room-card__switch" role="switch" aria-checked="<%= room.any_on? %>" aria-label="<%= room_switch_label(room) %>">
+        <span class="room-card__track" aria-hidden="true"></span>
+      </button>
+    <% end %>
+  </div>
+  <%= render "rooms/dots", room: room if room.lights.any? %>
+  <span class="room-row__bar" aria-hidden="true"></span>
+  <div class="room-row__editing">
+    <button type="button" class="btn btn--small"
+            data-action="editor#open" data-editor-url-param="<%= room_names_path(room.id) %>" data-editor-kind-param="room"
+            data-editor-title-param="<%= room.name %>" data-editor-name-param="<%= room.name %>" data-editor-nickname-param="<%= room.nickname %>"><%= t(".rename") %></button>
+    <button type="button" class="btn btn--icon" data-action="rooms#moveUp" aria-label="<%= t(".move_up", room: room.display_name) %>">▲</button>
+    <button type="button" class="btn btn--icon" data-action="rooms#moveDown" aria-label="<%= t(".move_down", room: room.display_name) %>">▼</button>
+  </div>
+</div>
