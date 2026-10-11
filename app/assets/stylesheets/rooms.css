@@ -66,7 +66,8 @@
 .room-dots__dot.is-on { background: var(--hue); box-shadow: 0 0 8px color-mix(in srgb, var(--hue) 55%, transparent); }
 .room-dots__dot.is-unreachable { box-shadow: inset 0 0 0 1.5px var(--danger); background: transparent; }
 
-.room-card__dim { position: relative; touch-action: pan-y; cursor: ew-resize; user-select: none; -webkit-user-select: none; }
+.room-card__dim { position: relative; touch-action: pan-y; cursor: ew-resize; }
+.room-card__dim, .room-card__dim * { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
 .room-card__dim input[type="range"] { pointer-events: none; }
 .room-card__dim input[type="range"] {
   height: 52px; border-radius: var(--radius); overflow: hidden;
