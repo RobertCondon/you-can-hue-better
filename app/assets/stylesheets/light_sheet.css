@@ -4,6 +4,8 @@
   max-height: calc(100dvh - 72px); overflow-y: auto; overscroll-behavior: contain;
 }
 .light-dock[hidden] { display: none; }
+/* On the dock, not the sheet: live updates replace the sheet, and it shouldn't slide up again each time. */
+.light-dock:not([hidden]) { animation: light-sheet-rise 220ms ease-out; }
 main:has(> .light-dock:not([hidden])) { padding-bottom: var(--dock-space, 480px); }
 
 .light-sheet {
@@ -11,7 +13,7 @@ main:has(> .light-dock:not([hidden])) { padding-bottom: var(--dock-space, 480px)
   background: var(--surface); border-radius: 26px 26px 0 0;
   box-shadow: var(--shadow-dialog), inset 0 2px 0 var(--hue);
   padding: 10px 16px calc(env(safe-area-inset-bottom, 0px) + 18px);
-  display: grid; gap: 14px; animation: light-sheet-rise 220ms ease-out;
+  display: grid; gap: 14px;
   touch-action: pan-y;
 }
 .light-sheet.is-off { box-shadow: var(--shadow-dialog), inset 0 1px 0 var(--line); }
@@ -80,7 +82,7 @@ main:has(> .light-dock:not([hidden])) { padding-bottom: var(--dock-space, 480px)
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .light-sheet { animation: none; }
+  .light-dock:not([hidden]) { animation: none; }
   .light-sheet__track, .light-sheet__track::after { transition: none; }
   .light-sheet__toggle.is-pending .light-sheet__track { animation: none; opacity: 0.7; }
 }
