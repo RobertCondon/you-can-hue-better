@@ -92,7 +92,6 @@
   background: var(--surface); border-radius: 26px 26px 0 0; box-shadow: var(--shadow-dialog), inset 0 1px 0 var(--line);
   padding: 10px 16px calc(env(safe-area-inset-bottom, 0px) + 18px);
 }
-.all-rooms__handle { align-self: center; width: 40px; height: 5px; border-radius: 3px; background: var(--off-ring); }
 .all-rooms__head { display: flex; align-items: center; gap: 10px; }
 .all-rooms__head h2 { flex: 1; font-size: 22px; font-weight: 700; }
 .all-rooms__list { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: grid; gap: 8px; align-content: start; padding-bottom: 4px; }

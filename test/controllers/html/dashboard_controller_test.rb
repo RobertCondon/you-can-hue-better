@@ -28,6 +28,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_select "main[data-controller~=all-rooms] > dialog.all-rooms[data-all-rooms-target=dialog]"
     assert_select "dialog.all-rooms [data-action='rooms#toggleEditing'][data-rooms-target=editButton]", "Edit"
     assert_select "dialog.all-rooms .room-row", 2
+    assert_select "dialog.all-rooms .all-rooms__sheet[data-controller=sheet-drag][data-action='sheet-drag:dismiss->all-rooms#close'] > .sheet-handle"
     assert_select "#room_row_r1[data-room-pager-target=row][style='--fill: 80%'] .room-row__go[data-action='room-pager#select all-rooms#close'][data-room-pager-room-param=r1]"
     assert_select "#room_row_r1 form.room-row__toggle[data-controller=async-hue-call] .room-card__switch[role=switch][aria-checked=true]"
     assert_select "#room_row_r1 .room-dots__dot[data-light-id]", 2

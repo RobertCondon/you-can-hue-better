@@ -34,8 +34,8 @@
     <%= render "rooms/body", room:, hidden: index.positive? %>
   <% end %>
   <dialog class="all-rooms" aria-labelledby="all_rooms_title" data-all-rooms-target="dialog" data-action="click->all-rooms#closeFromBackdrop">
-    <div class="all-rooms__sheet">
-      <span class="all-rooms__handle" aria-hidden="true"></span>
+    <div class="all-rooms__sheet" data-controller="sheet-drag" data-action="sheet-drag:dismiss->all-rooms#close">
+      <span class="sheet-handle" aria-hidden="true" data-action="pointerdown->sheet-drag#start pointermove->sheet-drag#move pointerup->sheet-drag#end pointercancel->sheet-drag#end"></span>
       <div class="all-rooms__head">
         <h2 id="all_rooms_title"><%= t(".all_rooms") %></h2>
         <button type="button" class="btn btn--small" data-action="rooms#toggleEditing" data-rooms-target="editButton" aria-pressed="false"><%= t(".edit") %></button>

@@ -1,9 +1,9 @@
 <section class="<%= class_names("light-sheet", light.lit? ? LightsHelper::ON_CLASS : LightsHelper::OFF_CLASS) %>" id="<%= targets.light_sheet(light) %>" data-light-id="<%= light.id %>" data-brightness="<%= light.brightness.round %>"
          aria-label="<%= light.display_name %>"
          style="<%= sheet_style(light) %>" <%= tag.attributes(data: power_looks(light) { |look| sheet_style(look) }) %>
-         data-controller="light pinned"
-         data-action="pointerdown->pinned#swipeStart pointermove->pinned#swipeMove pointerup->pinned#swipeEnd pointercancel->pinned#swipeEnd click->pinned#guard:capture">
-  <span class="light-sheet__handle" aria-hidden="true"></span>
+         data-controller="light pinned sheet-drag"
+         data-action="sheet-drag:dismiss->pinned#close pointerdown->pinned#swipeStart pointermove->pinned#swipeMove pointerup->pinned#swipeEnd pointercancel->pinned#swipeEnd click->pinned#guard:capture">
+  <span class="sheet-handle" aria-hidden="true" data-action="pointerdown->sheet-drag#start pointermove->sheet-drag#move pointerup->sheet-drag#end pointercancel->sheet-drag#end"></span>
   <div class="light-sheet__head">
     <%= async_hue_form_with url: light_path(light.id), method: :patch, class: "light-sheet__toggle", light_ids: [ light.id ] do |form| %>
       <button type="submit" name="light[on]" value="<%= !light.lit? %>" class="light-sheet__switch" role="switch" aria-checked="<%= light.lit? %>" aria-label="<%= light_switch_label(light) %>">

@@ -5,9 +5,20 @@ const PINNED_CLASS = "is-pinned"
 const TILE_SELECTOR = ".tile[data-light-id]"
 const TILE_OPENER_SELECTOR = ".tile__open"
 const OPEN_DIALOG_SELECTOR = "dialog[open]"
+const DOCK_SPACE = "--dock-space"
 
 export default class extends Controller {
   static targets = ["dock"]
+
+  // Keep room under the docked sheet for the page to scroll the last tiles above it.
+  dockTargetConnected(dock) {
+    this.dockSize = new ResizeObserver(() => this.element.style.setProperty(DOCK_SPACE, `${dock.offsetHeight}px`))
+    this.dockSize.observe(dock)
+  }
+
+  dockTargetDisconnected() {
+    this.dockSize?.disconnect()
+  }
 
   async toggle(event) {
     const { id, sheetUrl, room } = event.params

@@ -4,7 +4,7 @@
   max-height: calc(100dvh - 72px); overflow-y: auto; overscroll-behavior: contain;
 }
 .light-dock[hidden] { display: none; }
-main:has(> .light-dock:not([hidden])) { padding-bottom: 480px; }
+main:has(> .light-dock:not([hidden])) { padding-bottom: var(--dock-space, 480px); }
 
 .light-sheet {
   --hue: var(--warm-white); --fill: 0%;
@@ -17,7 +17,12 @@ main:has(> .light-dock:not([hidden])) { padding-bottom: 480px; }
 .light-sheet.is-off { box-shadow: var(--shadow-dialog), inset 0 1px 0 var(--line); }
 @keyframes light-sheet-rise { from { transform: translateY(32px); opacity: 0; } }
 
-.light-sheet__handle { justify-self: center; width: 40px; height: 5px; border-radius: 3px; background: var(--off-ring); }
+/* Shared by both sheets: a wide strip to grab, drawn as a short bar. */
+.sheet-handle {
+  justify-self: center; align-self: center; width: 96px; height: 24px; margin: -10px 0 -10px; cursor: grab; touch-action: none;
+  background: linear-gradient(var(--off-ring), var(--off-ring)) center / 40px 5px no-repeat;
+}
+.sheet-handle:active { cursor: grabbing; }
 .light-sheet__head { display: flex; align-items: center; gap: 12px; }
 .light-sheet__toggle { display: contents; }
 

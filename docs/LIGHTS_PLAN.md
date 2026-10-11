@@ -1,8 +1,7 @@
 # Lights page: moving to the G1 design
 
-Written 2026-10-11. **Built so far:** steps 1–5 (tile switches, the bottom light sheet, the room
-card and body split, the tabs and swipeable pager, and the All rooms sheet with Edit in it). Step 6,
-the tidy-up, is left. The design is the "F1: all rooms panel" page of the
+Written 2026-10-11. **Built:** all six steps, finished 2026-10-12. This is kept as the record of the
+choices made; the README describes what exists now. The design is the "F1: all rooms panel" page of the
 design canvas (G1) plus E3 for an open light, and the clickable prototype shows how it behaves.
 
 ## Where we're going

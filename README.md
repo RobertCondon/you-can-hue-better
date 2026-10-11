@@ -18,14 +18,17 @@ The environment wins, then a pairing made on the setup page, then the file.
 
 ## What it does
 
-**Lights** (`/`) is the everyday view, built for a phone. Rooms and zones collapse, remembered per
-device. A tile's icon switches the light, a sideways drag across it dims, and its name pins it: a bar
-docked at the top of the page with a slider and colour swatch that stays while the room scrolls.
-Swipe the bar to move to the next light; tap it to unfold rename and the colour wheel, which only
-offers colours the bulb can actually make. Edit arranges rooms, and the order is shared by every
-device. Names set here are nicknames this app shows; the bridge's name sits beside them. Each room's
-header has a power button and a brightness slider, which dims the lights that are on, or turns the
-whole room on at that level when it is all off.
+**Lights** (`/`) is the everyday view, built for a phone and centred on wider screens. It shows one
+room at a time: tabs along the top, and a room card you swipe left or right to change room, with a
+dot per light, a switch and a brightness bar that dims the lights that are on (or turns the whole
+room on at that level when it is all off). The page remembers the last room per device. Under the
+card are the room's scenes and its light tiles. A tile's switch, in the light's colour, turns it on
+or off; a sideways drag across the tile dims it; tapping it opens the light's sheet at the bottom of
+the page, with its switch, rename, a brightness bar and the colour wheel, which only offers colours
+the bulb can actually make. Swipe the sheet to move to the next light, or drag it down to close it.
+The button at the end of the tabs opens All rooms: every room with its own switch, and Edit to
+rename rooms and arrange their order, which is shared by every device. Names set here are nicknames
+this app shows; the bridge's name sits beside them.
 
 **Scenes** (`/scenes`) shows each room's scenes as cards with a dot per light and the palette behind,
 with Set and Play. A scene's page draws it on the floor plan.
