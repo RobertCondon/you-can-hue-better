@@ -23,7 +23,7 @@
     </template>
     <div id="<%= targets.flash %>">
       <%= render "shared/flash", message: flash[:alert] if flash[:alert] %>
-      <%= render "shared/flash", message: flash[:notice], tone: ToastStreams::DONE_TONE if flash[:notice] %>
+      <%= render "shared/flash", message: flash[:notice], tone: ApplicationHelper::DONE_TONE if flash[:notice] %>
     </div>
     <%= yield %>
   </body>

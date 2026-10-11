@@ -1,1 +1,1 @@
-<p class="<%= class_names("flash", "flash--done" => local_assigns[:tone] == ToastStreams::DONE_TONE) %>" role="status" data-controller="toast" data-action="click->toast#dismiss"><%= message %></p>
+<p class="<%= class_names("flash", "flash--done" => local_assigns[:tone] == ApplicationHelper::DONE_TONE) %>" role="status" data-controller="toast" data-action="click->toast#dismiss"><%= message %></p>

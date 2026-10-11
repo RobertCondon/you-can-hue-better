@@ -1,6 +1,8 @@
 class ApiController < ApplicationController
   include JsonErrors
 
+  before_action :require_bridge
+
   private
 
   def require_bridge

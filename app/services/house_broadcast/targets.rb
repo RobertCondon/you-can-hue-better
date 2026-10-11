@@ -4,7 +4,6 @@ module HouseBroadcast
     LISTENER_STATUS = "listener_status"
     RECENT_PRESSES = "recent_presses"
     FLASH = "flash"
-    EDITOR_ERROR = "editor_error"
     LIGHT_DOCK = "light_dock"
     VISIBILITY = "visibility"
 
@@ -14,7 +13,6 @@ module HouseBroadcast
     def listener_status = LISTENER_STATUS
     def recent_presses = RECENT_PRESSES
     def flash = FLASH
-    def editor_error = EDITOR_ERROR
     def light_dock = LIGHT_DOCK
     def visibility = VISIBILITY
 

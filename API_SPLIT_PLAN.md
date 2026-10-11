@@ -168,10 +168,15 @@ show a light on `/dev` while an everyday page updates.
 
 ## Chunk 6: Clean-up
 
-- [ ] Remove what nothing uses any more: Turbo form handlers (`turbo:submit-end`), reply-only stream helpers, `format.html` branches
-- [ ] `HouseStreams` and `ToastStreams` only build broadcasts
-- [ ] `ApplicationController`'s HTML behaviour (redirect to setup, Turbo Stream bridge errors, browser and importmap checks) moves into `Html::ApplicationController`
-- [ ] One test that every non-`Html::` controller only answers JSON
+- [x] `app/controllers/application_controller.rb` (now empty: just the shared Rails base)
+- [x] `app/controllers/html/application_controller.rb` (the browser and importmap checks, the redirect to setup, and a bridge it can't reach shows the "can't reach the bridge" page; the dashboard's own copy of that is gone)
+- [x] `app/controllers/api_controller.rb` (requires a bridge itself, answering 503)
+- [x] `LocksController` (`ApiController`)
+- [x] `app/controllers/concerns/house_streams.rb`, `toast_streams.rb` (removed: nothing renders streams in a reply any more; the flash's "done" tone moved to `ApplicationHelper`)
+- [x] `app/services/house_broadcast/targets.rb`, `app/views/shared/_editor.html.erb` (the editor's error element is a Stimulus target, not a stream target)
+- [x] `test/controllers/controller_split_test.rb` (new: every routed controller outside `Html::` is an `ApiController`, every `Html::` one an `Html::ApplicationController`)
+
+Live check: every page loads, a press guesses and pulses, the locks check-in answers JSON.
 
 ## Chunk 7: Docs
 
