@@ -15,29 +15,32 @@ class LightsControllerTest < ActionDispatch::IntegrationTest
   test "a press is accepted straight away with a time to check in" do
     press("l1", on: "false")
     assert_response :accepted
-    assert_equal [ [ :light, "l1", { on: { on: false } } ] ], hue.writes
+    assert_equal [ [ :light, "l1", { on: { on: false }, dynamics: { duration: 100 } } ] ], hue.writes
     assert_equal %w[l1], response.parsed_body["light_ids"]
     assert_includes Hue::CallTimings::FLOOR_MILLISECONDS..Hue::CallTimings::CEILING_MILLISECONDS, response.parsed_body["check_in_ms"]
   end
 
-  test "the truth goes to every tab, then the lights settle" do
+  test "the light settles as soon as the bridge takes the command, then the truth goes to every tab" do
     streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) { press("l1", on: "false") }
     targets = streams.map { |stream| stream["target"] }
     assert_includes targets, "light_r1_l1"
     assert_includes targets, "light_panel_l1"
-    assert_equal [ "settle", "l1" ], [ streams.last["action"], streams.last["light-ids"] ]
+    settle = streams.index { |stream| stream["action"] == "settle" }
+    assert_equal "l1", streams[settle]["light-ids"]
+    assert_operator settle, :<, targets.index("light_r1_l1"), "freed before the read-back's broadcast"
+    assert_equal 1, streams.count { |stream| stream["action"] == "settle" }
     refute Hue::Locks.locked?("l1")
   end
 
   test "a tile's switch sends on as a JSON boolean, and false still turns the light off" do
     patch light_path("l1"), params: { light: { on: false } }, headers: { HueCalls::TAB_HEADER => TAB }, as: :json
     assert_response :accepted
-    assert_equal [ [ :light, "l1", { on: { on: false } } ] ], hue.writes
+    assert_equal [ [ :light, "l1", { on: { on: false }, dynamics: { duration: 100 } } ] ], hue.writes
   end
 
     test "brightness also turns the light on" do
     press("l2", brightness: "42")
-    assert_equal [ [ :light, "l2", { on: { on: true }, dimming: { brightness: 42.0 } } ] ], hue.writes
+    assert_equal [ [ :light, "l2", { on: { on: true }, dimming: { brightness: 42.0 }, dynamics: { duration: 100 } } ] ], hue.writes
   end
 
   test "colour is converted to xy" do
@@ -81,13 +84,13 @@ class LightsControllerTest < ActionDispatch::IntegrationTest
 
   test "the picker sends xy straight through" do
     press("l1", x: "0.6915", y: "0.3083")
-    assert_equal [ [ :light, "l1", { on: { on: true }, color: { xy: { x: 0.6915, y: 0.3083 } } } ] ], hue.writes
+    assert_equal [ [ :light, "l1", { on: { on: true }, color: { xy: { x: 0.6915, y: 0.3083 } }, dynamics: { duration: 100 } } ] ], hue.writes
     assert_match(/colour #/, Activity.last.action)
   end
 
   test "the white strip sends a colour temperature, clamped to the bulb's range" do
     press("l1", mirek: "9000")
-    assert_equal [ [ :light, "l1", { on: { on: true }, color_temperature: { mirek: 500 } } ] ], hue.writes
+    assert_equal [ [ :light, "l1", { on: { on: true }, color_temperature: { mirek: 500 }, dynamics: { duration: 100 } } ] ], hue.writes
     assert_equal "white 2000K", Activity.last.action
   end
 

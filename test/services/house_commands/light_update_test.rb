@@ -9,17 +9,17 @@ class HouseCommands::LightUpdateTest < ActiveSupport::TestCase
 
   test "power is sent exactly as asked" do
     update_with(on: "false")
-    assert_equal [ { on: { on: false } }, "off" ], [ sent_payload, Activity.last.action ]
+    assert_equal [ { on: { on: false }, dynamics: { duration: 100 } }, "off" ], [ sent_payload, Activity.last.action ]
   end
 
   test "brightness never asks for less than the lowest step" do
     update_with(brightness: "0")
-    assert_equal({ on: { on: true }, dimming: { brightness: 1.0 } }, sent_payload)
+    assert_equal({ on: { on: true }, dimming: { brightness: 1.0 }, dynamics: { duration: 100 } }, sent_payload)
   end
 
   test "a white is kept within the bulb's range and described in kelvin" do
     update_with(mirek: "9000")
-    assert_equal({ on: { on: true }, color_temperature: { mirek: 500 } }, sent_payload)
+    assert_equal({ on: { on: true }, color_temperature: { mirek: 500 }, dynamics: { duration: 100 } }, sent_payload)
     assert_equal "white 2000K", Activity.last.action
   end
 

@@ -25,7 +25,7 @@ export function markPending(lightIds) {
   }
 }
 
-export function free(lightIds) {
+export function free(lightIds, { discard = false } = {}) {
   const freeing = lightIds.filter(isPending)
   for (const lightId of freeing) {
     const timer = checkInTimers.get(lightId)
@@ -33,7 +33,7 @@ export function free(lightIds) {
     if (![...checkInTimers.values()].includes(timer)) clearTimeout(timer)
     for (const element of elementsShowing(lightId)) {
       element.classList.remove(PENDING_CLASS)
-      release(element)
+      release(element, { discard })
     }
   }
   if (freeing.length) document.dispatchEvent(new CustomEvent(FREED_EVENT, { detail: { lightIds: freeing } }))
@@ -57,5 +57,6 @@ async function checkIn(lightIdsAtStart, milliseconds) {
 }
 
 export function freeLightsWhenSettled() {
-  document.addEventListener(SETTLED_EVENT, event => free(event.detail.lightIds))
+  // The bridge has taken the command and the read-back's truth follows, so anything held back is stale.
+  document.addEventListener(SETTLED_EVENT, event => free(event.detail.lightIds, { discard: true }))
 }

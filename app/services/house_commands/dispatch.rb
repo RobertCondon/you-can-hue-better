@@ -11,13 +11,22 @@ module HouseCommands
       Thread.new { run(claim, kind, &work) }.tap { |thread| thread.name = THREAD_NAME }
     end
 
-    def run(claim, kind, &work)
-      Rails.application.reloader.wrap { Hue::CallTimings.measure(kind, &work) }
+    # The work is handed a way to free the lights as soon as the bridge has taken the command, so the
+    # read-back and broadcast that follow don't keep them locked. Freeing happens once, whichever comes first.
+    def run(claim, kind)
+      freed = false
+      free = lambda do
+        next if freed
+
+        freed = true
+        Hue::Locks.release(claim)
+        HouseBroadcast.settle(claim.light_ids)
+      end
+      Rails.application.reloader.wrap { Hue::CallTimings.measure(kind) { yield free } }
     rescue StandardError => error
       Rails.logger.error("#{LOG_PREFIX} #{kind} #{error.class}: #{error.message}")
     ensure
-      Hue::Locks.release(claim)
-      HouseBroadcast.settle(claim.light_ids)
+      free&.call
     end
 
     def inline? = Rails.configuration.x.hue.dispatch_inline

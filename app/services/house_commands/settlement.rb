@@ -1,9 +1,10 @@
 module HouseCommands
   class Settlement
-    def initialize(command:, activity:, tab:)
+    def initialize(command:, activity:, tab:, on_delivered: -> { })
       @command = command
       @activity = activity
       @tab = tab
+      @on_delivered = on_delivered
     end
 
     def settle
@@ -20,6 +21,7 @@ module HouseCommands
       toast(Toasts.went_wrong(@command.target_name))
       raise
     ensure
+      @on_delivered.call
       broadcast_truth
     end
 

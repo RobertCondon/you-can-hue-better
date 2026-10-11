@@ -10,11 +10,12 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
       patch room_path("r1"), params: { room: { on: "false" } }, as: :json
     end
     assert_response :accepted
-    assert_equal [ [ :grouped_light, "g1", { on: { on: false } } ] ], hue.writes
+    assert_equal [ [ :grouped_light, "g1", { on: { on: false }, dynamics: { duration: 100 } } ] ], hue.writes
     targets = streams.map { |stream| stream["target"] }
     assert_includes targets, "room_card_r1"
     assert_includes targets, "house_summary"
-    assert_equal [ "settle", "l1 l2" ], [ streams.last["action"], streams.last["light-ids"].split.sort.join(" ") ]
+    settle = streams.find { |stream| stream["action"] == "settle" }
+    assert_equal "l1 l2", settle["light-ids"].split.sort.join(" ")
   end
 
   test "a room with a light another device is changing bounces whole" do
@@ -30,14 +31,14 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
   test "a room's brightness dims only the lights that are on" do
     patch room_path("r1"), params: { room: { brightness: "50" } }, as: :json
     assert_response :accepted
-    assert_equal [ [ :light, "l1", { on: { on: true }, dimming: { brightness: 50.0 } } ] ], hue.writes
+    assert_equal [ [ :light, "l1", { on: { on: true }, dimming: { brightness: 50.0 }, dynamics: { duration: 100 } } ] ], hue.writes
     assert_equal [ "Study", "brightness 50%", "ok" ], [ Activity.last.target_name, Activity.last.action, Activity.last.result ]
   end
 
   test "a room that is all off turns on at the chosen brightness" do
     Hue::Light.where(id: %w[l1 l2]).update_all(on: false)
     patch room_path("r1"), params: { room: { brightness: "30" } }, as: :json
-    assert_equal [ [ :grouped_light, "g1", { on: { on: true }, dimming: { brightness: 30.0 } } ] ], hue.writes
+    assert_equal [ [ :grouped_light, "g1", { on: { on: true }, dimming: { brightness: 30.0 }, dynamics: { duration: 100 } } ] ], hue.writes
   end
 
   test "a room's brightness bounces whole while any of its lights is being changed" do

@@ -21,7 +21,7 @@ module HouseCommands
       Hue::Api::CommandResult.combine(lit_light_ids.map { |light_id| Hue.client.lights.update(light_id, payload) })
     end
 
-    def payload = { on: { on: true }, dimming: { brightness: @brightness } }
+    def payload = { on: { on: true }, dimming: { brightness: @brightness }, dynamics: QUICK_FADE }
 
     def lit_light_ids = @lit_light_ids ||= @group.lights.where(on: true).pluck(:id)
   end

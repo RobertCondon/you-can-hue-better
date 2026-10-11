@@ -5,8 +5,10 @@ export function hold(element) {
   element.dataset.busy = BUSY
 }
 
-export function release(element) {
+// With discard, a stream held back while the element was busy is dropped: a fresher one is on its way.
+export function release(element, { discard = false } = {}) {
   delete element.dataset.busy
+  if (discard && element.id) pendingStreams.delete(element.id)
   const streamHtml = element.id && pendingStreams.get(element.id)
   if (!streamHtml) return
   pendingStreams.delete(element.id)

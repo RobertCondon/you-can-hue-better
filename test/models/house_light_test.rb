@@ -16,7 +16,8 @@ class House::LightTest < ActiveSupport::TestCase
     desk_lamp = House::LightBuilder.from_mirror(Hue::Light.find("l1"))
     assert_equal "80%", desk_lamp.brightness_label
     refute_equal House::Glow::OFF_HEX, desk_lamp.tile_hex
-    assert_equal House::LightTile::DARK_INK, desk_lamp.tile_text_hex, "amber at 80% is light enough for dark text"
+    assert_operator Hue::Color.luminance(desk_lamp.tile_hex), :<, House::LightTile::DARK_INK_FROM_LUMINANCE
+    assert_equal House::LightTile::LIGHT_INK, desk_lamp.tile_text_hex, "amber at 80% stays under the dark-text threshold"
   end
 
   test "a bulb at Hue's lowest step reads 1%, not 0%" do

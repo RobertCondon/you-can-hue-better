@@ -17,6 +17,6 @@ module HouseCommands
 
     def send_to_bridge = Hue.client.grouped_lights.update(@group.grouped_light_id, payload)
 
-    def payload = { on: { on: @on } }
+    def payload = { on: { on: @on }, dynamics: QUICK_FADE }
   end
 end

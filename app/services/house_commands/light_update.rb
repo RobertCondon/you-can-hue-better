@@ -21,7 +21,7 @@ module HouseCommands
 
     def catch_up_mirror = read_back_lights([ @light.id ])
 
-    def payload = @payload ||= requested_payload
+    def payload = @payload ||= requested_payload.merge(dynamics: QUICK_FADE)
 
     def requested_payload
       return { on: { on: requested_power } } unless @fields[:on].nil?

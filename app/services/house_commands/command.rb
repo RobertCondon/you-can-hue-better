@@ -1,6 +1,8 @@
 module HouseCommands
   class Command
     NO_LIGHTS = [].freeze
+    # Hue fades over about 400 ms when told nothing; a short fade makes the bulbs answer the tap.
+    QUICK_FADE = { duration: 100 }.freeze
 
     def self.call(...) = new(...).call_now
 
@@ -42,7 +44,7 @@ module HouseCommands
     private
 
     def hand_off(claim, pending_activity, tab)
-      Dispatch.later(claim, kind) { Settlement.new(command: self, activity: pending_activity, tab:).settle }
+      Dispatch.later(claim, kind) { |free| Settlement.new(command: self, activity: pending_activity, tab:, on_delivered: free).settle }
       Accepted.new(light_ids:, check_in_milliseconds: Hue::CallTimings.p95_milliseconds(kind))
     end
 
