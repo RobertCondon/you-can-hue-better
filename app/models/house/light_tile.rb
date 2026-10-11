@@ -3,8 +3,8 @@ class House
     DARK_INK = "#15181f"
     LIGHT_INK = "#f3f1ec"
     TINT_STRENGTH = 0.18
-    FILL_STRENGTH = 0.28
-    DARK_INK_FROM_LUMINANCE = 0.35
+    FILL_STRENGTH = 0.5
+    DARK_INK_FROM_LUMINANCE = 0.65
 
     def initialize(light)
       @light = light
