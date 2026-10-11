@@ -1,0 +1,30 @@
+<section class="<%= class_names("light-sheet", light.lit? ? LightsHelper::ON_CLASS : LightsHelper::OFF_CLASS) %>" id="<%= targets.light_sheet(light) %>" data-light-id="<%= light.id %>" data-brightness="<%= light.brightness.round %>"
+         aria-label="<%= light.display_name %>"
+         style="<%= sheet_style(light) %>" <%= tag.attributes(data: power_looks(light) { |look| sheet_style(look) }) %>
+         data-controller="light pinned"
+         data-action="pointerdown->pinned#swipeStart pointermove->pinned#swipeMove pointerup->pinned#swipeEnd pointercancel->pinned#swipeEnd click->pinned#guard:capture">
+  <span class="light-sheet__handle" aria-hidden="true"></span>
+  <div class="light-sheet__head">
+    <%= async_hue_form_with url: light_path(light.id), method: :patch, class: "light-sheet__toggle", light_ids: [ light.id ] do |form| %>
+      <button type="submit" name="light[on]" value="<%= !light.lit? %>" class="light-sheet__switch" role="switch" aria-checked="<%= light.lit? %>" aria-label="<%= light_switch_label(light) %>">
+        <span class="light-sheet__track" aria-hidden="true"></span>
+      </button>
+    <% end %>
+    <button type="button" class="light-sheet__name"
+            data-action="editor#open" data-editor-url-param="<%= light_names_path(light.id) %>" data-editor-kind-param="light"
+            data-editor-title-param="<%= light.name %>" data-editor-name-param="<%= light.name %>" data-editor-nickname-param="<%= light.nickname %>">
+      <span><%= light.display_name %></span>
+      <small><%= light.nicknamed? ? t(".rename_nicknamed", name: light.name) : t(".rename") %></small>
+    </button>
+    <button type="button" class="light-sheet__close" data-action="pinned#close" aria-label="<%= t(".close", light: light.display_name) %>">
+      <%= render "shared/icons/chevron" %>
+    </button>
+  </div>
+  <%= async_hue_form_with url: light_path(light.id), method: :patch, class: "light-sheet__dim", light_ids: [ light.id ] do |form| %>
+    <label class="sr-only" for="sheet_bri_<%= light.id %>"><%= t(".brightness_of", light: light.display_name) %></label>
+    <input type="range" id="sheet_bri_<%= light.id %>" name="light[brightness]" min="<%= Hue::Api::Limits::LIT_BRIGHTNESS.min %>" max="<%= Hue::Api::Limits::LIT_BRIGHTNESS.max %>"
+           value="<%= slider_level(light) %>" data-action="input->light#preview change->light#submit">
+    <output for="sheet_bri_<%= light.id %>" data-level><%= light.brightness_label %></output>
+  <% end %>
+  <%= render "lights/panel", light: %>
+</section>

@@ -190,6 +190,11 @@ en:
       pick_colour: Pick a colour
       warm: Warm
       cool: Cool
+    sheet:
+      rename: Tap to rename
+      rename_nicknamed: "%{name} · tap to rename"
+      close: Close %{light}
+      brightness_of: Brightness of %{light}
     pin:
       more_controls: More controls for %{light}
       brightness_of: Brightness of %{light}

@@ -20,7 +20,11 @@ module HouseBroadcast
     end
 
     def light_details(light)
-      [ replace(Targets.light_panel(light), "lights/panel", light:), replace(Targets.light_pin(light), "lights/pin", light:) ]
+      [
+        replace(Targets.light_panel(light), "lights/panel", light:),
+        replace(Targets.light_pin(light), "lights/pin", light:),
+        replace(Targets.light_sheet(light), "lights/sheet", light:)
+      ]
     end
 
     def floor_lamps(house, light_ids)

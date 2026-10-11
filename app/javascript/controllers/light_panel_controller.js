@@ -2,33 +2,36 @@ import { Controller } from "@hotwired/stimulus"
 import { getHtml } from "lib/requests"
 
 const PINNED_CLASS = "is-pinned"
-const EXPANDED_CLASS = "is-expanded"
 const TILE_SELECTOR = ".tile[data-light-id]"
 const TILE_OPENER_SELECTOR = ".tile__open"
+const OPEN_DIALOG_SELECTOR = "dialog[open]"
 
 export default class extends Controller {
   static targets = ["dock"]
 
   async toggle(event) {
-    const { id, pinUrl, room } = event.params
+    const { id, sheetUrl, room } = event.params
     if (this.pinnedLightId === id) return this.close()
-    await this.pin(id, pinUrl, room)
+    await this.pin(id, sheetUrl, room)
   }
 
-  async pin(lightId, pinUrl, roomId) {
-    const pinHtml = await getHtml(pinUrl)
-    if (!pinHtml) return
-    this.dockTarget.innerHTML = pinHtml
+  async pin(lightId, sheetUrl, roomId) {
+    const sheetHtml = await getHtml(sheetUrl)
+    if (!sheetHtml) return
+    this.dockTarget.innerHTML = sheetHtml
     this.dockTarget.hidden = false
     this.dockTarget.dataset.room = roomId || ""
     this.pinnedLightId = lightId
     this.markPinnedTile(lightId)
   }
 
+  escape() {
+    if (this.pinnedLightId && !document.querySelector(OPEN_DIALOG_SELECTOR)) this.close()
+  }
+
   close() {
     this.dockTarget.innerHTML = ""
     this.dockTarget.hidden = true
-    this.dockTarget.classList.remove(EXPANDED_CLASS)
     this.pinnedLightId = null
     this.markPinnedTile(null)
   }
@@ -40,7 +43,7 @@ export default class extends Controller {
     if (position < 0 || lightIds.length < 2) return
     const nextLightId = lightIds[(position + event.detail.direction + lightIds.length) % lightIds.length]
     const opener = this.element.querySelector(`.tile[data-light-id="${nextLightId}"] ${TILE_OPENER_SELECTOR}`)
-    if (opener) this.pin(nextLightId, opener.dataset.lightPanelPinUrlParam, roomId)
+    if (opener) this.pin(nextLightId, opener.dataset.lightPanelSheetUrlParam, roomId)
   }
 
   lightIdsIn(roomId) {

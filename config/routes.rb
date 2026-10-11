@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       member do
         get :panel
         get :pin
+        get :sheet
       end
     end
     resources :custom_scenes, only: [ :new, :edit ]

@@ -4,6 +4,8 @@ module Html
 
     def pin = render_light_partial("lights/pin")
 
+    def sheet = render_light_partial("lights/sheet")
+
     private
 
     def render_light_partial(partial)

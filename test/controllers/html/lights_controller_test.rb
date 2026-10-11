@@ -5,7 +5,7 @@ class Html::LightsControllerTest < ActionDispatch::IntegrationTest
 
   test "tiles are plain and open a panel; the panel carries the colour component" do
     get root_path
-    assert_select "#light_r1_l1 .tile__open[data-light-panel-pin-url-param='#{pin_html_light_path("l1")}']"
+    assert_select "#light_r1_l1 .tile__open[data-light-panel-sheet-url-param='#{sheet_html_light_path("l1")}']"
     assert_select "#light_r1_l1 input", 0, "no form controls in the row; the drag is the slider"
     assert_select "main[data-controller=light-panel]"
 

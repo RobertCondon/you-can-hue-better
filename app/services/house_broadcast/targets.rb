@@ -21,6 +21,7 @@ module HouseBroadcast
     def light_tile(room, light) = "light_#{room.id}_#{light.id}"
     def light_panel(light) = "light_panel_#{light.id}"
     def light_pin(light) = "light_pin_#{light.id}"
+    def light_sheet(light) = "light_sheet_#{light.id}"
     def floor_lamp(light) = "floor_light_#{light.id}"
     def floor_net(net) = "floor_net_#{net.id}"
     def floor_item(item) = "floor_object_#{item.id}"

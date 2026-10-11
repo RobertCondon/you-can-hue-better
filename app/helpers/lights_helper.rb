@@ -16,6 +16,8 @@ module LightsHelper
 
   def pin_style(light) = css_variables(hue: light.hex, ink: light.tile_text_hex, fill: "#{light.fill_pct}%")
 
+  def sheet_style(light) = css_variables(hue: light.hex, fill: "#{light.fill_pct}%")
+
   def power_looks(light, &style)
     on_light = light.with(on: true)
     off_light = light.with(on: false)

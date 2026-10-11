@@ -8,8 +8,8 @@
   </div>
 </header>
 
-<main data-controller="light-panel" data-action="pinned:close->light-panel#close pinned:swipe->light-panel#swipe" data-rooms-target="list">
-  <div class="dock" id="<%= targets.light_dock %>" data-light-panel-target="dock" hidden></div>
+<main data-controller="light-panel" data-action="pinned:close->light-panel#close pinned:swipe->light-panel#swipe keydown.esc@window->light-panel#escape" data-rooms-target="list">
+  <div class="light-dock" id="<%= targets.light_dock %>" data-light-panel-target="dock" hidden></div>
   <% house.rooms.each do |room| %>
     <%= render "rooms/room", room: %>
   <% end %>
