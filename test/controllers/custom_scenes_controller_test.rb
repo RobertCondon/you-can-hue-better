@@ -53,6 +53,16 @@ class CustomScenesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Late reading", room.at_css(".chip--custom").text.strip
   end
 
+  test "moving a scene to another room takes its chip out of the old room" do
+    scene = CustomScene.create!(name: "Reading", group_id: "r1", lights_attributes: [ { hue_light_id: "l1", brightness: 40 } ])
+    streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) do
+      patch custom_scene_path(scene), params: { custom_scene: { group_id: "z1" } }, as: :json
+    end
+    assert_response :ok
+    assert_empty streams.find { |stream| stream["target"] == "room_r1" }.css(".chip--custom")
+    assert_equal "Reading", streams.find { |stream| stream["target"] == "room_z1" }.at_css(".chip--custom").text.strip
+  end
+
   test "deleting from the modal removes the scene and its chip" do
     scene = CustomScene.create!(name: "Reading", group_id: "r1", lights_attributes: [ { hue_light_id: "l1", brightness: 40 } ])
     streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) { delete custom_scene_path(scene), as: :json }

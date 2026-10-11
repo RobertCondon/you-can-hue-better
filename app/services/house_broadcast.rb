@@ -14,6 +14,11 @@ module HouseBroadcast
     send_streams([ *Streams.rooms(house), Streams.summary(house) ])
   end
 
+  def rooms(group_ids)
+    house = House.load(refresh: false)
+    send_streams(group_ids.compact.uniq.filter_map { |group_id| house.room(group_id) }.map { |room| Streams.room(room) })
+  end
+
   def listener_status = send_streams([ Streams.listener_status ])
 
   def settle(light_ids)

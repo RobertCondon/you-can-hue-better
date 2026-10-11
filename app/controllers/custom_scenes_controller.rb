@@ -8,21 +8,21 @@ class CustomScenesController < ApiController
 
   def create
     scene = CustomScene.create!(scene_params.key?(:lights_attributes) ? scene_params : current_look_params)
-    broadcast_room_of(scene)
+    HouseBroadcast.rooms([ scene.group_id ])
     render json: CustomSceneSerializer.new(scene).serialize, status: :created
   end
 
   def update
     scene = CustomScene.find(params[:id])
     scene.update!(scene_params)
-    broadcast_room_of(scene)
+    HouseBroadcast.rooms([ scene.group_id_previously_was, scene.group_id ])
     render json: CustomSceneSerializer.new(scene.reload).serialize
   end
 
   def destroy
     scene = CustomScene.find(params[:id])
     scene.destroy!
-    broadcast_room_of(scene)
+    HouseBroadcast.rooms([ scene.group_id ])
     head :no_content
   end
 
@@ -33,10 +33,5 @@ class CustomScenesController < ApiController
   def current_look_params
     group = Hue::Group.find(scene_params.require(:group_id))
     { **scene_params.to_h.symbolize_keys, lights_attributes: CustomSceneCapture.new(group).lights_attributes }
-  end
-
-  def broadcast_room_of(scene)
-    room = scene.group_id && House.load(refresh: false).room(scene.group_id)
-    HouseBroadcast.send_streams([ HouseBroadcast::Streams.room(room) ]) if room
   end
 end
