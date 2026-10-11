@@ -22,7 +22,8 @@ class VisibilityTest < ActionDispatch::IntegrationTest
   test "a hidden room disappears everywhere outside /dev" do
     patch room_visibility_path("z1"), params: { room: { hidden: "true" } }, as: :json
     get root_path
-    assert_select "#room_z1", 0
+    assert_select "#room_card_z1", 0
+    assert_select "#room_tab_z1", 0
     get scenes_path
     assert_select "main.scenes-page"
     assert_select "#scene_card_s3", 0

@@ -1,4 +1,4 @@
-<div class="room__body" id="<%= targets.room_body(room) %>" data-room-id="<%= room.id %>">
+<div class="room__body" id="<%= targets.room_body(room) %>" role="tabpanel" aria-labelledby="<%= targets.room_tab(room) %>" data-room-id="<%= room.id %>" data-room-pager-target="body"<%= " hidden" if local_assigns[:hidden] %>>
   <% if room.lights.any? %>
     <div class="scenes">
       <% room.scenes.each do |scene| %>

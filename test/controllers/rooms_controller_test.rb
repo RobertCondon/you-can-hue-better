@@ -99,6 +99,7 @@ class RoomsOrderTest < ActionDispatch::IntegrationTest
     assert_response :no_content
     assert_equal [ [ "z1", 0 ], [ "r1", 1 ] ], HueExtensions::Group.order(:position).pluck(:id, :position)
     get root_path
-    assert_select "main > section.room:first-of-type h2", /Evening/
+    assert_select ".room-pager > .room-card:first-child h2", /Evening/
+    assert_select ".room-tabs > .room-tab:first-child", /Evening/
   end
 end

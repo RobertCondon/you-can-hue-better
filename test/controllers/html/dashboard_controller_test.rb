@@ -6,12 +6,16 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
   test "the everyday view shows every room and no logs" do
     get root_path
     assert_response :success
-    assert_select ".compact section.room", 2
+    assert_select ".compact .room-pager > section.room-card", 2
     assert_select "#light_r1_l1 .tile__name", "Desk lamp"
     assert_select "#light_z1_l1 .tile__name", "Desk lamp"
     assert_select "#house_summary", /1 of 2 on/
     assert_select ".activity", 0
-    assert_select ".room-card__title[aria-expanded]", 2
+    assert_select ".room-tabs[role=tablist] .room-tab[role=tab][data-action='room-pager#select']", 2
+    assert_select "#room_tab_r1[aria-controls=room_body_r1][data-room-pager-room-param=r1]"
+    assert_select ".room__body[role=tabpanel]", 2
+    assert_select "#room_body_z1[hidden]"
+    assert_select ".room-pager__dots span[data-room-pager-target=dot]", 2
     assert_select "[data-controller~=rooms] .room-card__editing", 2
     assert_select "svg path[d^=\"M9.5\"]", 0, "no pencil icons"
     assert_select ".views .views__link.is-current", "Lights"

@@ -2,7 +2,8 @@ import { Controller } from "@hotwired/stimulus"
 import { sendJson } from "lib/requests"
 
 const EDITING_CLASS = "is-editing"
-const ROOM_SELECTOR = ".room"
+const CARD_SELECTOR = ".room-card"
+const ROOM_PIECES_SELECTOR = ".room-tab, .room__body"
 const ROOM_IDS_FIELD = "ids[]"
 const PATCH = "PATCH"
 const EARLIER = -1
@@ -20,26 +21,35 @@ export default class extends Controller {
   }
 
   moveUp(event) {
-    this.move(event.target.closest(ROOM_SELECTOR), EARLIER)
+    this.move(event.target.closest(CARD_SELECTOR), EARLIER)
   }
 
   moveDown(event) {
-    this.move(event.target.closest(ROOM_SELECTOR), LATER)
+    this.move(event.target.closest(CARD_SELECTOR), LATER)
   }
 
-  move(section, direction) {
-    const sections = this.sections()
-    const neighbour = sections[sections.indexOf(section) + direction]
+  // The card, its tab and its body all move, so every row keeps the same order.
+  move(card, direction) {
+    const cards = this.cards()
+    const neighbour = cards[cards.indexOf(card) + direction]
     if (!neighbour) return
-    direction === EARLIER ? neighbour.before(section) : neighbour.after(section)
+    for (const [piece, neighbourPiece] of this.piecesOf(card).map((piece, index) => [piece, this.piecesOf(neighbour)[index]])) {
+      direction === EARLIER ? neighbourPiece.before(piece) : neighbourPiece.after(piece)
+    }
+    this.dispatch("moved", { target: card })
     this.saveOrder()
   }
 
-  sections() {
-    return [...this.listTarget.querySelectorAll(`:scope > ${ROOM_SELECTOR}`)]
+  cards() {
+    return [...this.listTarget.querySelectorAll(CARD_SELECTOR)]
+  }
+
+  piecesOf(card) {
+    const roomId = card.dataset.roomId
+    return [card, ...[...this.listTarget.querySelectorAll(ROOM_PIECES_SELECTOR)].filter(piece => piece.dataset.roomId === roomId)]
   }
 
   saveOrder() {
-    return sendJson(PATCH, this.urlValue, { [ROOM_IDS_FIELD]: this.sections().map(section => section.dataset.roomId) })
+    return sendJson(PATCH, this.urlValue, { [ROOM_IDS_FIELD]: this.cards().map(card => card.dataset.roomId) })
   }
 }

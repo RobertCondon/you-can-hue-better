@@ -7,7 +7,7 @@ class PinnedLightTest < ActionDispatch::IntegrationTest
 
   test "the lights view docks a light's sheet at the bottom and tiles open into it" do
     get root_path
-    assert_select "main[data-controller=light-panel] > .light-dock#light_dock[hidden][data-light-panel-target=dock]"
+    assert_select "main[data-controller~=light-panel] > .light-dock#light_dock[hidden][data-light-panel-target=dock]"
     assert_select "#light_r1_l1 .tile__open[data-light-panel-sheet-url-param='#{sheet_html_light_path("l1")}'][data-light-panel-room-param=r1][aria-controls=light_dock]"
   end
 

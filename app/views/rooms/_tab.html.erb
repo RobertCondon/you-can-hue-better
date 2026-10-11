@@ -1,0 +1,4 @@
+<button type="button" class="room-tab" role="tab" id="<%= targets.room_tab(room) %>" aria-selected="false" aria-controls="<%= targets.room_body(room) %>"
+        data-room-id="<%= room.id %>" data-room-pager-target="tab" data-action="room-pager#select" data-room-pager-room-param="<%= room.id %>">
+  <span class="<%= class_names("room-tab__dot", LightsHelper::ON_CLASS => room.any_on?) %>" aria-hidden="true"></span><%= room.display_name %>
+</button>

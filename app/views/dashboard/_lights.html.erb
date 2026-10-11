@@ -8,10 +8,26 @@
   </div>
 </header>
 
-<main data-controller="light-panel" data-action="pinned:close->light-panel#close pinned:swipe->light-panel#swipe keydown.esc@window->light-panel#escape" data-rooms-target="list">
+<main class="lights" data-controller="light-panel room-pager" data-rooms-target="list"
+      data-action="pinned:close->light-panel#close pinned:swipe->light-panel#swipe keydown.esc@window->light-panel#escape room-pager:changed->light-panel#close rooms:moved->room-pager#follow">
   <div class="light-dock" id="<%= targets.light_dock %>" data-light-panel-target="dock" hidden></div>
-  <% house.rooms.each do |room| %>
-    <%= render "rooms/room", room: %>
+  <div class="room-tabs" role="tablist" aria-label="<%= t(".rooms") %>" data-room-pager-target="tabs">
+    <% house.rooms.each do |room| %>
+      <%= render "rooms/tab", room: %>
+    <% end %>
+  </div>
+  <div class="room-pager" data-room-pager-target="pager" data-action="scroll->room-pager#scrolled">
+    <% house.rooms.each do |room| %>
+      <%= render "rooms/card", room: %>
+    <% end %>
+  </div>
+  <div class="room-pager__dots" aria-hidden="true">
+    <% house.rooms.each do %>
+      <span data-room-pager-target="dot"></span>
+    <% end %>
+  </div>
+  <% house.rooms.each_with_index do |room, index| %>
+    <%= render "rooms/body", room:, hidden: index.positive? %>
   <% end %>
 </main>
 <%= render "shared/editor", bridge_names: dev %>

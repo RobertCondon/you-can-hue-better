@@ -1,13 +1,13 @@
-<div class="<%= class_names("room-card", LightsHelper::ON_CLASS => room.any_on?) %>" id="<%= targets.room_card(room) %>" data-room-id="<%= room.id %>">
+<section class="<%= class_names("room-card", "room-card--#{room.kind}", LightsHelper::ON_CLASS => room.any_on?) %>" id="<%= targets.room_card(room) %>" aria-label="<%= room.display_name %>"
+         data-room-id="<%= room.id %>" data-room-pager-target="card">
   <div class="room-card__head">
-    <button type="button" class="room-card__title" data-action="room#toggle" aria-expanded="true" aria-controls="<%= targets.room_body(room) %>">
-      <%= render "shared/icons/chevron" %>
+    <div class="room-card__title">
       <span class="room-card__names">
         <% if room.nicknamed? %><small class="room-card__realname"><%= room.name %></small><% end %>
         <h2><%= room.display_name %><%= room_badges(room, badge_class: "room-card__kind") %></h2>
         <span class="room-card__summary"><%= room.summary %><% if room.any_on? %> · <%= room.brightness_label %><% end %></span>
       </span>
-    </button>
+    </div>
     <%= async_hue_form_with url: room_path(room.id), method: :patch, class: "room-card__toggle", light_ids: room.lights.map(&:id) do |form| %>
       <input type="hidden" name="room[on]" value="<%= room_power_target_state(room) %>">
       <button type="submit" class="room-card__switch" role="switch" aria-checked="<%= room.any_on? %>" aria-label="<%= room_switch_label(room) %>">
@@ -39,4 +39,4 @@
     <button type="button" class="btn btn--icon" data-action="rooms#moveUp" aria-label="<%= t(".move_up", room: room.display_name) %>">▲</button>
     <button type="button" class="btn btn--icon" data-action="rooms#moveDown" aria-label="<%= t(".move_down", room: room.display_name) %>">▼</button>
   </div>
-</div>
+</section>
