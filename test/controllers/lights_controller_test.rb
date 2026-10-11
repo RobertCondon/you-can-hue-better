@@ -29,7 +29,13 @@ class LightsControllerTest < ActionDispatch::IntegrationTest
     refute Hue::Locks.locked?("l1")
   end
 
-  test "brightness also turns the light on" do
+  test "a tile's switch sends on as a JSON boolean, and false still turns the light off" do
+    patch light_path("l1"), params: { light: { on: false } }, headers: { HueCalls::TAB_HEADER => TAB }, as: :json
+    assert_response :accepted
+    assert_equal [ [ :light, "l1", { on: { on: false } } ] ], hue.writes
+  end
+
+    test "brightness also turns the light on" do
     press("l2", brightness: "42")
     assert_equal [ [ :light, "l2", { on: { on: true }, dimming: { brightness: 42.0 } } ] ], hue.writes
   end

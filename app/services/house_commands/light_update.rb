@@ -24,7 +24,7 @@ module HouseCommands
     def payload = @payload ||= requested_payload
 
     def requested_payload
-      return { on: { on: requested_power } } if @fields[:on].present?
+      return { on: { on: requested_power } } unless @fields[:on].nil?
       return { on: { on: true }, dimming: { brightness: @fields[:brightness].to_f.clamp(Hue::Api::Limits::LIT_BRIGHTNESS) } } if @fields[:brightness].present?
       return { on: { on: true }, color: { xy: Hue::Color.hex_to_xy(@fields[:color]) } } if @fields[:color].present?
       return { on: { on: true }, color: { xy: { x: cie(@fields[:x]), y: cie(@fields[:y]) } } } if @fields[:x].present? && @fields[:y].present?
