@@ -19,18 +19,30 @@
 .tile__fill { position: absolute; left: 0; top: 0; bottom: 0; width: var(--fill); background: var(--fillc); transition: width var(--quick) ease; pointer-events: none; }
 .tile.is-dragging .tile__fill { transition: none; }
 
-.tile__icon {
-  all: unset; position: relative; z-index: 1; width: 48px; flex: none; cursor: pointer;
-  display: grid; place-items: center;
+.tile__switch {
+  all: unset; position: relative; z-index: 1; flex: none; cursor: pointer;
+  display: grid; place-items: center; padding: 0 10px 0 12px;
 }
-.tile__icon:focus-visible .tile__dot { outline: var(--focus-width) solid var(--ink); outline-offset: 2px; }
+.tile__switch:focus-visible .tile__track { outline: var(--focus-width) solid var(--ink); outline-offset: 2px; }
+.tile__track {
+  position: relative; width: 46px; height: 28px; border-radius: var(--radius-pill);
+  background: var(--line); transition: background var(--quick) ease, box-shadow var(--quick) ease;
+}
+.tile__track::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--ink-soft); transition: transform var(--quick) ease, background var(--quick) ease;
+}
+.tile.is-on .tile__track { background: var(--hue); box-shadow: 0 0 12px color-mix(in srgb, var(--hue) 40%, transparent); }
+.tile.is-on .tile__track::after { transform: translateX(18px); background: var(--page); }
+.tile.is-unreachable .tile__track { background: transparent; box-shadow: inset 0 0 0 2px var(--danger); }
+.tile.is-unreachable .tile__track::after { background: var(--danger); }
+
 .tile__dot {
   width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
   background: var(--hue); color: var(--ink); box-shadow: 0 0 0 2px var(--dot-ring);
 }
 .tile__dot .ico { width: 16px; height: 16px; }
-.tile.is-off .tile__dot, .pin.is-off .tile__dot { background: transparent; color: var(--ink-soft); box-shadow: 0 0 0 2px var(--off-ring) inset; }
-.tile.is-unreachable .tile__dot { color: var(--danger); box-shadow: 0 0 0 2px var(--danger) inset; background: transparent; }
+.pin.is-off .tile__dot { background: transparent; color: var(--ink-soft); box-shadow: 0 0 0 2px var(--off-ring) inset; }
 
 .tile__open {
   all: unset; position: relative; z-index: 1; cursor: pointer; flex: 1; min-width: 0;
@@ -45,12 +57,12 @@
 .tile__level { font-size: var(--text-md); color: var(--level-ink); opacity: 0.9; font-variant-numeric: tabular-nums; flex: 0 1 auto; text-align: right; }
 .tile.is-unreachable .tile__level { color: var(--danger); opacity: 1; font-size: var(--text-xs); line-height: 1.2; max-width: 5.5em; }
 
-.tile.is-pending .tile__dot, .pin.is-pending .tile__dot, .floor__lamp.is-pending .floor__dot,
+.tile.is-pending .tile__track, .pin.is-pending .tile__dot, .floor__lamp.is-pending .floor__dot,
 .light-panel.is-pending .switch__track, .room__toggle.is-pending .btn, .chip-form.is-pending button, .room__dim.is-pending input { animation: pending-breath 1.6s ease-in-out infinite; }
 @keyframes pending-breath { 50% { opacity: 0.45; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .tile__fill, .chevron { transition: none; }
-  .tile.is-pending .tile__dot, .pin.is-pending .tile__dot, .floor__lamp.is-pending .floor__dot,
+  .tile__fill, .chevron, .tile__track, .tile__track::after { transition: none; }
+  .tile.is-pending .tile__track, .pin.is-pending .tile__dot, .floor__lamp.is-pending .floor__dot,
   .light-panel.is-pending .switch__track, .room__toggle.is-pending .btn, .chip-form.is-pending button, .room__dim.is-pending input { animation: none; opacity: 0.7; }
 }

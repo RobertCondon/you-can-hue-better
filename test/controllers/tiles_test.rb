@@ -3,10 +3,10 @@ require "test_helper"
 class TileGrammarTest < ActionDispatch::IntegrationTest
   setup { sync_mirror! }
 
-  test "a tile has an icon that switches, a name that opens, and a fill for the level" do
+  test "a tile has a switch, a name that opens, and a fill for the level" do
     get root_path
     assert_select "#light_r1_l1[data-controller=tile][data-tile-url-value='#{light_path("l1")}'][style*='--fill: 80%']"
-    assert_select "#light_r1_l1 .tile__icon[data-action='tile#toggle'][aria-pressed=true] svg.ico"
+    assert_select "#light_r1_l1 .tile__switch[role=switch][data-action='tile#toggle'][aria-checked=true] .tile__track"
     assert_select "#light_r1_l1 .tile__open[data-action='light-panel#toggle'] .tile__name", "Desk lamp"
     assert_select "#light_r1_l1 .tile__fill"
     assert_select "#light_r1_l2.is-off[style*='--fill: 0%']"

@@ -176,6 +176,7 @@ en:
     power:
       turn_off: Turn off %{light}
       turn_on: Turn on %{light}
+      switch: "%{light} power"
     panel:
       not_responding: Not responding. Check it has power at the switch. The bridge last had it %{last_state}.
       last_on: on at %{level}%

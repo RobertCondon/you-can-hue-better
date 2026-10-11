@@ -6,12 +6,18 @@ const ON_CLASS = "is-on"
 const OFF_CLASS = "is-off"
 const LEVEL_SELECTOR = "[data-level]"
 const NO_FILL = "0%"
+const SWITCH_SELECTOR = "[role='switch']"
 
 const elementsShowing = lightId => document.querySelectorAll(`[data-light-id="${lightId}"]`)
+
+function markSwitches(element, on) {
+  for (const powerSwitch of element.querySelectorAll(SWITCH_SELECTOR)) powerSwitch.setAttribute("aria-checked", String(on))
+}
 
 function showAsOn(element) {
   element.classList.remove(OFF_CLASS)
   element.classList.add(ON_CLASS)
+  markSwitches(element, true)
 }
 
 export function previewLevel(lightId, level) {
@@ -42,6 +48,7 @@ export function previewPower(lightId, on) {
     else element.style.setProperty("--fill", on ? `${element.dataset.brightness}%` : NO_FILL)
     element.classList.toggle(ON_CLASS, on)
     element.classList.toggle(OFF_CLASS, !on)
+    markSwitches(element, on)
     if (look.level !== undefined) for (const levelLabel of element.querySelectorAll(LEVEL_SELECTOR)) levelLabel.textContent = look.level
   }
 }
@@ -51,13 +58,15 @@ export function snapshotLight(lightId) {
     element,
     appearance: snapshotAppearance(element),
     brightness: element.dataset.brightness,
+    on: element.classList.contains(ON_CLASS),
     levels: [...element.querySelectorAll(LEVEL_SELECTOR)].map(levelLabel => levelLabel.textContent)
   }))
 }
 
 export function restoreLight(snapshot) {
-  for (const { element, appearance, brightness, levels } of snapshot) {
+  for (const { element, appearance, brightness, on, levels } of snapshot) {
     restoreAppearance(element, appearance)
+    markSwitches(element, on)
     element.dataset.brightness = brightness
     element.querySelectorAll(LEVEL_SELECTOR).forEach((levelLabel, index) => { levelLabel.textContent = levels[index] })
   }
