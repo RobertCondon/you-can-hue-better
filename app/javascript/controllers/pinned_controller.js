@@ -5,7 +5,7 @@ const HORIZONTAL_BIAS = 1.5
 const NEXT = 1
 const PREVIOUS = -1
 const EXPANDED_CLASS = "is-expanded"
-const NOT_SWIPEABLE = "input, .pin__sheet, .picker, .sheet-handle"
+const NOT_SWIPEABLE = "input, .pin__sheet, .picker, .sheet-handle, [data-controller~='drag-range']"
 const DOCK_SELECTOR = ".dock"
 
 export default class extends Controller {
