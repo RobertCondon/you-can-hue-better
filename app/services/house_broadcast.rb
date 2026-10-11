@@ -16,7 +16,7 @@ module HouseBroadcast
 
   def rooms(group_ids)
     house = House.load(refresh: false)
-    send_streams(group_ids.compact.uniq.filter_map { |group_id| house.room(group_id) }.map { |room| Streams.room(room) })
+    send_streams(group_ids.compact.uniq.filter_map { |group_id| house.room(group_id) }.flat_map { |room| Streams.room(room) })
   end
 
   def listener_status = send_streams([ Streams.listener_status ])

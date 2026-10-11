@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 const STORAGE_KEY = "rooms:collapsed"
 const COLLAPSED_CLASS = "is-collapsed"
-const TITLE_SELECTOR = ".room__title"
+const TITLE_SELECTOR = ".room-card__title"
 
 export default class extends Controller {
   connect() {

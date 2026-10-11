@@ -1,28 +1,74 @@
 .room { margin-bottom: var(--section-gap); }
-.room__head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
-.room__dim { flex-basis: 100%; display: flex; align-items: center; gap: 12px; font-size: var(--text-md); color: var(--ink-soft); }
-.room__dim input[type="range"] { flex: 1; }
-.room__dim output { min-width: 3.2em; text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
-.room.is-collapsed .room__dim { display: none; }
-.room__dim.is-mixed input[type="range"]::-webkit-slider-thumb { background: var(--ink-soft); }
-.room__dim.is-mixed input[type="range"]::-moz-range-thumb { background: var(--ink-soft); }
-.room__dim.is-mixed input[type="range"], .room__dim.is-mixed output { opacity: 0.6; }
-.room__title {
-  all: unset; cursor: pointer; display: flex; align-items: last baseline; gap: 12px; flex: 1; min-width: 0;
-  padding: 4px 0; border-radius: var(--radius-small);
+
+.room-card {
+  --fill: 0%;
+  display: grid; gap: 14px; margin-bottom: 14px; padding: 16px;
+  background: var(--surface); border-radius: 22px; box-shadow: inset 0 0 0 1px var(--line);
 }
-.room__title:focus-visible { outline: var(--focus-width) solid var(--ink); outline-offset: 4px; }
-.room__title h2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.room__kind { color: var(--ink-soft); font-size: 0.7em; }
-.room__summary { color: var(--ink-soft); white-space: nowrap; }
-.room__names { display: flex; flex-direction: column; min-width: 0; }
-.room__realname { font-size: var(--text-xs); color: var(--ink-soft); line-height: 1.2; }
-.room__editing { display: none; gap: 4px; }
-.is-editing .room__editing { display: flex; }
+.room-card.is-on { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--warm-white) 20%, transparent), 0 24px 48px -28px color-mix(in srgb, var(--warm-white) 40%, transparent); }
+.room-card__head { display: flex; align-items: center; gap: 12px; }
+.room-card__title {
+  all: unset; cursor: pointer; display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;
+  border-radius: var(--radius-small);
+}
+.room-card__title:focus-visible { outline: var(--focus-width) solid var(--ink); outline-offset: 4px; }
+.room-card__names { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.room-card__names h2 { font-size: 24px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.room-card__realname { font-size: var(--text-xs); color: var(--ink-soft); line-height: 1.2; }
+.room-card__kind { color: var(--ink-soft); font-size: 0.6em; font-weight: 400; }
+.room-card__summary { font-size: var(--text-md); color: var(--ink-soft); }
+
+.room-card__toggle { display: contents; }
+.room-card__switch { all: unset; flex: none; cursor: pointer; }
+.room-card__switch:focus-visible .room-card__track { outline: var(--focus-width) solid var(--ink); outline-offset: 2px; }
+.room-card__track {
+  display: block; position: relative; width: 64px; height: 38px; border-radius: var(--radius-pill);
+  background: var(--line); transition: background var(--quick) ease, box-shadow var(--quick) ease;
+}
+.room-card__track::after {
+  content: ""; position: absolute; top: 4px; left: 4px; width: 30px; height: 30px; border-radius: 50%;
+  background: var(--ink-soft); transition: transform var(--quick) ease, background var(--quick) ease;
+}
+.room-card__switch[aria-checked="true"] .room-card__track { background: var(--warm-white); box-shadow: 0 0 18px color-mix(in srgb, var(--warm-white) 35%, transparent); }
+.room-card__switch[aria-checked="true"] .room-card__track::after { transform: translateX(26px); background: var(--page); }
+
+.room-card__dots { display: flex; flex-wrap: wrap; gap: 5px; }
+.room-card__dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--off-ring); }
+.room-card__dot.is-on { background: var(--hue); box-shadow: 0 0 8px color-mix(in srgb, var(--hue) 55%, transparent); }
+.room-card__dot.is-unreachable { box-shadow: inset 0 0 0 1.5px var(--danger); background: transparent; }
+
+.room-card__dim { position: relative; }
+.room-card__dim input[type="range"] {
+  height: 52px; border-radius: var(--radius); overflow: hidden;
+  background: linear-gradient(90deg, var(--warm-white) 0 var(--fill), var(--page) var(--fill) 100%);
+}
+.room-card__dim input[type="range"]::-webkit-slider-runnable-track { height: 52px; background: transparent; }
+.room-card__dim input[type="range"]::-webkit-slider-thumb { width: 8px; height: 32px; margin-top: 10px; border-radius: 4px; background: var(--page); box-shadow: 0 0 0 2px color-mix(in srgb, var(--ink) 40%, transparent); }
+.room-card__dim input[type="range"]::-moz-range-track { height: 52px; background: transparent; }
+.room-card__dim input[type="range"]::-moz-range-thumb { width: 8px; height: 32px; border-radius: 4px; background: var(--page); }
+.room-card__dim output {
+  position: absolute; right: 14px; top: 0; bottom: 0; display: flex; align-items: center; pointer-events: none;
+  font-size: var(--text-base); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink);
+}
+.room-card__dim.is-mixed input[type="range"] { opacity: 0.75; }
+
+.room-card__editing { display: none; gap: 4px; }
+.is-editing .room-card__editing { display: flex; }
+
 .chevron { align-self: center; color: var(--ink-soft); transition: transform var(--quick) ease; flex: none; }
 .room.is-collapsed { margin-bottom: 14px; }
 .room.is-collapsed .chevron { transform: rotate(-90deg); }
-.room.is-collapsed .room__body { display: none; }
+.room.is-collapsed .room__body, .room.is-collapsed .room-card__dots, .room.is-collapsed .room-card__dim { display: none; }
+
+/* The scenes page still heads its rooms with these. */
+.room__head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+.room__kind { color: var(--ink-soft); font-size: 0.7em; }
+.room__names { display: flex; flex-direction: column; min-width: 0; }
+.room__realname { font-size: var(--text-xs); color: var(--ink-soft); line-height: 1.2; }
 
 .scenes { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
 .scenes::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .room-card__track, .room-card__track::after { transition: none; }
+}

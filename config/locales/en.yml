@@ -107,11 +107,8 @@ en:
       zone: zone
       hidden: hidden
     power:
-      turn_off: Turn %{room} off
-      turn_on: Turn %{room} on
-      title_off: Turn room off
-      title_on: Turn room on
-    head:
+      switch: "%{room} power"
+    card:
       rename: Rename
       brightness_of: Brightness of %{room}
       move_up: Move %{room} up

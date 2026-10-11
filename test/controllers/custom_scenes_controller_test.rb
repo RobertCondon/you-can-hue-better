@@ -17,7 +17,7 @@ class CustomScenesControllerTest < ActionDispatch::IntegrationTest
     desk = scene.lights.find_by!(hue_light_id: "l1")
     assert_equal [ true, 80.0, 359, nil ], [ desk.on, desk.brightness.to_f, desk.mirek, desk.color_x ]
     refute scene.lights.find_by!(hue_light_id: "l2").on
-    room = streams.find { |stream| stream["target"] == "room_r1" }
+    room = streams.find { |stream| stream["target"] == "room_body_r1" }
     assert_equal "Reading", room.at_css(".chip--custom").text.strip
   end
 
@@ -32,14 +32,14 @@ class CustomScenesControllerTest < ActionDispatch::IntegrationTest
   test "a room lists its custom scenes after its own scenes, then the add button" do
     CustomScene.create!(name: "Reading", group_id: "r1", lights_attributes: [ { hue_light_id: "l1", brightness: 40, mirek: 366 } ])
     get root_path
-    chips = css_select("#room_r1 .scenes .chip").map { |chip| chip.text.strip }
+    chips = css_select("#room_body_r1 .scenes .chip").map { |chip| chip.text.strip }
     assert_equal [ "Bright", "Relax", "Reading", "+" ], chips
     scene = CustomScene.sole
-    assert_select "#room_r1 form.chip-form[action$='/activation'][data-controller~=async-hue-call][data-controller~=scene-hold] .chip--custom", "Reading"
-    assert_select "#room_r1 form.chip-form[data-action*='scene-hold:edit->custom-scene-dialog#open'][data-custom-scene-dialog-url-param='#{edit_html_custom_scene_path(scene)}']"
-    targets = JSON.parse(css_select("#room_r1 form.chip-form[action$='/activation']").sole["data-async-hue-call-targets-value"])
+    assert_select "#room_body_r1 form.chip-form[action$='/activation'][data-controller~=async-hue-call][data-controller~=scene-hold] .chip--custom", "Reading"
+    assert_select "#room_body_r1 form.chip-form[data-action*='scene-hold:edit->custom-scene-dialog#open'][data-custom-scene-dialog-url-param='#{edit_html_custom_scene_path(scene)}']"
+    targets = JSON.parse(css_select("#room_body_r1 form.chip-form[action$='/activation']").sole["data-async-hue-call-targets-value"])
     assert_equal [ { "light_id" => "l1", "on" => true, "level" => 40, "hex" => Hue::Color.mirek_to_hex(366) } ], targets
-    assert_select "#room_r1 .chip--add[data-action='custom-scene-dialog#open'][data-custom-scene-dialog-url-param='#{new_html_custom_scene_path(group_id: "r1")}']"
+    assert_select "#room_body_r1 .chip--add[data-action='custom-scene-dialog#open'][data-custom-scene-dialog-url-param='#{new_html_custom_scene_path(group_id: "r1")}']"
   end
 
   test "renaming from the modal updates the room everywhere" do
@@ -49,7 +49,7 @@ class CustomScenesControllerTest < ActionDispatch::IntegrationTest
     end
     assert_equal "Late reading", response.parsed_body["name"]
     assert_equal 1, scene.reload.lights.count
-    room = streams.find { |stream| stream["target"] == "room_r1" }
+    room = streams.find { |stream| stream["target"] == "room_body_r1" }
     assert_equal "Late reading", room.at_css(".chip--custom").text.strip
   end
 
@@ -59,8 +59,8 @@ class CustomScenesControllerTest < ActionDispatch::IntegrationTest
       patch custom_scene_path(scene), params: { custom_scene: { group_id: "z1" } }, as: :json
     end
     assert_response :ok
-    assert_empty streams.find { |stream| stream["target"] == "room_r1" }.css(".chip--custom")
-    assert_equal "Reading", streams.find { |stream| stream["target"] == "room_z1" }.at_css(".chip--custom").text.strip
+    assert_empty streams.find { |stream| stream["target"] == "room_body_r1" }.css(".chip--custom")
+    assert_equal "Reading", streams.find { |stream| stream["target"] == "room_body_z1" }.at_css(".chip--custom").text.strip
   end
 
   test "deleting from the modal removes the scene and its chip" do
@@ -68,7 +68,7 @@ class CustomScenesControllerTest < ActionDispatch::IntegrationTest
     streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) { delete custom_scene_path(scene), as: :json }
     assert_response :no_content
     assert_equal 0, CustomScene.count
-    assert_empty streams.find { |stream| stream["target"] == "room_r1" }.css(".chip--custom")
+    assert_empty streams.find { |stream| stream["target"] == "room_body_r1" }.css(".chip--custom")
   end
 
   test "a blank name on rename shows why in the modal" do

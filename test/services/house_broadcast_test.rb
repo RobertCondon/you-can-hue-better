@@ -15,8 +15,8 @@ class HouseBroadcastTest < ActiveSupport::TestCase
     targets = broadcast_targets(changes)
     assert_includes targets, "light_r1_l1"
     assert_includes targets, "light_z1_l1"
-    assert_includes targets, "room_head_r1"
-    assert_includes targets, "room_head_z1"
+    assert_includes targets, "room_card_r1"
+    assert_includes targets, "room_card_z1"
     assert_includes targets, "house_summary"
     assert_includes targets, "light_panel_l1"
     assert_includes targets, "floor_light_l1"

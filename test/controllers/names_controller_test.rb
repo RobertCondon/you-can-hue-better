@@ -70,9 +70,9 @@ class NamesControllerTest < ActionDispatch::IntegrationTest
   test "a room nickname shows with the real name above" do
     streams = capture_turbo_stream_broadcasts(HouseBroadcast::STREAM) { patch room_names_path("r1"), params: { room: { nickname: "Office" } }, as: :json }
     assert_equal({ "id" => "r1", "name" => "Study", "nickname" => "Office" }, response.parsed_body)
-    head = streams.find { |stream| stream["target"] == "room_head_r1" }
+    head = streams.find { |stream| stream["target"] == "room_card_r1" }
     assert_match(/Office/, head.at_css("h2").text)
-    assert_equal "Study", head.at_css(".room__realname").text.strip
+    assert_equal "Study", head.at_css(".room-card__realname").text.strip
   end
 
   test "renaming a zone renames it on the bridge" do

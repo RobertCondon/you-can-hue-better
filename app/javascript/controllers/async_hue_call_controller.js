@@ -6,6 +6,7 @@ const POWER_FIELDS = [ "light[on]", "room[on]" ]
 const TRUE = "true"
 const PENDING_CLASS = "is-pending"
 const METHOD_FIELD = "_method"
+const SWITCH_SELECTOR = "[role='switch']"
 
 export default class extends Controller {
   static values = { lightIds: Array, targets: Array }
@@ -15,11 +16,13 @@ export default class extends Controller {
     const form = this.element
     const fields = new FormData(form, event.submitter)
     form.classList.add(PENDING_CLASS)
+    const switchesBefore = [...form.querySelectorAll(SWITCH_SELECTOR)].map(powerSwitch => [powerSwitch, powerSwitch.getAttribute("aria-checked")])
     const method = (fields.get(METHOD_FIELD) || form.method).toUpperCase()
     const accepted = await asyncHueCall(form.action, fields, this.lightIdsValue, { method, guess: () => this.guess(fields) })
     if (!accepted) {
       form.classList.remove(PENDING_CLASS)
       form.reset()
+      for (const [powerSwitch, checked] of switchesBefore) powerSwitch.setAttribute("aria-checked", checked)
     }
   }
 
@@ -31,6 +34,7 @@ export default class extends Controller {
     if (this.targetsValue.length) return this.showTargets()
     const power = POWER_FIELDS.flatMap(name => fields.getAll(name)).at(-1)
     if (power === undefined) return
+    for (const powerSwitch of this.element.querySelectorAll(SWITCH_SELECTOR)) powerSwitch.setAttribute("aria-checked", String(power === TRUE))
     for (const lightId of this.lightIdsValue) previewPower(lightId, power === TRUE)
   }
 

@@ -12,7 +12,7 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_response :accepted
     assert_equal [ [ :grouped_light, "g1", { on: { on: false } } ] ], hue.writes
     targets = streams.map { |stream| stream["target"] }
-    assert_includes targets, "room_head_r1"
+    assert_includes targets, "room_card_r1"
     assert_includes targets, "house_summary"
     assert_equal [ "settle", "l1 l2" ], [ streams.last["action"], streams.last["light-ids"].split.sort.join(" ") ]
   end
@@ -51,28 +51,35 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
 
   test "each room has a brightness slider at the average of its lit lights" do
     get root_path
-    assert_select "#room_head_r1 form.room__dim[data-controller~=async-hue-call][data-controller~=room-brightness] input[type=range][name='room[brightness]'][value='80']"
-    assert_select "#room_head_r1 form.room__dim output", "80%"
+    assert_select "#room_card_r1 form.room-card__dim[data-controller~=async-hue-call][data-controller~=room-brightness] input[type=range][name='room[brightness]'][value='80']"
+    assert_select "#room_card_r1 form.room-card__dim output", "80%"
+    assert_select "#room_card_r1 form.room-card__dim[style='--fill: 80%']"
+  end
+
+  test "each room card has a switch and a dot per light" do
+    get root_path
+    assert_select "#room_card_r1 .room-card__switch[role=switch][aria-checked=true]"
+    assert_select "#room_card_r1 .room-card__dot[data-light-id]", 2
   end
 
   test "the slider greys out at the average when the lit lights are at different levels" do
     Hue::Light.find("l2").update!(on: true, brightness: 40)
     Hue::Device.find("d2").update!(reachable: true)
     get root_path
-    assert_select "#room_head_r1 form.room__dim.is-mixed input[type=range][value='60']"
-    assert_select "#room_head_r1 form.room__dim output", "~60%"
+    assert_select "#room_card_r1 form.room-card__dim.is-mixed input[type=range][value='60']"
+    assert_select "#room_card_r1 form.room-card__dim output", "~60%"
   end
 
   test "the slider is not grey when every lit light is at the same level" do
     get root_path
-    assert_select "#room_head_r1 form.room__dim:not(.is-mixed)"
+    assert_select "#room_card_r1 form.room-card__dim:not(.is-mixed)"
   end
 
   test "the room's power button and scene chips go through the async form controller with their lights" do
     get root_path
-    assert_select "#room_head_r1 form.room__toggle[data-controller=async-hue-call][data-async-hue-call-light-ids-value*=l1]"
-    assert_select "#room_r1 .scenes form.chip-form[data-controller=async-hue-call][data-async-hue-call-light-ids-value*=l2]"
-    scene_targets = JSON.parse(css_select("#room_r1 .scenes form.chip-form[action$='s1/activate']").sole["data-async-hue-call-targets-value"])
+    assert_select "#room_card_r1 form.room-card__toggle[data-controller=async-hue-call][data-async-hue-call-light-ids-value*=l1]"
+    assert_select "#room_body_r1 .scenes form.chip-form[data-controller=async-hue-call][data-async-hue-call-light-ids-value*=l2]"
+    scene_targets = JSON.parse(css_select("#room_body_r1 .scenes form.chip-form[action$='s1/activate']").sole["data-async-hue-call-targets-value"])
     assert_equal %w[l1 l2], scene_targets.map { |target| target["light_id"] }.sort
   end
 

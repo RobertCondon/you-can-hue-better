@@ -47,7 +47,7 @@ export default class extends Controller {
   }
 
   lightIdsIn(roomId) {
-    const room = roomId && this.element.querySelector(`#room_${CSS.escape(roomId)}`)
+    const room = roomId && this.element.querySelector(`#room_body_${CSS.escape(roomId)}`)
     return [...(room || this.element).querySelectorAll(TILE_SELECTOR)].map(tile => tile.dataset.lightId)
   }
 

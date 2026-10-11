@@ -7,15 +7,15 @@ module HouseBroadcast
 
     module_function
 
-    def rooms(house) = house.rooms.map { |room| room(room) }
+    def rooms(house) = house.rooms.flat_map { |room| room(room) }
 
-    def room(room) = replace(Targets.room(room), "rooms/room", room:)
+    def room(room) = [ replace(Targets.room_card(room), "rooms/card", room:), replace(Targets.room_body(room), "rooms/body", room:) ]
 
     def room_changes(house, light_ids:, group_ids: [])
       house.rooms.flat_map do |room|
         changed_lights = room.lights.select { |light| light_ids.include?(light.id) }
         tiles = changed_lights.map { |light| replace(Targets.light_tile(room, light), "lights/light", light:, room:) }
-        changed_lights.any? || group_ids.include?(room.id) ? [ *tiles, replace(Targets.room_head(room), "rooms/head", room:) ] : tiles
+        changed_lights.any? || group_ids.include?(room.id) ? [ *tiles, replace(Targets.room_card(room), "rooms/card", room:) ] : tiles
       end
     end
 

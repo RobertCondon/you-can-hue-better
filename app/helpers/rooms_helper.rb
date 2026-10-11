@@ -10,7 +10,5 @@ module RoomsHelper
 
   def room_power_target_state(room) = !room.any_on?
 
-  def room_power_label(room) = t(room.any_on? ? "rooms.power.turn_off" : "rooms.power.turn_on", room: room.display_name)
-
-  def room_power_title(room) = t(room.any_on? ? "rooms.power.title_off" : "rooms.power.title_on")
+  def room_switch_label(room) = t("rooms.power.switch", room: room.display_name)
 end

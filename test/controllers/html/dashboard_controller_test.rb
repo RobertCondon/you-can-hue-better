@@ -11,8 +11,8 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_select "#light_z1_l1 .tile__name", "Desk lamp"
     assert_select "#house_summary", /1 of 2 on/
     assert_select ".activity", 0
-    assert_select ".room__title[aria-expanded]", 2
-    assert_select "[data-controller~=rooms] .room__editing", 2
+    assert_select ".room-card__title[aria-expanded]", 2
+    assert_select "[data-controller~=rooms] .room-card__editing", 2
     assert_select "svg path[d^=\"M9.5\"]", 0, "no pencil icons"
     assert_select ".views .views__link.is-current", "Lights"
     assert_select ".views a[href='#{floor_path}']", "Floor"

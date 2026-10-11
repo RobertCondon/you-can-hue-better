@@ -17,7 +17,8 @@ module HouseBroadcast
     def visibility = VISIBILITY
 
     def room(room) = "room_#{room.id}"
-    def room_head(room) = "room_head_#{room.id}"
+    def room_card(room) = "room_card_#{room.id}"
+    def room_body(room) = "room_body_#{room.id}"
     def light_tile(room, light) = "light_#{room.id}_#{light.id}"
     def light_panel(light) = "light_panel_#{light.id}"
     def light_pin(light) = "light_pin_#{light.id}"

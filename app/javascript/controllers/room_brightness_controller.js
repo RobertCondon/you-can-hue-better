@@ -3,8 +3,7 @@ import { hold, release } from "lib/busy"
 import { anyPending } from "lib/light_intents"
 import { previewLevel, previewPower } from "lib/light_preview"
 
-const ROOM_SELECTOR = ".room"
-const HEAD_SELECTOR = ".room__head"
+const CARD_SELECTOR = ".room-card"
 const TILE_SELECTOR = ".tile[data-light-id]"
 const ON_CLASS = "is-on"
 const MIXED_CLASS = "is-mixed"
@@ -15,7 +14,7 @@ export default class extends Controller {
   preview(event) {
     const tiles = this.tiles()
     if (anyPending(tiles.map(tile => tile.dataset.lightId))) return
-    hold(this.head)
+    hold(this.card)
     this.dimming ??= this.litOrEveryLight(tiles)
     const level = Number(event.target.value)
     for (const lightId of this.dimming) {
@@ -23,6 +22,7 @@ export default class extends Controller {
       previewLevel(lightId, level)
     }
     this.element.classList.remove(MIXED_CLASS)
+    this.element.style.setProperty("--fill", `${level}%`)
     this.levelTarget.textContent = `${level}%`
   }
 
@@ -33,15 +33,16 @@ export default class extends Controller {
 
   freed(event) {
     const roomLightIds = this.tiles().map(tile => tile.dataset.lightId)
-    if (event.detail.lightIds.some(lightId => roomLightIds.includes(lightId))) release(this.head)
+    if (event.detail.lightIds.some(lightId => roomLightIds.includes(lightId))) release(this.card)
   }
 
-  get head() {
-    return this.element.closest(HEAD_SELECTOR)
+  get card() {
+    return this.element.closest(CARD_SELECTOR)
   }
 
   tiles() {
-    return [...this.element.closest(ROOM_SELECTOR).querySelectorAll(TILE_SELECTOR)]
+    const body = document.getElementById(`room_body_${this.card.dataset.roomId}`)
+    return body ? [...body.querySelectorAll(TILE_SELECTOR)] : []
   }
 
   litOrEveryLight(tiles) {

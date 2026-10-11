@@ -10,12 +10,12 @@ class VisibilityTest < ActionDispatch::IntegrationTest
     get root_path
     assert_select "#light_r1_l2", 0
     assert_select "#light_r1_l1"
-    assert_select "#room_head_r1 .room__summary", "All on"
+    assert_select "#room_card_r1 .room-card__summary", "All on · 80%"
     get floor_path
     assert_select "#floor_light_l2", 0
     get dev_path
     assert_select "#light_r1_l2 .tile__badge", "hidden"
-    assert_select "#room_head_r1 .room__summary", "All on", "counts are of visible lights on /dev too"
+    assert_select "#room_card_r1 .room-card__summary", "All on · 80%", "counts are of visible lights on /dev too"
     assert_select "#visibility_light_l2 input[name='light[hidden]'][type=checkbox][checked]"
   end
 
@@ -27,7 +27,7 @@ class VisibilityTest < ActionDispatch::IntegrationTest
     assert_select "main.scenes-page"
     assert_select "#scene_card_s3", 0
     get dev_path
-    assert_select "#room_head_z1 .room__kind", /hidden/
+    assert_select "#room_card_z1 .room-card__kind", /hidden/
   end
 
   test "off the floor without hiding, and an icon override" do
