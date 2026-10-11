@@ -1,6 +1,7 @@
 import { styleNumber, clampRounded, setStyles } from "lib/floor/element_style"
-import { post, patch, destroy } from "lib/requests"
+import { post, patch, destroy, readJson, getHtml } from "lib/requests"
 
+const ID_PLACEHOLDER = "ID"
 const EDITING_MIN_WIDTH = 900
 const EDITING_CLASS = "is-editing"
 const UNPLACED_CLASS = "is-unplaced"
@@ -213,7 +214,9 @@ export class FloorLayoutEditor {
   async addObject(kind) {
     const response = await post(this.floor.objectsUrlValue, { kind })
     if (!response.ok) return
-    const html = await response.text()
+    const item = await readJson(response)
+    const html = await getHtml(this.floor.objectHtmlUrlValue.replace(ID_PLACEHOLDER, item.id))
+    if (!html) return
     const firstLamp = this.floor.worldTarget.querySelector(LAMP_SELECTOR)
     firstLamp ? firstLamp.insertAdjacentHTML("beforebegin", html) : this.floor.worldTarget.insertAdjacentHTML("beforeend", html)
     const object = this.floor.objectTargets.at(-1)

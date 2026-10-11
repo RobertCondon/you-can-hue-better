@@ -1,33 +1,22 @@
 import { hueTab, HUE_TAB_HEADER } from "lib/hue_tab"
 
 const CSRF_TOKEN_SELECTOR = 'meta[name="csrf-token"]'
-const CONTENT_TYPE_HEADER = "Content-Type"
 const GET = "GET"
 const POST = "POST"
 const PATCH = "PATCH"
 const DELETE = "DELETE"
-
-export const ACCEPT = { turboStream: "text/vnd.turbo-stream.html", html: "text/html", json: "application/json" }
+const HTML = "text/html"
+const JSON_TYPE = "application/json"
 const BRACKETED_NAME = /[^[\]]+/g
 const SKIPPED_FIELDS = new Set(["_method", "authenticity_token"])
 
 const csrfToken = () => document.querySelector(CSRF_TOKEN_SELECTOR).content
 
-function formDataFrom(fields) {
-  if (fields instanceof FormData) return fields
-  const body = new FormData()
-  for (const [name, value] of Object.entries(fields)) {
-    for (const item of [value].flat()) body.append(name, item)
-  }
-  return body
-}
-
-export function request(method, url, { fields, accept } = {}) {
-  const headers = { "X-CSRF-Token": csrfToken() }
-  if (accept) headers.Accept = accept
+function headersAccepting(accept) {
+  const headers = { "X-CSRF-Token": csrfToken(), Accept: accept }
   const tab = hueTab()
   if (tab) headers[HUE_TAB_HEADER] = tab
-  return fetch(url, { method, headers, body: fields && formDataFrom(fields) })
+  return headers
 }
 
 function nestedFields(fields) {
@@ -42,9 +31,7 @@ function nestedFields(fields) {
 }
 
 export function sendJson(method, url, fields = {}) {
-  const tab = hueTab()
-  const headers = { "X-CSRF-Token": csrfToken(), Accept: ACCEPT.json, "Content-Type": ACCEPT.json }
-  if (tab) headers[HUE_TAB_HEADER] = tab
+  const headers = { ...headersAccepting(JSON_TYPE), "Content-Type": JSON_TYPE }
   return fetch(url, { method, headers, body: JSON.stringify(nestedFields(fields)) })
 }
 
@@ -56,25 +43,18 @@ export async function readJson(response) {
   }
 }
 
-export const post = (url, fields, options = {}) => request(POST, url, { ...options, fields })
+export const post = (url, fields) => sendJson(POST, url, fields)
 
-export const patch = (url, fields, options = {}) => request(PATCH, url, { ...options, fields })
+export const patch = (url, fields) => sendJson(PATCH, url, fields)
 
-export const destroy = url => request(DELETE, url)
-
-const isTurboStream = response => response.headers.get(CONTENT_TYPE_HEADER)?.startsWith(ACCEPT.turboStream)
-
-export async function renderStreams(response) {
-  if (isTurboStream(response)) window.Turbo.renderStreamMessage(await response.text())
-  return response
-}
+export const destroy = url => sendJson(DELETE, url)
 
 export async function getHtml(url) {
-  const response = await request(GET, url, { accept: ACCEPT.html })
+  const response = await fetch(url, { method: GET, headers: headersAccepting(HTML) })
   return response.ok ? response.text() : null
 }
 
 export async function getJson(url) {
-  const response = await request(GET, url, { accept: ACCEPT.json })
+  const response = await fetch(url, { method: GET, headers: headersAccepting(JSON_TYPE) })
   return response.ok ? response.json() : null
 }

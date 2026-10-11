@@ -5,19 +5,27 @@ class FloorObjectsControllerTest < ActionDispatch::IntegrationTest
 
   def add_object(kind) = Floor::Item.create_centred!(group_id: Floor.home.id, kind:)
 
-  test "adding a wall returns its element, centred with a default size" do
-    post floor_objects_path, params: { kind: "wall" }
+  test "adding a wall returns it as JSON, centred with a default size" do
+    post floor_objects_path, params: { kind: "wall" }, as: :json
     assert_response :created
     wall = Floor::Item.last
     assert_equal [ "wall", Floor.home.id, 35.0, 48.5, 30.0, 3.0 ], [ wall.kind, wall.group_id, wall.x.to_f, wall.y.to_f, wall.w.to_f, wall.h.to_f ]
+    assert_equal({ "id" => wall.id, "kind" => "wall", "label" => nil, "x" => 35.0, "y" => 48.5, "w" => 30.0, "h" => 3.0, "rotation" => 0.0 }, response.parsed_body)
+  end
+
+  test "an object's element is a fragment the editor loads" do
+    wall = add_object("wall")
+    get html_floor_object_path(wall)
+    assert_response :success
     assert_select ".floor__object--wall[data-kind=wall][data-url='#{floor_object_path(wall)}'] .floor__handle"
     assert_select ".floor__object--wall .floor__rotate", 1
     assert_select ".floor__object--wall[style*='--r: 0']"
   end
 
   test "an unknown kind is refused" do
-    post floor_objects_path, params: { kind: "pony" }
+    post floor_objects_path, params: { kind: "pony" }, as: :json
     assert_response :unprocessable_entity
+    assert_predicate response.parsed_body["error"], :present?
   end
 
   test "moving and resizing saves, clamped" do

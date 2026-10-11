@@ -1,6 +1,4 @@
-class FloorNetsController < ApplicationController
-  rescue_from ActiveRecord::RecordInvalid, with: :render_invalid
-
+class FloorNetsController < ApiController
   def create
     render json: Floor::Net.draw!(net_attributes), status: :created
   end
@@ -25,6 +23,4 @@ class FloorNetsController < ApplicationController
     attributes[:label] = params[:label].to_s.strip.presence if params.key?(:label)
     attributes
   end
-
-  def render_invalid(error) = render(json: { error: error.message }, status: :unprocessable_entity)
 end

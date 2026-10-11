@@ -9,7 +9,7 @@
           <tr id="<%= targets.visibility_room(room) %>">
             <td><%= room.display_name %><% if room.kind == Hue::Group::ZONE %> <span class="muted"><%= t("rooms.badges.zone") %></span><% end %></td>
             <td>
-              <%= form_with url: room_visibility_path(room.id), method: :patch, data: { controller: "autosave" } do |form| %>
+              <%= form_with url: room_visibility_path(room.id), method: :patch, data: { controller: "autosave json-form", action: "submit->json-form#submit" } do |form| %>
                 <input type="hidden" name="room[hidden]" value="false">
                 <input type="checkbox" name="room[hidden]" value="true" <%= "checked" if room.hidden? %> data-action="autosave#save" aria-label="<%= t(".hide", name: room.display_name) %>">
               <% end %>
@@ -25,19 +25,19 @@
           <tr id="<%= targets.visibility_light(light) %>">
             <td><%= light.display_name %> <small class="muted"><%= house.rooms_containing(light).map(&:display_name).join(", ") %></small></td>
             <td>
-              <%= form_with url: light_visibility_path(light.id), method: :patch, data: { controller: "autosave" } do |form| %>
+              <%= form_with url: light_visibility_path(light.id), method: :patch, data: { controller: "autosave json-form", action: "submit->json-form#submit" } do |form| %>
                 <input type="hidden" name="light[hidden]" value="false">
                 <input type="checkbox" name="light[hidden]" value="true" <%= "checked" if light.hidden? %> data-action="autosave#save" aria-label="<%= t(".hide", name: light.display_name) %>">
               <% end %>
             </td>
             <td>
-              <%= form_with url: light_visibility_path(light.id), method: :patch, data: { controller: "autosave" } do |form| %>
+              <%= form_with url: light_visibility_path(light.id), method: :patch, data: { controller: "autosave json-form", action: "submit->json-form#submit" } do |form| %>
                 <input type="hidden" name="light[on_floor]" value="false">
                 <input type="checkbox" name="light[on_floor]" value="true" <%= "checked" if light.on_floor? %> data-action="autosave#save" aria-label="<%= t(".show_on_floor", name: light.display_name) %>">
               <% end %>
             </td>
             <td>
-              <%= form_with url: light_visibility_path(light.id), method: :patch, data: { controller: "autosave" } do |form| %>
+              <%= form_with url: light_visibility_path(light.id), method: :patch, data: { controller: "autosave json-form", action: "submit->json-form#submit" } do |form| %>
                 <select name="light[icon]" data-action="autosave#save" aria-label="<%= t(".icon_for", name: light.display_name) %>">
                   <option value=""><%= t(".automatic_icon", icon: light.auto_icon) %></option>
                   <% HueExtensions::Light::ICONS.each do |icon| %><option value="<%= icon %>" <%= "selected" if light.icon_override == icon %>><%= icon.capitalize %></option><% end %>

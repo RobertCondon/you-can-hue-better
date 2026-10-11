@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       end
     end
     resources :custom_scenes, only: [ :new, :edit ]
+    resources :floor_objects, only: :show
   end
 
   resources :custom_scenes, only: [ :show, :create, :update, :destroy ] do

@@ -1,6 +1,7 @@
 module FloorsHelper
   SHAPES = { wide: 1.6, square: 1.0, tall: 0.7 }.freeze
   SHAPE_MATCH_TOLERANCE = 0.05
+  ID_PLACEHOLDER = "ID"
   ROTATION_STEP_DEGREES = 15
   HUE_SLIDER_RANGE = 0..359
   HUE_SLIDER_START = 300

@@ -1,4 +1,4 @@
-class FloorsController < ApplicationController
+class FloorsController < ApiController
   def update
     place_light if params[:light_id].present?
     reshape_floor if params[:aspect].present?

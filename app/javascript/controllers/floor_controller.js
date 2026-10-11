@@ -18,7 +18,7 @@ export default class extends Controller {
     "nets", "net", "netLabel", "draft", "void", "toolButton", "drawing", "drawingHint", "netRoom", "vertex",
     "paintButton", "tray", "swatch", "hueSlider", "trayScene", "trayScenePalette", "trayRecent", "trayRecentPalette", "paintStatus", "paintClear", "paintApply"
   ]
-  static values = { url: String, objectsUrl: String, netsUrl: String, paintUrl: String, aspect: Number, labels: Object }
+  static values = { url: String, objectsUrl: String, objectHtmlUrl: String, netsUrl: String, paintUrl: String, aspect: Number, labels: Object }
 
   connect() {
     this.aspect = this.aspectValue || DEFAULT_ASPECT

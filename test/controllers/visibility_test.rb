@@ -4,8 +4,8 @@ class VisibilityTest < ActionDispatch::IntegrationTest
   setup { sync_mirror! }
 
   test "a light hidden in /dev leaves the everyday views, the floor and the counts, but stays in /dev" do
-    patch light_visibility_path("l2"), params: { light: { hidden: "true" } }
-    assert_redirected_to dev_path(anchor: "visibility")
+    patch light_visibility_path("l2"), params: { light: { hidden: "true" } }, as: :json
+    assert_response :no_content
 
     get root_path
     assert_select "#light_r1_l2", 0
@@ -20,7 +20,7 @@ class VisibilityTest < ActionDispatch::IntegrationTest
   end
 
   test "a hidden room disappears everywhere outside /dev" do
-    patch room_visibility_path("z1"), params: { room: { hidden: "true" } }
+    patch room_visibility_path("z1"), params: { room: { hidden: "true" } }, as: :json
     get root_path
     assert_select "#room_z1", 0
     get scenes_path
@@ -31,14 +31,14 @@ class VisibilityTest < ActionDispatch::IntegrationTest
   end
 
   test "off the floor without hiding, and an icon override" do
-    patch light_visibility_path("l1"), params: { light: { on_floor: "false" } }
-    patch light_visibility_path("l1"), params: { light: { icon: "candle" } }
+    patch light_visibility_path("l1"), params: { light: { on_floor: "false" } }, as: :json
+    patch light_visibility_path("l1"), params: { light: { icon: "candle" } }, as: :json
     get floor_path
     assert_select "#floor_light_l1", 0
     get root_path
     assert_select "#light_r1_l1"
     assert_equal "candle", House.load(refresh: false).light("l1").icon
-    patch light_visibility_path("l1"), params: { light: { icon: "" } }
+    patch light_visibility_path("l1"), params: { light: { icon: "" } }, as: :json
     assert_equal "lamp", House.load(refresh: false).light("l1").icon
   end
 
@@ -48,7 +48,7 @@ class VisibilityTest < ActionDispatch::IntegrationTest
     assert_select "#visibility_room_r1 input[name='room[hidden]'][type=checkbox]:not([checked])"
     assert_select "#visibility_light_l1 select[name='light[icon]'] option[value=candle]"
     assert_select "#visibility_light_l1 input[name='light[on_floor]'][type=checkbox][checked]"
-    assert_select "#visibility_light_l1 form[data-controller=autosave]", 3
+    assert_select "#visibility_light_l1 form[data-controller='autosave json-form'][data-action='submit->json-form#submit']", 3
   end
 
   test "the views nav carries icons for the phone tab bar" do

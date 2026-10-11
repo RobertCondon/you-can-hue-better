@@ -152,15 +152,19 @@ Rails only picks those up when it boots.
 
 ## Chunk 5: The floor and visibility
 
-- [ ] `app/controllers/html/floor_objects_controller.rb` (new `show`: one floor item's HTML, for the editor to insert)
-- [ ] `FloorsController#update`, `FloorObjectsController`, `FloorNetsController` (JSON; creating an object returns JSON, then the editor loads its fragment)
-- [ ] `VisibilityController` (JSON, broadcasts everything; no redirect)
-- [ ] `app/javascript/lib/floor/layout_editor.js`, `net_editor.js` (JSON replies)
-- [ ] `app/javascript/controllers/autosave_controller.js` (becomes `json-form`)
-- [ ] Tests
+- [x] `FloorObjectsController` (`ApiController`; creating an object answers its JSON; an unknown kind is a 422)
+- [x] `app/serializers/floor_item_serializer.rb` (new)
+- [x] `app/controllers/html/floor_objects_controller.rb` (new `show`: one floor item's HTML at `/html/floor_objects/:id`, for the editor to insert)
+- [x] `FloorsController`, `FloorNetsController` (`ApiController`; nets lean on `JsonErrors` for a 422)
+- [x] `VisibilityController` (`ApiController`; answers 204 and broadcasts everything; no redirect)
+- [x] `app/views/floors/_floor.html.erb`, `app/helpers/floors_helper.rb`, `app/javascript/controllers/floor_controller.js` (the floor carries the fragment's URL with an `ID` placeholder)
+- [x] `app/javascript/lib/floor/layout_editor.js` (a new object is created as JSON, then its fragment is loaded and inserted)
+- [x] `app/javascript/lib/requests.js` (`post`, `patch` and `destroy` send JSON, so the floor editors need no other change; the Turbo Stream and form-data paths are gone)
+- [x] `app/views/dashboard/_visibility.html.erb` (each form is `autosave` plus `json-form`: a change submits, `json-form` sends it as JSON)
+- [x] `test/controllers/floor_objects_controller_test.rb`, `visibility_test.rb` (JSON replies, the fragment)
 
-Live check: add, move and delete a floor object and a net; move a lamp; hide and show a light on
-`/dev`.
+Live check: add, move and delete a floor object and a net, save the floor's shape, and hide and
+show a light on `/dev` while an everyday page updates.
 
 ## Chunk 6: Clean-up
 
