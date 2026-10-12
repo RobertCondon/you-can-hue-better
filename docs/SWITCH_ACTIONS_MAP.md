@@ -413,3 +413,33 @@ the model).
     switches the app owns.
 15. **Disabled bindings.** `enabled: false` frees nothing (the slot stays taken by the unique index).
 16. **`webhook`/`job`** have no settings schema or executor; decide whether to show them at all.
+
+## 7. Decisions (2026-10-12)
+
+Answers to the open questions above. "Decided" came from the project owner; "proposed" is a
+recommendation still to confirm.
+
+- **Deleted scene or room (§6.2), decided.** A scene deleted from a cycle drops out and the rest
+  close up in order; the cycle's position resets. If the deletion leaves a cycle empty, or removes
+  the only scene or the target of any other binding ("only Living room", "show scene Y", "set this
+  light"), the whole binding is removed and that gesture shows as **not set** on the switch's page.
+  Do this where the mirror sync removes rows, not lazily at press time.
+- **Overlapping time windows (§6.3), decided.** The window that starts earlier wins. Still to settle:
+  for a window that wraps midnight (22:00–06:00), "earlier" means its start time on the day it
+  began, so at 01:00 it beats a window that starts at 00:30.
+- **Undo (§6.4), proposed.** Undo the last change this app made to the same room, whatever caused
+  it (any switch or the phone), one level deep, within 5 minutes. Store the room's lights as they
+  were just before each command. Changes made outside the app aren't undone, and an undo can't be
+  undone.
+- **Bursts from holding and the ring (§6.5), decided: queue.** Keep at most one command in flight
+  per room. While it's out, add further steps to one waiting command, and send that as soon as the
+  first returns. Steps are summed, never dropped, so the final brightness matches what was turned.
+- **Double press (§6.6), decided: lenient, 1–2 s.** Time presses by when the app receives them,
+  not the bridge's whole-second stamp. A 1–2 s window is too long to make a single press wait, so:
+  the single-press action runs immediately; if a second press arrives within the window, the
+  double-press action runs as well. That suits pairs where the double builds on the single (press:
+  brighter, double: full brightness; press: next scene, double: all off). Warn in the UI when the
+  pair doesn't fit that pattern.
+- **`webhook` and `job` (§6.16), decided: hide.** They're only names in `ControlBinding::ACTIONS`:
+  no settings, nothing runs them. Leave them out of the action picker and the counts until one is
+  built.
