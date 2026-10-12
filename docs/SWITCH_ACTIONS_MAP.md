@@ -440,6 +440,6 @@ recommendation still to confirm.
   double-press action runs as well. That suits pairs where the double builds on the single (press:
   brighter, double: full brightness; press: next scene, double: all off). Warn in the UI when the
   pair doesn't fit that pattern.
-- **`webhook` and `job` (§6.16), decided: hide.** They're only names in `ControlBinding::ACTIONS`:
+- **`webhook` and `job` (§6.16), proposed: hide.** They're only names in `ControlBinding::ACTIONS`:
   no settings, nothing runs them. Leave them out of the action picker and the counts until one is
   built.
