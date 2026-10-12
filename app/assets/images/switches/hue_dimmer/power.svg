@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 260" role="img" aria-label="Power">
+  <defs>
+    <linearGradient id="hue-dimmer-power-face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbfaf6"/>
+      <stop offset="1" stop-color="#ebe8e1"/>
+    </linearGradient>
+    <filter id="hue-dimmer-power-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>
+  </defs>
+  <rect x="14" y="16" width="92" height="74" rx="15" filter="url(#hue-dimmer-power-glow)" style="fill: var(--button-glow, transparent)"/>
+  <rect x="14" y="17" width="92" height="74" rx="15" style="fill: var(--button-shadow, #c3beb2)"/>
+  <rect x="14" y="16" width="92" height="74" rx="15" style="fill: var(--button-face, url(#hue-dimmer-power-face))"/>
+  <rect x="14.5" y="16.5" width="91" height="73" rx="15" fill="none" style="stroke: var(--button-edge, #ffffff); stroke-opacity: .8"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--button-ink, #8a8d96); fill: none">
+    <path d="M60 41v12" stroke-width="3.2"/>
+    <path d="M51.5 45.5a12 12 0 1 0 17 0" stroke-width="3.2"/>
+  </g>
+</svg>

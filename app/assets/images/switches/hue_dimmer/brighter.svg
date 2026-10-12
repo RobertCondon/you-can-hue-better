@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 260" role="img" aria-label="Brighter">
+  <defs>
+    <linearGradient id="hue-dimmer-brighter-face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbfaf6"/>
+      <stop offset="1" stop-color="#ebe8e1"/>
+    </linearGradient>
+    <filter id="hue-dimmer-brighter-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>
+  </defs>
+  <rect x="14" y="96" width="92" height="56" rx="11" filter="url(#hue-dimmer-brighter-glow)" style="fill: var(--button-glow, transparent)"/>
+  <rect x="14" y="97" width="92" height="56" rx="11" style="fill: var(--button-shadow, #c3beb2)"/>
+  <rect x="14" y="96" width="92" height="56" rx="11" style="fill: var(--button-face, url(#hue-dimmer-brighter-face))"/>
+  <rect x="14.5" y="96.5" width="91" height="55" rx="11" fill="none" style="stroke: var(--button-edge, #ffffff); stroke-opacity: .8"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--button-ink, #8a8d96); fill: none">
+    <circle cx="60" cy="124" r="5.5" stroke-width="2.4"/>
+    <path d="M60 110v4M60 134v4M46 124h4M70 124h4M50.1 114.1l2.8 2.8M67.1 131.1l2.8 2.8M50.1 133.9l2.8-2.8M67.1 116.9l2.8-2.8" stroke-width="2.4"/>
+  </g>
+</svg>

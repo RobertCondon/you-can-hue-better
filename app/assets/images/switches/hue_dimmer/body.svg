@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 260" role="img" aria-label="Hue dimmer switch">
+  <defs>
+    <linearGradient id="hue-dimmer-body-face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fdfcf9"/>
+      <stop offset="1" stop-color="#e7e4dc"/>
+    </linearGradient>
+    <linearGradient id="hue-dimmer-body-rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#cfcbc1"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="116" height="256" rx="24" style="fill: var(--switch-rim, url(#hue-dimmer-body-rim))"/>
+  <rect x="5" y="5" width="110" height="250" rx="21" style="fill: var(--switch-face, url(#hue-dimmer-body-face))"/>
+  <rect x="11" y="11" width="98" height="238" rx="17" style="fill: var(--switch-well, #dcd8cf)"/>
+  <rect x="11.5" y="11.5" width="97" height="237" rx="16.5" fill="none" style="stroke: var(--switch-well-edge, #c9c4b9)"/>
+</svg>
