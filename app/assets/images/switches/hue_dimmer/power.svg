@@ -1,17 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 260" role="img" aria-label="Power">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 292" role="img" aria-label="Power">
   <defs>
-    <linearGradient id="hue-dimmer-power-face" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fbfaf6"/>
-      <stop offset="1" stop-color="#ebe8e1"/>
-    </linearGradient>
-    <filter id="hue-dimmer-power-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>
+    <filter id="hue-dimmer-power-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
   </defs>
-  <rect x="14" y="16" width="92" height="74" rx="15" filter="url(#hue-dimmer-power-glow)" style="fill: var(--button-glow, transparent)"/>
-  <rect x="14" y="17" width="92" height="74" rx="15" style="fill: var(--button-shadow, #c3beb2)"/>
-  <rect x="14" y="16" width="92" height="74" rx="15" style="fill: var(--button-face, url(#hue-dimmer-power-face))"/>
-  <rect x="14.5" y="16.5" width="91" height="73" rx="15" fill="none" style="stroke: var(--button-edge, #ffffff); stroke-opacity: .8"/>
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--button-ink, #8a8d96); fill: none">
-    <path d="M60 41v12" stroke-width="3.2"/>
-    <path d="M51.5 45.5a12 12 0 1 0 17 0" stroke-width="3.2"/>
+  <path d="M0 22A22 22 0 0 1 22 0H98A22 22 0 0 1 120 22V89H0Z" filter="url(#hue-dimmer-power-glow)" style="fill: var(--button-glow, transparent)"/>
+  <path d="M0 22A22 22 0 0 1 22 0H98A22 22 0 0 1 120 22V89H0Z" style="fill: var(--button-face, transparent)"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--button-ink, #a6a6a3)">
+    <path d="M60 31v13" stroke-width="2.6"/>
+    <path d="M51.5 35.5a12 12 0 1 0 17 0" stroke-width="2.6"/>
+  </g>
+  <rect x="53" y="70" width="14" height="3" rx="1.5" style="fill: var(--button-led, #ffffff); stroke: var(--button-led-edge, #d9d7d2)" stroke-width=".6"/>
+  <g>
   </g>
 </svg>

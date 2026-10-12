@@ -1,18 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 260" role="img" aria-label="Hue scenes">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 292" role="img" aria-label="Hue scenes">
   <defs>
-    <linearGradient id="hue-dimmer-hue-face" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fbfaf6"/>
-      <stop offset="1" stop-color="#ebe8e1"/>
-    </linearGradient>
-    <filter id="hue-dimmer-hue-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>
+    <filter id="hue-dimmer-hue-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
   </defs>
-  <rect x="14" y="220" width="92" height="28" rx="11" filter="url(#hue-dimmer-hue-glow)" style="fill: var(--button-glow, transparent)"/>
-  <rect x="14" y="221" width="92" height="28" rx="11" style="fill: var(--button-shadow, #c3beb2)"/>
-  <rect x="14" y="220" width="92" height="28" rx="11" style="fill: var(--button-face, url(#hue-dimmer-hue-face))"/>
-  <rect x="14.5" y="220.5" width="91" height="27" rx="11" fill="none" style="stroke: var(--button-edge, #ffffff); stroke-opacity: .8"/>
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--button-ink, #8a8d96); fill: none">
-    <circle cx="51" cy="234" r="3.2" stroke-width="2"/>
-    <circle cx="60" cy="234" r="3.2" stroke-width="2"/>
-    <circle cx="69" cy="234" r="3.2" stroke-width="2"/>
+  <path d="M0 199H120V278A14 14 0 0 1 106 292H14A14 14 0 0 1 0 278Z" filter="url(#hue-dimmer-hue-glow)" style="fill: var(--button-glow, transparent)"/>
+  <path d="M0 199H120V278A14 14 0 0 1 106 292H14A14 14 0 0 1 0 278Z" style="fill: var(--button-face, transparent)"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--button-ink, #a6a6a3)">
+  </g>
+  <text x="60" y="254" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="25" font-weight="300" letter-spacing=".5" style="fill: var(--button-ink, #a6a6a3)">hue</text>
+  <g>
   </g>
 </svg>

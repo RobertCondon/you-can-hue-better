@@ -1,17 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 260" role="img" aria-label="Dimmer">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 292" role="img" aria-label="Dimmer">
   <defs>
-    <linearGradient id="hue-dimmer-dimmer-face" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fbfaf6"/>
-      <stop offset="1" stop-color="#ebe8e1"/>
-    </linearGradient>
-    <filter id="hue-dimmer-dimmer-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>
+    <filter id="hue-dimmer-dimmer-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
   </defs>
-  <rect x="14" y="158" width="92" height="56" rx="11" filter="url(#hue-dimmer-dimmer-glow)" style="fill: var(--button-glow, transparent)"/>
-  <rect x="14" y="159" width="92" height="56" rx="11" style="fill: var(--button-shadow, #c3beb2)"/>
-  <rect x="14" y="158" width="92" height="56" rx="11" style="fill: var(--button-face, url(#hue-dimmer-dimmer-face))"/>
-  <rect x="14.5" y="158.5" width="91" height="55" rx="11" fill="none" style="stroke: var(--button-edge, #ffffff); stroke-opacity: .8"/>
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--button-ink, #8a8d96); fill: none">
-    <circle cx="60" cy="186" r="5.5" stroke-width="2.4"/>
-    <path d="M60 176.5v1.5M60 194v1.5M50.5 186h1.5M68 186h1.5M53.3 179.3l1 1M65.7 191.7l1 1M53.3 192.7l1-1M65.7 180.3l1-1" stroke-width="2.4"/>
+  <path d="M0 145H120V197H0Z" filter="url(#hue-dimmer-dimmer-glow)" style="fill: var(--button-glow, transparent)"/>
+  <path d="M0 145H120V197H0Z" style="fill: var(--button-face, transparent)"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--button-ink, #a6a6a3)">
+    <circle cx="60" cy="168" r="3" style="fill: var(--button-ink, #a6a6a3)" stroke="none"/>
+    <path d="M65.50 168.00L68.50 168.00M63.89 171.89L66.01 174.01M60.00 173.50L60.00 176.50M56.11 171.89L53.99 174.01M54.50 168.00L51.50 168.00M56.11 164.11L53.99 161.99M60.00 162.50L60.00 159.50M63.89 164.11L66.01 161.99" stroke-width="1.6"/>
   </g>
 </svg>
