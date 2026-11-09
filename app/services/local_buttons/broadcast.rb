@@ -27,7 +27,7 @@ module LocalButtons
 
     def new_button? = @event == PRESSED && @button.first_press?
 
-    def locals = { button: @button, choices: ButtonRule::Choices.load, pressed: @event == PRESSED }
+    def locals = { button: @button, choices: ButtonRules::Choices.call, pressed: @event == PRESSED }
 
     def card = HouseBroadcast::Targets.local_button(@button)
 

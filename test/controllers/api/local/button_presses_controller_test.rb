@@ -31,8 +31,8 @@ class Api::Local::ButtonPressesControllerTest < ActionDispatch::IntegrationTest
   test "runs the first rule whose condition holds, logged as a button press" do
     sync_mirror!
     button = LocalButton.create!(client: "hall-board", key: "button-1")
-    button.rules.create!(gesture: "single", if_group_id: "r1", if_state: "off", action: "turn_on", target_group_id: "r1")
-    otherwise = button.rules.create!(gesture: "single", action: "turn_off", target_group_id: "r1")
+    button.rules.create!(gesture: "single", if_subject_type: "Hue::Group", if_subject_id: "r1", if_state: "off", action: "turn_on", target_type: "Hue::Group", target_id: "r1")
+    otherwise = button.rules.create!(gesture: "single", action: "turn_off", target_type: "Hue::Group", target_id: "r1")
 
     press token
 
@@ -45,8 +45,8 @@ class Api::Local::ButtonPressesControllerTest < ActionDispatch::IntegrationTest
   test "a second press sees the room the first one turned off" do
     sync_mirror!
     button = LocalButton.create!(client: "hall-board", key: "button-1")
-    turn_on = button.rules.create!(gesture: "single", if_group_id: "r1", if_state: "off", action: "turn_on", target_group_id: "r1")
-    button.rules.create!(gesture: "single", action: "turn_off", target_group_id: "r1")
+    turn_on = button.rules.create!(gesture: "single", if_subject_type: "Hue::Group", if_subject_id: "r1", if_state: "off", action: "turn_on", target_type: "Hue::Group", target_id: "r1")
+    button.rules.create!(gesture: "single", action: "turn_off", target_type: "Hue::Group", target_id: "r1")
 
     press token
     press token
@@ -57,7 +57,7 @@ class Api::Local::ButtonPressesControllerTest < ActionDispatch::IntegrationTest
 
   test "toggle turns a lit room off" do
     sync_mirror!
-    LocalButton.create!(client: "hall-board", key: "button-1").rules.create!(gesture: "single", action: "toggle", target_group_id: "r1")
+    LocalButton.create!(client: "hall-board", key: "button-1").rules.create!(gesture: "single", action: "toggle", target_type: "Hue::Group", target_id: "r1")
 
     press token
 
@@ -67,19 +67,53 @@ class Api::Local::ButtonPressesControllerTest < ActionDispatch::IntegrationTest
   test "a double press runs the double rules" do
     sync_mirror!
     button = LocalButton.create!(client: "hall-board", key: "button-1")
-    button.rules.create!(gesture: "single", action: "turn_off", target_group_id: "r1")
-    button.rules.create!(gesture: "double", action: "recall_scene", target_group_id: "r1", scene_id: "s1")
+    button.rules.create!(gesture: "single", action: "turn_off", target_type: "Hue::Group", target_id: "r1")
+    button.rules.create!(gesture: "double", action: "recall_scene", target_type: "Hue::Group", target_id: "r1", scene_id: "s1")
 
     press token, gesture: "double"
 
     assert_equal [ [ :scene, "s1", Hue::Api::SceneRecall::STATIC_LOOK ] ], hue.writes
   end
 
+  test "a rule can check and change a single light" do
+    sync_mirror!
+    LocalButton.create!(client: "hall-board", key: "button-1").rules.create!(
+      gesture: "single", if_subject_type: "Hue::Light", if_subject_id: "l2", if_state: "off", action: "turn_on", target_type: "Hue::Light", target_id: "l2"
+    )
+
+    press token
+
+    assert_equal [ [ :light, "l2", { on: { on: true }, dynamics: { duration: 100 } } ] ], hue.writes
+  end
+
+  test "sets a single light to a brightness" do
+    sync_mirror!
+    LocalButton.create!(client: "hall-board", key: "button-1").rules.create!(
+      gesture: "single", action: "set_brightness", brightness: 30, target_type: "Hue::Light", target_id: "l2"
+    )
+
+    press token
+
+    assert_equal [ [ :light, "l2", { on: { on: true }, dimming: { brightness: 30.0 }, dynamics: { duration: 100 } } ] ], hue.writes
+    assert_equal [ Activity::BUTTON, "brightness 30%" ], [ Activity.last.source, Activity.last.action ]
+  end
+
+  test "sets a room's brightness like the Lights page slider, dimming the lights that are on" do
+    sync_mirror!
+    LocalButton.create!(client: "hall-board", key: "button-1").rules.create!(
+      gesture: "single", action: "set_brightness", brightness: 60, target_type: "Hue::Group", target_id: "r1"
+    )
+
+    press token
+
+    assert_equal [ [ :light, "l1", { on: { on: true }, dimming: { brightness: 60.0 }, dynamics: { duration: 100 } } ] ], hue.writes
+  end
+
   test "skips a rule whose room has gone from the bridge" do
     sync_mirror!
     button = LocalButton.create!(client: "hall-board", key: "button-1")
-    button.rules.create!(gesture: "single", action: "turn_off", target_group_id: "gone")
-    fallback = button.rules.create!(gesture: "single", action: "turn_on", target_group_id: "r1")
+    button.rules.create!(gesture: "single", action: "turn_off", target_type: "Hue::Group", target_id: "gone")
+    fallback = button.rules.create!(gesture: "single", action: "turn_on", target_type: "Hue::Group", target_id: "r1")
 
     press token
 

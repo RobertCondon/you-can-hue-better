@@ -10,7 +10,7 @@ class LocalButtonsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "the Buttons page shows each button with its rules" do
-    @button.rules.create!(gesture: ButtonRule::SINGLE, if_group_id: "r1", if_state: "off", action: "turn_on", target_group_id: "r1")
+    @button.rules.create!(gesture: ButtonRule::SINGLE, if_subject_type: "Hue::Group", if_subject_id: "r1", if_state: "off", action: "turn_on", target_type: "Hue::Group", target_id: "r1")
 
     get local_buttons_path
 
@@ -19,7 +19,8 @@ class LocalButtonsControllerTest < ActionDispatch::IntegrationTest
     card = "#local_button_#{@button.id}"
     assert_select "#{card}.is-unnamed input[name='local_button[name]'][placeholder='Name this button']"
     assert_select "#{card} .local-button__meta", /button-1 · hall-board · pressed about 1 hour ago · 3 presses/
-    assert_select "#{card} .button-rule select[name='button_rule[if_group_id]'] option[selected][value=r1]", "Study"
+    assert_select "#{card} .button-rule select[name='button_rule[if_subject]'] optgroup[label=Rooms] option[selected][value='room:r1']", "Study"
+    assert_select "#{card} .button-rule select[name='button_rule[target]'] optgroup[label=Lights] option[value='light:l1']", "Desk lamp"
     assert_select "#{card} .button-rule select[name='button_rule[if_state]'] option[selected][value=off]"
     assert_select "#{card} .local-button__gesture", 2
     assert_select "#{card} .local-button__nothing", "Nothing happens yet."
@@ -44,7 +45,7 @@ class LocalButtonsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "forgets a button and its rules" do
-    @button.rules.create!(gesture: ButtonRule::SINGLE, action: "turn_off", target_group_id: "r1")
+    @button.rules.create!(gesture: ButtonRule::SINGLE, action: "turn_off", target_type: "Hue::Group", target_id: "r1")
 
     streams = capture_turbo_stream_broadcasts(LocalButtons::Broadcast::STREAM) { delete local_button_path(@button), as: :json }
 

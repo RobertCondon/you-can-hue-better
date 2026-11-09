@@ -7,6 +7,6 @@ module LocalButtons
       @gesture = gesture
     end
 
-    def call = @button.rules_for(@gesture).find { |rule| rule.runnable? && rule.matches? }
+    def call = @button.rules_for(@gesture).find { |rule| ButtonRules::Condition.call(rule) }
   end
 end

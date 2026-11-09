@@ -83,6 +83,10 @@ en:
   activerecord:
     errors:
       models:
+        button_rule:
+          attributes:
+            base:
+              scene_needs_a_room: A scene can only be set in a room. Pick a room instead of a light.
         control_binding:
           attributes:
             target:
@@ -302,6 +306,9 @@ en:
       nothing: Nothing happens yet.
       add_rule: Add a rule
   button_rules:
+    choices:
+      rooms: Rooms
+      lights: Lights
     rule:
       if: If
       else_if: Else if
@@ -310,10 +317,10 @@ en:
       is: is
       then: Then
       to: to
-      if_room: Room to check
+      if_room: Room or light to check
       if_state: State it must be in
       action: What to do
-      room: Room to change
+      room: Room or light to change
       scene: Scene
       states:
         "on": "on"
@@ -322,8 +329,11 @@ en:
         turn_on: Turn on
         turn_off: Turn off
         toggle: Toggle
+        set_brightness: Set brightness of
         recall_scene: Set a scene in
-      missing: Its room or scene is gone from the bridge, so this rule is skipped. Pick another.
+      brightness: Brightness
+      percent: "%"
+      missing: A room, light or scene it uses is gone from the bridge, so this rule is skipped. Pick another.
       move_up: Move up
       move_down: Move down
       remove: Remove rule

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
   create_table "activities", force: :cascade do |t|
     t.string "target_kind"
     t.string "target_id"
@@ -39,13 +39,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_090000) do
     t.integer "local_button_id", null: false
     t.string "gesture", null: false
     t.integer "position", null: false
-    t.string "if_group_id"
+    t.string "if_subject_id"
     t.string "if_state"
     t.string "action", null: false
-    t.string "target_group_id", null: false
+    t.string "target_id", null: false
     t.string "scene_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "if_subject_type"
+    t.string "target_type", null: false
+    t.integer "brightness"
     t.index ["local_button_id", "gesture", "position"], name: "index_button_rules_on_local_button_id_and_gesture_and_position"
     t.index ["local_button_id"], name: "index_button_rules_on_local_button_id"
   end

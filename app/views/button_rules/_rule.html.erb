@@ -4,8 +4,8 @@
                 data: { controller: "json-form autosave", action: "submit->json-form#submit change->autosave#save" } do |form| %>
     <div class="button-rule__clause">
       <span class="button-rule__word"><%= t(first ? ".if" : ".else_if") %></span>
-      <%= form.select :if_group_id, choices.rooms, { include_blank: t(first ? ".always" : ".otherwise"), selected: rule.if_group_id },
-                      id: dom_id(rule, :if_group), "aria-label": t(".if_room") %>
+      <%= form.select :if_subject, grouped_options_for_select(choices.subjects, ButtonRules::SubjectKey.dump(rule.if_subject_type, rule.if_subject_id)),
+                      { include_blank: t(first ? ".always" : ".otherwise") }, id: dom_id(rule, :if_subject), "aria-label": t(".if_room") %>
       <% unless rule.always? %>
         <span><%= t(".is") %></span>
         <%= form.select :if_state, ButtonRule::STATES.map { |state| [ t(".states.#{state}"), state ] }, { selected: rule.if_state },
@@ -16,12 +16,18 @@
       <span class="button-rule__word"><%= t(".then") %></span>
       <%= form.select :action, ButtonRule::ACTIONS.map { |action| [ t(".actions.#{action}"), action ] }, { selected: rule.action },
                       id: dom_id(rule, :action), "aria-label": t(".action") %>
-      <%= form.select :target_group_id, choices.rooms, { selected: rule.target_group_id },
-                      id: dom_id(rule, :target_group), "aria-label": t(".room") %>
-      <% if rule.recalls_scene? %>
+      <%= form.select :target, grouped_options_for_select(choices.subjects(rooms_only: rule.recalls_scene? && rule.targets_room?), ButtonRules::SubjectKey.dump(rule.target_type, rule.target_id)),
+                      {}, id: dom_id(rule, :target), "aria-label": t(".room") %>
+      <% if rule.recalls_scene? && rule.targets_room? %>
         <span><%= t(".to") %></span>
-        <%= form.select :scene_id, choices.scenes_in(rule.target_group_id), { selected: rule.scene_id },
+        <%= form.select :scene_id, choices.scenes_in(rule.target_id), { selected: rule.scene_id },
                         id: dom_id(rule, :scene), "aria-label": t(".scene") %>
+      <% elsif rule.sets_brightness? %>
+        <span><%= t(".to") %></span>
+        <span class="button-rule__level">
+          <%= form.number_field :brightness, value: rule.brightness, in: Hue::Api::Limits::LIT_BRIGHTNESS, step: 1,
+                                id: dom_id(rule, :brightness), "aria-label": t(".brightness") %><%= t(".percent") %>
+        </span>
       <% end %>
     </div>
     <p class="button-rule__error" role="alert" data-json-form-target="error"><%= t(".missing") if rule.missing? %></p>

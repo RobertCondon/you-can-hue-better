@@ -29,7 +29,7 @@ module LocalButtons
     end
 
     def run(rule)
-      reply = rule.command.from(Activity::BUTTON).call_later
+      reply = ButtonRules::Command.call(rule).from(Activity::BUTTON).call_later
       raise HouseCommands::LightsBusy, reply if reply.is_a?(HouseCommands::Busy)
     rescue HouseCommands::NotInstant
       nil

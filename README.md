@@ -135,12 +135,16 @@ away, and the bridge's answer replaces it a moment later.
   browser shares with Ruby arrive from Ruby in the page head (`lib/light_constants.js`). The floor's controller wires
   the page to the classes in `lib/floor/`, one per job. Stylesheets are one file per part of the page,
   with shared values in `tokens.css`. Every piece of visible text is in `config/locales/en.yml`.
-- **Local buttons** (`/buttons`, `app/services/local_buttons/`): a `LocalButton` is keyed by the
-  board's client id and the button's key. Each gesture has an ordered list of `ButtonRule`s: "if <room>
-  is on/off, then turn on, turn off, toggle or set a scene in <room>", and a rule with no room to check
-  always matches. `LocalButtons::Press` saves a button on its first press, counts presses, and runs the
-  rule `LocalButtons::MatchingRule` picks (the first that matches; rules whose room or scene has gone
-  from the bridge are skipped) as an ordinary house command logged with source `button`. The page edits
+- **Local buttons** (`/buttons`, `app/services/local_buttons/`, `app/services/button_rules/`): a
+  `LocalButton` is keyed by the board's client id and the button's key. Each gesture has an ordered
+  list of `ButtonRule`s: "if <room or light> is on/off, then turn on, turn off, toggle or set the
+  brightness of <room or light>, or set a scene in <room>". A rule that checks nothing always matches.
+  Both ends are polymorphic (`Hue::Group` or `Hue::Light`); the page's menus send them as `room:r1` or
+  `light:l1` (`ButtonRules::SubjectKey`, `ButtonRules::Fields`). `LocalButtons::Press` saves a button on
+  its first press, counts presses, and runs the rule `LocalButtons::MatchingRule` picks (the first whose
+  `ButtonRules::Condition` holds; rules using something gone from the bridge are skipped) through
+  `ButtonRules::Command`, which builds the same command the Lights page would (a room's brightness
+  dims only its lit lights, like the slider), logged with source `button`. The page edits
   everything through `LocalButtonsController` and `ButtonRulesController` and learns the result from
   `LocalButtons::Broadcast`, which also makes a pressed card glow.
 - **Remote controls**: `ControlBinding` and friends describe what each switch button and the dial ring

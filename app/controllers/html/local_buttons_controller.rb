@@ -1,8 +1,8 @@
 module Html
   class LocalButtonsController < ApplicationController
     def index
-      @buttons = LocalButton.arranged.includes(rules: %i[if_group target_group scene])
-      @choices = ButtonRule::Choices.load
+      @buttons = LocalButton.arranged.includes(rules: %i[if_subject target scene])
+      @choices = ButtonRules::Choices.call
     end
   end
 end
