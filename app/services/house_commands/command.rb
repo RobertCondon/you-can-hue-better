@@ -6,10 +6,13 @@ module HouseCommands
 
     def self.call(...) = new(...).call_now
 
+    # Logs the command as coming from somewhere other than the dashboard (Activity::SOURCES).
+    def from(source) = tap { @source = source }
+
     def call_now
       check_request!
       claim = Hue::Locks.claim(light_ids) or return busy
-      result = ActivityRecorder.record(**activity) { send_to_bridge }
+      result = ActivityRecorder.record(**logged_activity) { send_to_bridge }
       HouseBroadcast.changes(catch_up_mirror)
       result
     ensure
@@ -21,7 +24,7 @@ module HouseCommands
       raise NotInstant, self.class.name if light_ids.empty?
 
       claim = Hue::Locks.claim(light_ids) or return busy
-      hand_off(claim, ActivityRecorder.pending(**activity), tab)
+      hand_off(claim, ActivityRecorder.pending(**logged_activity), tab)
     rescue StandardError
       Hue::Locks.release(claim)
       raise
@@ -49,6 +52,8 @@ module HouseCommands
     end
 
     def busy = Busy.new(light_ids:, target_name:)
+
+    def logged_activity = @source ? activity.merge(source: @source) : activity
 
     def catch_up_mirror
       Hue.wait_for_bridge

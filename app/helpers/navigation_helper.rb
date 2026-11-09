@@ -2,7 +2,7 @@ module NavigationHelper
   CURRENT_CLASS = "is-current"
   CURRENT_PAGE = "page"
 
-  def navigation_items = { lights: root_path, scenes: scenes_path, floor: floor_path }
+  def navigation_items = { lights: root_path, scenes: scenes_path, floor: floor_path, buttons: local_buttons_path }
 
   def navigation_link_class(view, current) = class_names("views__link", CURRENT_CLASS => view == current)
 

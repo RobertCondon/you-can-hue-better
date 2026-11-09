@@ -1,0 +1,16 @@
+<% content_for :title, t(".title") %>
+<%= turbo_stream_from LocalButtons::Broadcast::STREAM %>
+<header class="house">
+  <h1><%= t(".title") %></h1>
+  <div class="house__meta">
+    <%= render "shared/nav", current: :buttons %>
+  </div>
+</header>
+
+<main class="buttons-page">
+  <p class="buttons-page__intro muted"><%= t(".intro") %></p>
+  <div id="<%= targets.local_buttons %>" class="local-buttons">
+    <%= render partial: "local_buttons/card", collection: @buttons, as: :button, locals: { choices: @choices, pressed: false } %>
+  </div>
+  <p class="buttons-page__empty muted"><%= t(".empty") %></p>
+</main>

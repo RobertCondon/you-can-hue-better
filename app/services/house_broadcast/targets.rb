@@ -6,6 +6,7 @@ module HouseBroadcast
     FLASH = "flash"
     LIGHT_DOCK = "light_dock"
     VISIBILITY = "visibility"
+    LOCAL_BUTTONS = "local_buttons"
 
     module_function
 
@@ -15,6 +16,7 @@ module HouseBroadcast
     def flash = FLASH
     def light_dock = LIGHT_DOCK
     def visibility = VISIBILITY
+    def local_buttons = LOCAL_BUTTONS
 
     def room_card(room) = "room_card_#{room.id}"
     def room_body(room) = "room_body_#{room.id}"
@@ -30,5 +32,6 @@ module HouseBroadcast
     def scene_card(scene) = "scene_card_#{scene.id}"
     def visibility_room(room) = "visibility_room_#{room.id}"
     def visibility_light(light) = "visibility_light_#{light.id}"
+    def local_button(button) = "local_button_#{button.id}"
   end
 end

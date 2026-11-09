@@ -10,10 +10,10 @@ class ControllerSplitTest < ActiveSupport::TestCase
 
   def controller_class(path) = "#{path.camelize}Controller".constantize
 
-  test "every routed controller outside Html:: is a JSON API" do
+  test "every routed controller outside Html:: is a JSON API, for browsers or for machines" do
     api_paths = routed_controllers.reject { |path| path.start_with?(HTML_NAMESPACE) }
     assert_not_empty api_paths
-    assert_empty api_paths.reject { |path| controller_class(path) < ApiController }
+    assert_empty api_paths.reject { |path| controller_class(path) < ApiController || controller_class(path) < MachineController }
   end
 
   test "every Html:: controller renders HTML from the Html base" do

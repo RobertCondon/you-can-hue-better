@@ -1,0 +1,68 @@
+.buttons-page { display: grid; gap: 16px; max-width: 760px; }
+.buttons-page__intro { margin: 0; max-width: 62ch; font-size: var(--text-md); }
+.buttons-page__empty { margin: 0; padding: 24px; text-align: center; border: 1px dashed var(--line); border-radius: var(--radius); }
+.buttons-page:has(.local-button) .buttons-page__empty { display: none; }
+.local-buttons { display: grid; gap: 14px; }
+
+.local-button {
+  display: grid; gap: 12px; padding: 14px 16px 16px;
+  background: var(--surface); border: 1px solid transparent; border-radius: var(--radius);
+}
+.local-button.is-unnamed { border: 1px dashed var(--line); }
+.local-button.is-pressed { animation: local-button-press 2.4s ease-out; }
+@keyframes local-button-press {
+  0%, 40% { border-color: var(--live); box-shadow: 0 0 24px 2px var(--live-glow); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+@media (prefers-reduced-motion: reduce) { .local-button.is-pressed { animation: none; border-color: var(--live); } }
+
+.local-button__head { display: flex; align-items: flex-start; gap: 8px; }
+.local-button__name { flex: 1; min-width: 0; margin: 0; }
+.local-button__name input {
+  width: 100%; font: inherit; font-size: var(--text-2xl); font-weight: 500; color: var(--ink);
+  background: transparent; border: 1px solid transparent; border-radius: var(--radius-control); padding: 4px 8px; margin-left: -8px;
+}
+.local-button__name input::placeholder { color: var(--ink-soft); }
+.local-button__name input:hover { border-color: var(--line); }
+.local-button__name input:focus { outline: none; border-color: var(--ink-soft); background: var(--page); }
+.local-button__forget { margin: 0; }
+.local-button__meta { margin: -8px 0 0; font-size: var(--text-sm); color: var(--ink-soft); }
+.local-button__meta code { font-size: var(--text-xs); }
+.local-button__error:empty { display: none; }
+.local-button__error { margin: 4px 0 0; font-size: var(--text-sm); color: var(--danger); }
+
+.local-button__gesture { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
+.local-button__gesture h3 { margin: 0; font-size: var(--text-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft); }
+.local-button__nothing { margin: 0; font-size: var(--text-md); }
+
+.button-rules { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.button-rule {
+  display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px;
+  background: var(--page); border: 1px solid var(--line); border-radius: var(--radius-medium);
+}
+.button-rule.is-missing { border-color: var(--danger-line); }
+.button-rule__form { flex: 1; min-width: 0; margin: 0; display: grid; gap: 8px; }
+.button-rule__clause { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: var(--text-md); }
+.button-rule__word { min-width: 52px; font-size: var(--text-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); }
+.button-rule select {
+  font: inherit; font-size: var(--text-md); color: var(--ink); max-width: 100%;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-small); padding: 5px 8px;
+}
+.button-rule select:focus-visible { outline: var(--focus-width) solid var(--ink); outline-offset: 1px; }
+.button-rule__error { margin: 0; font-size: var(--text-sm); color: var(--danger); }
+.button-rule__error:empty { display: none; }
+.button-rule__tools { display: flex; gap: 2px; }
+.button-rule__tools form { margin: 0; }
+.button-rule__tool {
+  width: 30px; height: 30px; display: inline-grid; place-items: center; font: inherit; font-size: var(--text-md);
+  color: var(--ink-soft); background: none; border: 0; border-radius: var(--radius-small); cursor: pointer;
+}
+.button-rule__tool:hover:not(:disabled) { background: var(--surface); color: var(--ink); }
+.button-rule__tool:disabled { opacity: 0.3; cursor: default; }
+.button-rule__tool:focus-visible { outline: var(--focus-width) solid var(--ink); }
+.button-rules__add { margin: 0; display: flex; align-items: center; gap: 8px; }
+
+@media (max-width: 560px) {
+  .button-rule { flex-direction: column; }
+  .button-rule__tools { align-self: flex-end; }
+}

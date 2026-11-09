@@ -6,6 +6,7 @@ module ApplicationHelper
   STYLESHEETS = %w[
     tokens base header toasts rooms tiles light_panel pinned_light light_sheet scenes dev
     floor floor_toolbar floor_nets floor_paint floor_objects floor_lamps editor pages
+    buttons
   ].freeze
 
   def targets = HouseBroadcast::Targets

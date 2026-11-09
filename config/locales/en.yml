@@ -1,5 +1,10 @@
 en:
   html:
+    local_buttons:
+      index:
+        title: Buttons
+        intro: Buttons on the boards around the house show up here the first time they're pressed. For each press, the rules are checked from the top and the first one that matches runs.
+        empty: No buttons yet. Press one on a board and it appears here.
     dashboard:
       show:
         title: Lights
@@ -92,6 +97,7 @@ en:
       house_label: House
   api:
     no_bridge: No bridge is set up yet. Pair one on the setup page.
+    unauthorized: Missing or invalid machine token.
   toasts:
     a_painted_light: A painted light
     a_light_in: A light in %{room}
@@ -144,6 +150,7 @@ en:
       lights: Lights
       scenes: Scenes
       floor: Floor
+      buttons: Buttons
   dashboard:
     lights:
       title: Lights
@@ -279,3 +286,44 @@ en:
       net_name: 'Net: %{name}'
       point: Point %{number}
       painted: "%{count} painted · tap a room name to paint the whole room"
+  local_buttons:
+    card:
+      name_label: Button name
+      name_placeholder: Name this button
+      forget: Forget %{key}
+      confirm_forget: Forget %{key} and its rules? It comes back as a new button the next time it's pressed.
+      pressed: pressed %{ago} ago
+      presses:
+        one: 1 press
+        other: "%{count} presses"
+      gestures:
+        single: Press once
+        double: Press twice
+      nothing: Nothing happens yet.
+      add_rule: Add a rule
+  button_rules:
+    rule:
+      if: If
+      else_if: Else if
+      always: always
+      otherwise: otherwise
+      is: is
+      then: Then
+      to: to
+      if_room: Room to check
+      if_state: State it must be in
+      action: What to do
+      room: Room to change
+      scene: Scene
+      states:
+        "on": "on"
+        "off": "off"
+      actions:
+        turn_on: Turn on
+        turn_off: Turn off
+        toggle: Toggle
+        recall_scene: Set a scene in
+      missing: Its room or scene is gone from the bridge, so this rule is skipped. Pick another.
+      move_up: Move up
+      move_down: Move down
+      remove: Remove rule

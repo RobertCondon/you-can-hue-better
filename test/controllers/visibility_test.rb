@@ -55,6 +55,6 @@ class VisibilityTest < ActionDispatch::IntegrationTest
   test "the views nav carries icons for the phone tab bar" do
     get root_path
     assert_select "nav.views .views__link[aria-current=page] svg.views__icon", 1
-    assert_select "nav.views .views__link svg.views__icon", 3
+    assert_select "nav.views .views__link svg.views__icon", 4
   end
 end

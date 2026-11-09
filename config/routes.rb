@@ -1,12 +1,21 @@
 Rails.application.routes.draw do
   get "up", to: "rails/health#show", as: :rails_health_check
 
+  # Endpoints other machines call with a signed JWT, not browsers. Controllers live in
+  # app/controllers/api/ and inherit MachineController. /api/local is for devices on the home network.
+  namespace :api do
+    namespace :local do
+      post "button", to: "button_presses#create", as: :button_press
+    end
+  end
+
   scope module: :html do
     root "dashboard#show"
     get "dev", to: "dashboard#dev"
     resource :setup, only: [ :show, :create ], controller: "setup"
     resource :floor, only: :show
     resources :scenes, only: [ :index, :show ]
+    resources :local_buttons, only: :index, path: "buttons"
   end
   namespace :html do
     resources :lights, only: [] do
@@ -34,6 +43,13 @@ Rails.application.routes.draw do
   end
 
   resources :locks, only: :index
+
+  resources :local_buttons, only: [ :update, :destroy ] do
+    resources :button_rules, only: :create, path: "rules"
+  end
+  resources :button_rules, only: [ :update, :destroy ] do
+    patch :move, on: :member
+  end
 
   resources :scenes, only: [] do
     member do

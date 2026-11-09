@@ -1,6 +1,7 @@
 class Activity < ApplicationRecord
   DASHBOARD = "dashboard"
-  SOURCES = [ DASHBOARD, "remote", "schedule", "api" ].freeze
+  BUTTON = "button"
+  SOURCES = [ DASHBOARD, "remote", "schedule", "api", BUTTON ].freeze
   OK = "ok"
   UNREACHABLE = "not responding"
   PENDING = "pending"

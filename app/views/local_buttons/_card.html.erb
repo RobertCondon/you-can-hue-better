@@ -1,0 +1,37 @@
+<article id="<%= targets.local_button(button) %>" class="<%= class_names("local-button", "is-unnamed": button.unnamed?, "is-pressed": pressed) %>">
+  <div class="local-button__head">
+    <%= form_with url: local_button_path(button), method: :patch, scope: :local_button, class: "local-button__name",
+                  data: { controller: "json-form autosave", action: "submit->json-form#submit change->autosave#save" } do |form| %>
+      <%= form.text_field :name, value: button.name, id: dom_id(button, :name), placeholder: t(".name_placeholder"), "aria-label": t(".name_label"), autocomplete: "off" %>
+      <p class="local-button__error" role="alert" data-json-form-target="error"></p>
+    <% end %>
+    <%= form_with url: local_button_path(button), method: :delete, class: "local-button__forget",
+                  data: { controller: "json-form", action: "submit->json-form#submit", json_form_confirm_value: t(".confirm_forget", key: button.key) } do %>
+      <button type="submit" class="btn btn--icon" aria-label="<%= t(".forget", key: button.key) %>" title="<%= t(".forget", key: button.key) %>">✕</button>
+    <% end %>
+  </div>
+  <p class="local-button__meta">
+    <code><%= button.key %></code> · <%= button.client %>
+    <% if button.last_pressed_at %>· <%= t(".pressed", ago: time_ago_in_words(button.last_pressed_at)) %> · <%= t(".presses", count: button.presses_count) %><% end %>
+  </p>
+
+  <% ButtonRule::GESTURES.each do |gesture| %>
+    <% rules = button.rules_for(gesture) %>
+    <section class="local-button__gesture" aria-labelledby="<%= dom_id(button, gesture) %>">
+      <h3 id="<%= dom_id(button, gesture) %>"><%= t(".gestures.#{gesture}") %></h3>
+      <% if rules.empty? %>
+        <p class="local-button__nothing muted"><%= t(".nothing") %></p>
+      <% else %>
+        <ol class="button-rules">
+          <%= render partial: "button_rules/rule", collection: rules, as: :rule, locals: { choices:, last_index: rules.size - 1 } %>
+        </ol>
+      <% end %>
+      <%= form_with url: local_button_button_rules_path(button), scope: :button_rule, class: "button-rules__add",
+                    data: { controller: "json-form", action: "submit->json-form#submit" } do |form| %>
+        <%= form.hidden_field :gesture, value: gesture, id: dom_id(button, "#{gesture}_gesture") %>
+        <button type="submit" class="chip chip--add"><%= t(".add_rule") %></button>
+        <span class="local-button__error" role="alert" data-json-form-target="error"></span>
+      <% end %>
+    </section>
+  <% end %>
+</article>

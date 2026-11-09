@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_10_134548) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_090000) do
   create_table "activities", force: :cascade do |t|
     t.string "target_kind"
     t.string "target_id"
@@ -33,6 +33,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_134548) do
     t.datetime "paired_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "button_rules", force: :cascade do |t|
+    t.integer "local_button_id", null: false
+    t.string "gesture", null: false
+    t.integer "position", null: false
+    t.string "if_group_id"
+    t.string "if_state"
+    t.string "action", null: false
+    t.string "target_group_id", null: false
+    t.string "scene_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["local_button_id", "gesture", "position"], name: "index_button_rules_on_local_button_id_and_gesture_and_position"
+    t.index ["local_button_id"], name: "index_button_rules_on_local_button_id"
   end
 
   create_table "control_binding_steps", force: :cascade do |t|
@@ -277,7 +292,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_134548) do
     t.index ["light_id"], name: "index_light_placements_on_light_id"
   end
 
+  create_table "local_buttons", force: :cascade do |t|
+    t.string "client", null: false
+    t.string "key", null: false
+    t.string "name"
+    t.datetime "last_pressed_at"
+    t.integer "presses_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client", "key"], name: "index_local_buttons_on_client_and_key", unique: true
+  end
+
   add_foreign_key "activities", "control_events"
+  add_foreign_key "button_rules", "local_buttons"
   add_foreign_key "control_binding_steps", "control_bindings"
   add_foreign_key "control_bindings", "hue_controls", column: "control_id"
   add_foreign_key "control_events", "control_bindings"

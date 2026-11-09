@@ -93,7 +93,12 @@ away, and the bridge's answer replaces it a moment later.
   | No bridge set up yet | 503 | `{ "error": "..." }` |
 
   A new endpoint that changes something goes on `ApiController` at the resource's path; a new page or
-  fragment goes in `Html::`. `API_SPLIT_PLAN.md` is the plan this was built from.
+  fragment goes in `Html::`. Endpoints other machines call (the button board, scripts) go on
+  `MachineController` instead: `ActionController::API`, so no session or CSRF, and every request needs
+  `Authorization: Bearer <jwt>`. Each client has its own HS256 secret in `MACHINE_CLIENTS`
+  (`id:secret,id:secret`) and signs a fresh token per request with `iss` (its id), `iat` and `exp`,
+  at most five minutes apart (`MachineToken`). `POST /api/local/button` takes a `button_id` and a
+  `gesture` (`single` or `double`, default `single`) from a physical button on a board. `API_SPLIT_PLAN.md` is the plan this was built from.
 - **Commands** (`app/services/house_commands/`): everything that changes the house is one command.
   `HouseCommands::Command` runs it one of two ways, and the controller says which with a block that
   builds it (`HueCalls`):
@@ -130,6 +135,14 @@ away, and the bridge's answer replaces it a moment later.
   browser shares with Ruby arrive from Ruby in the page head (`lib/light_constants.js`). The floor's controller wires
   the page to the classes in `lib/floor/`, one per job. Stylesheets are one file per part of the page,
   with shared values in `tokens.css`. Every piece of visible text is in `config/locales/en.yml`.
+- **Local buttons** (`/buttons`, `app/services/local_buttons/`): a `LocalButton` is keyed by the
+  board's client id and the button's key. Each gesture has an ordered list of `ButtonRule`s: "if <room>
+  is on/off, then turn on, turn off, toggle or set a scene in <room>", and a rule with no room to check
+  always matches. `LocalButtons::Press` saves a button on its first press, counts presses, and runs the
+  rule `LocalButtons::MatchingRule` picks (the first that matches; rules whose room or scene has gone
+  from the bridge are skipped) as an ordinary house command logged with source `button`. The page edits
+  everything through `LocalButtonsController` and `ButtonRulesController` and learns the result from
+  `LocalButtons::Broadcast`, which also makes a pressed card glow.
 - **Remote controls**: `ControlBinding` and friends describe what each switch button and the dial ring
   should do, seeded by `bin/rails hue:import_v1_rules` from the bridge's own rules. Nothing acts on them
   yet: the bridge's rules still drive the switches.

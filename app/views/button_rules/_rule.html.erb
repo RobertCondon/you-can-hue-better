@@ -1,0 +1,41 @@
+<% first = rule_counter.zero? %>
+<li id="<%= dom_id(rule) %>" class="<%= class_names("button-rule", "is-missing": rule.missing?) %>">
+  <%= form_with url: button_rule_path(rule), method: :patch, scope: :button_rule, class: "button-rule__form",
+                data: { controller: "json-form autosave", action: "submit->json-form#submit change->autosave#save" } do |form| %>
+    <div class="button-rule__clause">
+      <span class="button-rule__word"><%= t(first ? ".if" : ".else_if") %></span>
+      <%= form.select :if_group_id, choices.rooms, { include_blank: t(first ? ".always" : ".otherwise"), selected: rule.if_group_id },
+                      id: dom_id(rule, :if_group), "aria-label": t(".if_room") %>
+      <% unless rule.always? %>
+        <span><%= t(".is") %></span>
+        <%= form.select :if_state, ButtonRule::STATES.map { |state| [ t(".states.#{state}"), state ] }, { selected: rule.if_state },
+                        id: dom_id(rule, :if_state), "aria-label": t(".if_state") %>
+      <% end %>
+    </div>
+    <div class="button-rule__clause">
+      <span class="button-rule__word"><%= t(".then") %></span>
+      <%= form.select :action, ButtonRule::ACTIONS.map { |action| [ t(".actions.#{action}"), action ] }, { selected: rule.action },
+                      id: dom_id(rule, :action), "aria-label": t(".action") %>
+      <%= form.select :target_group_id, choices.rooms, { selected: rule.target_group_id },
+                      id: dom_id(rule, :target_group), "aria-label": t(".room") %>
+      <% if rule.recalls_scene? %>
+        <span><%= t(".to") %></span>
+        <%= form.select :scene_id, choices.scenes_in(rule.target_group_id), { selected: rule.scene_id },
+                        id: dom_id(rule, :scene), "aria-label": t(".scene") %>
+      <% end %>
+    </div>
+    <p class="button-rule__error" role="alert" data-json-form-target="error"><%= t(".missing") if rule.missing? %></p>
+  <% end %>
+
+  <div class="button-rule__tools">
+    <% [ [ ButtonRule::UP, "↑", first ], [ ButtonRule::DOWN, "↓", rule_counter == last_index ] ].each do |direction, arrow, disabled| %>
+      <%= form_with url: move_button_rule_path(rule), method: :patch, data: { controller: "json-form", action: "submit->json-form#submit" } do |form| %>
+        <%= hidden_field_tag :direction, direction, id: dom_id(rule, "move_#{direction}") %>
+        <button type="submit" class="button-rule__tool" aria-label="<%= t(".move_#{direction}") %>" title="<%= t(".move_#{direction}") %>" <%= "disabled" if disabled %>><%= arrow %></button>
+      <% end %>
+    <% end %>
+    <%= form_with url: button_rule_path(rule), method: :delete, data: { controller: "json-form", action: "submit->json-form#submit" } do %>
+      <button type="submit" class="button-rule__tool" aria-label="<%= t(".remove") %>" title="<%= t(".remove") %>">✕</button>
+    <% end %>
+  </div>
+</li>
