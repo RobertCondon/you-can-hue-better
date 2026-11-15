@@ -5,7 +5,7 @@ module FloorsHelper
   ROTATION_STEP_DEGREES = 15
   HUE_SLIDER_RANGE = 0..359
   HUE_SLIDER_START = 300
-  LAMP_CLASSES = { unplaced: "is-unplaced", muted: "is-muted" }.freeze
+  LAMP_CLASSES = { unplaced: "is-unplaced", muted: "is-muted", switch: "is-switch" }.freeze
   PAINT_WHITES = { candle: 400, warm: 370, soft: 286, cool: 200, daylight: 153 }.freeze
   PAINT_COLOURS = %w[#ff3b30 #ff9500 #ffcc00 #34c759 #30d5c8 #0a84ff #5e5ce6 #bf5af2 #ff2d55].freeze
 
@@ -27,7 +27,7 @@ module FloorsHelper
   def paint_colours = PAINT_COLOURS
 
   def lamp_classes(spot)
-    class_names("floor__lamp", light_state_class(spot.light), LAMP_CLASSES[:unplaced] => !spot.placed, LAMP_CLASSES[:muted] => spot.muted)
+    class_names("floor__lamp", light_state_class(spot.light), LAMP_CLASSES[:unplaced] => !spot.placed, LAMP_CLASSES[:muted] => spot.muted, LAMP_CLASSES[:switch] => !spot.light.dimmable?)
   end
 
   def lamp_style(spot)

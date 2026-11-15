@@ -24,6 +24,9 @@ module Hue
         def mirek_valid? = raw.dig(COLOR_TEMPERATURE_FIELD, MIREK_VALID_FIELD) == true
         def archetype = raw.dig(METADATA_FIELD, ARCHETYPE_FIELD)
 
+        # A smart plug is a light the bridge can only switch: it reports no dimming at all.
+        def dimmable? = raw.key?(DIMMING_FIELD)
+
         def gamut
           corners = raw.dig(COLOR_FIELD, GAMUT_FIELD) or return
           corners.to_h { |corner, point| [ corner.to_sym, { x: point[X_FIELD], y: point[Y_FIELD] } ] }

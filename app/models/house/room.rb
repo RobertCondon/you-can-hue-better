@@ -13,16 +13,20 @@ class House
     def all_on? = visible_lights.all?(&:lit?)
     def lit_lights = visible_lights.select(&:lit?)
 
-    def level
-      return Light::UNLIT_LEVEL if lit_lights.empty?
+    # Plugs switch with the room but have no level, so they stay out of its brightness.
+    def dimmed_lights = lit_lights.select(&:dimmable?)
 
-      (lit_lights.sum(&:brightness) / lit_lights.size).round.clamp(Hue::Api::Limits::LIT_BRIGHTNESS)
+    def level
+      return Light::UNLIT_LEVEL if dimmed_lights.empty?
+
+      (dimmed_lights.sum(&:brightness) / dimmed_lights.size).round.clamp(Hue::Api::Limits::LIT_BRIGHTNESS)
     end
 
-    def mixed_brightness? = lit_lights.map { |light| light.brightness.round }.uniq.size > 1
+    def mixed_brightness? = dimmed_lights.map { |light| light.brightness.round }.uniq.size > 1
 
     def brightness_label
       return I18n.t("house.light.off") unless any_on?
+      return I18n.t("house.light.on") if dimmed_lights.empty?
 
       I18n.t(mixed_brightness? ? "house.room.mixed_level" : "house.light.level", level:)
     end

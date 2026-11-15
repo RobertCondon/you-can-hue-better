@@ -9,6 +9,7 @@ const RECENT_LIMIT = 8
 const PAINTING_CLASS = "is-painting"
 const PAINTED_CLASS = "is-painted"
 const ON_CLASS = "is-on"
+const SWITCH_CLASS = "is-switch"
 const OFF_CLASS = "is-off"
 const MUTED_CLASS = "is-muted"
 const LAMP_SELECTOR = ".floor__lamp"
@@ -94,7 +95,7 @@ export class FloorPaintBrush {
   }
 
   paintLamp(lamp) {
-    if (!this.brush || !lamp || lamp.classList.contains(MUTED_CLASS)) return
+    if (!this.brush || !lamp || lamp.classList.contains(MUTED_CLASS) || lamp.classList.contains(SWITCH_CLASS)) return
     const lightId = lamp.dataset.lightId
     if (!this.strokes[lightId]) this.originalAppearances[lightId] = snapshotAppearance(lamp)
     this.strokes[lightId] = { light_id: lightId, hex: this.brush.hex, mirek: this.brush.mirek }

@@ -12,10 +12,14 @@
       <span class="pin__name"><%= light.display_name %></span>
       <span class="pin__level" data-level><%= light.brightness_label %></span>
     </button>
-    <%= async_hue_form_with url: light_path(light.id), method: :patch, class: "pin__dim", light_ids: [ light.id ] do |form| %>
-      <label class="sr-only" for="pin_bri_<%= light.id %>"><%= t(".brightness_of", light: light.display_name) %></label>
-      <input type="range" id="pin_bri_<%= light.id %>" name="light[brightness]" min="<%= Hue::Api::Limits::LIT_BRIGHTNESS.min %>" max="<%= Hue::Api::Limits::LIT_BRIGHTNESS.max %>"
-             value="<%= slider_level(light) %>" data-action="input->light#preview change->light#submit">
+    <% if light.dimmable? %>
+      <%= async_hue_form_with url: light_path(light.id), method: :patch, class: "pin__dim", light_ids: [ light.id ] do |form| %>
+        <label class="sr-only" for="pin_bri_<%= light.id %>"><%= t(".brightness_of", light: light.display_name) %></label>
+        <input type="range" id="pin_bri_<%= light.id %>" name="light[brightness]" min="<%= Hue::Api::Limits::LIT_BRIGHTNESS.min %>" max="<%= Hue::Api::Limits::LIT_BRIGHTNESS.max %>"
+               value="<%= slider_level(light) %>" data-action="input->light#preview change->light#submit">
+      <% end %>
+    <% else %>
+      <span class="pin__dim" aria-hidden="true"></span>
     <% end %>
     <button type="button" class="pin__swatch" data-action="pinned#expand" aria-label="<%= t(".colour_of", light: light.display_name) %>"></button>
     <button type="button" class="pin__close" data-action="pinned#close" aria-label="<%= t(".unpin", light: light.display_name) %>">×</button>

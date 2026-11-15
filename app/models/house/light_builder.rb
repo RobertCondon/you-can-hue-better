@@ -25,7 +25,7 @@ class House
     def shared_attributes(light, payload)
       {
         id: light.id, name: light.name, owner_id: light.device_id, gamut: payload.gamut,
-        nickname: light.extension&.nickname, reachable: light.device.reachable,
+        nickname: light.extension&.nickname, dimmable: payload.dimmable?, reachable: light.device.reachable,
         archetype: payload.archetype || Hue::Api::Payloads::Device.new(light.device.raw).product_archetype
       }
     end

@@ -74,6 +74,7 @@ en:
     light:
       not_responding: Not responding
       'off': 'Off'
+      'on': 'On'
       level: "%{level}%"
     room:
       all_off: All off
@@ -87,6 +88,7 @@ en:
           attributes:
             base:
               scene_needs_a_room: A scene can only be set in a room. Pick a room instead of a light.
+              cannot_dim: "%{name} only switches on and off. Pick turn on, turn off or toggle."
         control_binding:
           attributes:
             target:

@@ -1,5 +1,5 @@
 class House
-  class Light < Data.define(:id, :name, :on, :brightness, :xy, :owner_id, :gamut, :mirek, :mirek_valid, :nickname, :reachable, :archetype, :hidden, :on_floor, :icon_override)
+  class Light < Data.define(:id, :name, :on, :brightness, :xy, :owner_id, :gamut, :mirek, :mirek_valid, :nickname, :reachable, :archetype, :hidden, :on_floor, :icon_override, :dimmable)
     GAMUT_C = { red: { x: 0.6915, y: 0.3083 }, green: { x: 0.17, y: 0.7 }, blue: { x: 0.1532, y: 0.0475 } }.freeze
     TEMPERATURE_MODE = "ct"
     COLOUR_MODE = "xy"
@@ -8,9 +8,12 @@ class House
 
     delegate :tile_hex, :tint_hex, :fill_hex, :tile_text_hex, :fill_pct, to: :tile
 
-    def initialize(gamut: nil, mirek: nil, mirek_valid: false, nickname: nil, reachable: true, archetype: nil, hidden: false, on_floor: true, icon_override: nil, **attributes)
+    def initialize(gamut: nil, mirek: nil, mirek_valid: false, nickname: nil, reachable: true, archetype: nil, hidden: false, on_floor: true, icon_override: nil, dimmable: true, **attributes)
+      dimmable = dimmable != false
+      # Something that only switches, like a plug, is at full whenever it is on.
+      attributes[:brightness] = Glow::FULL_BRIGHTNESS unless dimmable
       super(
-        gamut: gamut || GAMUT_C, mirek:, mirek_valid: mirek_valid == true, nickname: nickname.presence, reachable: reachable != false,
+        dimmable:, gamut: gamut || GAMUT_C, mirek:, mirek_valid: mirek_valid == true, nickname: nickname.presence, reachable: reachable != false,
         archetype:, hidden: hidden == true, on_floor: on_floor != false, icon_override: icon_override.presence, **attributes
       )
     end
@@ -24,6 +27,7 @@ class House
     def responding? = reachable
     def lit? = on && reachable
     def color? = xy.present?
+    def dimmable? = dimmable
     def color_mode = mirek_valid ? TEMPERATURE_MODE : COLOUR_MODE
 
     def icon = icon_override || auto_icon
@@ -36,11 +40,13 @@ class House
     def brightness_label
       return I18n.t("house.light.not_responding") unless responding?
       return I18n.t("house.light.off") if off?
+      return I18n.t("house.light.on") unless dimmable?
 
       I18n.t("house.light.level", level:)
     end
 
-    def glow = lit? ? (brightness / Glow::FULL_BRIGHTNESS).round(GLOW_DECIMAL_PLACES) : UNLIT_LEVEL
+    # Only a dimmable light throws light on the floor plan; a plug shows on or off and never glows.
+    def glow = lit? && dimmable? ? (brightness / Glow::FULL_BRIGHTNESS).round(GLOW_DECIMAL_PLACES) : UNLIT_LEVEL
 
     def tile = LightTile.new(self)
   end

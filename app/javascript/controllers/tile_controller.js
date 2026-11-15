@@ -13,9 +13,10 @@ const DRAGGING_CLASS = "is-dragging"
 const ON_CLASS = "is-on"
 
 export default class extends Controller {
-  static values = { url: String }
+  static values = { url: String, dimmable: { type: Boolean, default: true } }
 
   down(event) {
+    if (!this.dimmableValue) return
     if (event.button !== PRIMARY_BUTTON && event.pointerType === MOUSE) return
     this.dragOrigin = { x: event.clientX, y: event.clientY, level: this.element.classList.contains(ON_CLASS) ? Number(this.element.dataset.brightness) : 0 }
     this.dragging = false

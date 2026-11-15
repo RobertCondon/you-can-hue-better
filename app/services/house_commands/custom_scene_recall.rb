@@ -44,7 +44,7 @@ module HouseCommands
     end
 
     def dimming(light)
-      return if light.brightness.blank?
+      return if light.brightness.blank? || !light.hue_light.dimmable?
 
       { brightness: light.brightness.to_f }
     end

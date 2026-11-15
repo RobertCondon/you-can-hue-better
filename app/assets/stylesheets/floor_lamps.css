@@ -12,6 +12,8 @@
 .floor__dot .ico { width: 13px; height: 13px; }
 .floor__name { font-size: var(--text-xs); line-height: 1.15; color: var(--ink); text-shadow: 0 1px 3px var(--text-shadow); max-width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
+/* A plug only switches: a square marker, where lamps are round. */
+.floor__lamp.is-switch .floor__dot { border-radius: var(--radius-tiny); }
 .floor__lamp.is-off .floor__dot { background: transparent; color: var(--ink-soft); box-shadow: 0 0 0 2px var(--line) inset; }
 .floor__lamp.is-unreachable .floor__dot { background: transparent; color: var(--danger); border: 2px dashed var(--danger); box-sizing: border-box; box-shadow: none; }
 .floor__lamp.is-unreachable .floor__name { color: var(--danger); }

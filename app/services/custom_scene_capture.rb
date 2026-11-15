@@ -9,6 +9,6 @@ class CustomSceneCapture
 
   def attributes_for(light)
     colour = light.mirek_valid ? { mirek: light.mirek } : { color_x: light.xy&.dig(:x), color_y: light.xy&.dig(:y) }
-    { hue_light_id: light.id, on: light.on, brightness: light.brightness, **colour }
+    { hue_light_id: light.id, on: light.on, brightness: (light.brightness if light.dimmable?), **colour }
   end
 end

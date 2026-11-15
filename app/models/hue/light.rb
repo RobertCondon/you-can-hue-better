@@ -13,6 +13,7 @@ module Hue
 
     def on? = on
     def off? = !on
+    def dimmable? = Api::Payloads::Light.new(raw).dimmable?
 
     def xy = color_x && { x: color_x.to_f, y: color_y.to_f }
   end

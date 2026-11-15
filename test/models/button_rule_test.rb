@@ -37,6 +37,16 @@ class ButtonRuleTest < ActiveSupport::TestCase
     assert_nil dimmed.brightness
   end
 
+  test "a plug can be switched but not dimmed" do
+    corner = Hue::Light.find("l2")
+    corner.update!(raw: corner.raw.except("dimming"))
+    dimmed = @button.rules.build(gesture: ButtonRule::SINGLE, action: ButtonRule::SET_BRIGHTNESS, target_type: ButtonRule::LIGHT, target_id: "l2")
+
+    assert_not dimmed.valid?
+    assert dimmed.errors.added?(:base, :cannot_dim, name: "Corner lamp")
+    assert dimmed.tap { |rule| rule.action = ButtonRule::TOGGLE }.valid?
+  end
+
   test "a scene can only be set in a room" do
     on_a_light = @button.rules.build(gesture: ButtonRule::SINGLE, action: ButtonRule::RECALL_SCENE, target_type: ButtonRule::LIGHT, target_id: "l1")
 

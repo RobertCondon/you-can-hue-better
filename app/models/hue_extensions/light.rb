@@ -1,6 +1,6 @@
 module HueExtensions
   class Light < Record
-    ICONS = %w[lamp candle spot strip].freeze
+    ICONS = %w[lamp candle spot strip plug].freeze
     BOOLEAN_SETTINGS = %w[hidden on_floor].freeze
 
     belongs_to :hue_light, class_name: "Hue::Light", foreign_key: :id, inverse_of: :extension

@@ -25,12 +25,14 @@
     <% end %>
   </div>
 
-  <%= async_hue_form_with url: light_path(light.id), method: :patch, class: "light-panel__row", light_ids: [ light.id ] do |form| %>
-    <label for="panel_bri_<%= light.id %>"><%= t(".brightness") %></label>
-    <input type="range" id="panel_bri_<%= light.id %>" name="light[brightness]" min="<%= Hue::Api::Limits::LIT_BRIGHTNESS.min %>" max="<%= Hue::Api::Limits::LIT_BRIGHTNESS.max %>"
-           value="<%= light.on? ? light.brightness.round : House::Light::UNLIT_LEVEL %>"
-           data-action="input->light#preview change->light#submit">
-    <output data-level for="panel_bri_<%= light.id %>"><%= light.brightness_label %></output>
+  <% if light.dimmable? %>
+    <%= async_hue_form_with url: light_path(light.id), method: :patch, class: "light-panel__row", light_ids: [ light.id ] do |form| %>
+      <label for="panel_bri_<%= light.id %>"><%= t(".brightness") %></label>
+      <input type="range" id="panel_bri_<%= light.id %>" name="light[brightness]" min="<%= Hue::Api::Limits::LIT_BRIGHTNESS.min %>" max="<%= Hue::Api::Limits::LIT_BRIGHTNESS.max %>"
+             value="<%= light.on? ? light.brightness.round : House::Light::UNLIT_LEVEL %>"
+             data-action="input->light#preview change->light#submit">
+      <output data-level for="panel_bri_<%= light.id %>"><%= light.brightness_label %></output>
+    <% end %>
   <% end %>
 
   <% if light.color? %>

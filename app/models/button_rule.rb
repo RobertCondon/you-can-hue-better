@@ -44,6 +44,7 @@ class ButtonRule < ApplicationRecord
   validates :brightness, numericality: { only_integer: true, in: Hue::Api::Limits::LIT_BRIGHTNESS }, if: :sets_brightness?
   validates :scene_id, presence: true, if: -> { recalls_scene? && targets_room? }
   validate :scene_needs_a_room, if: :recalls_scene?
+  validate :target_can_dim, if: :sets_brightness?
 
   def always? = if_subject_id.blank?
   def recalls_scene? = action == RECALL_SCENE
@@ -73,6 +74,11 @@ class ButtonRule < ApplicationRecord
 
   def scene_needs_a_room
     errors.add(:base, :scene_needs_a_room) unless targets_room?
+  end
+
+  # A plug is a light that only switches.
+  def target_can_dim
+    errors.add(:base, :cannot_dim, name: target.name) if target.is_a?(Hue::Light) && !target.dimmable?
   end
 
   def place_last

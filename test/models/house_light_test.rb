@@ -36,6 +36,21 @@ class House::LightTest < ActiveSupport::TestCase
     assert_equal "strip", light(archetype: "candle_bulb", icon_override: "strip").icon
   end
 
+  test "a plug only switches: on reads On at full, with its own glyph and no level" do
+    sync_mirror!
+    corner = Hue::Light.find("l2")
+    corner.update!(on: true, raw: corner.raw.except("dimming").merge("metadata" => { "archetype" => "plug" }))
+    Hue::Device.find("d2").update!(reachable: true)
+    plug = House.load.light("l2")
+
+    refute plug.dimmable?
+    assert_equal [ "On", 100, "plug" ], [ plug.brightness_label, plug.fill_pct, plug.icon ]
+    assert_equal "Off", plug.with(on: false).brightness_label
+    assert_equal 0, plug.glow, "it shows on the floor plan without lighting it"
+    assert_equal "80%", House.load.room("r1").brightness_label, "the plug stays out of the room's level"
+    assert light.dimmable?
+  end
+
   test "a tile's fill is one muted shade of the light's colour at any brightness" do
     bright = light(brightness: 95, xy: { x: 0.45, y: 0.41 })
     dim = bright.with(brightness: 10)
