@@ -26,6 +26,17 @@ class LocalButtonsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#{card} .local-button__nothing", "Nothing happens yet."
   end
 
+  test "a toggle switch's card has a list for switching on and one for switching off" do
+    @button.update!(kind: LocalButton::TOGGLE)
+
+    get local_buttons_path
+
+    card = "#local_button_#{@button.id}"
+    assert_select "#{card} .local-button__meta", /button-1 · toggle switch · hall-board/
+    assert_equal [ "Switched on", "Switched off" ], css_select("#{card} .local-button__gesture h3").map(&:text)
+    assert_select "#{card} input[name='button_rule[gesture]'][value=on]"
+  end
+
   test "names a button and updates open pages" do
     streams = capture_turbo_stream_broadcasts(LocalButtons::Broadcast::STREAM) do
       patch local_button_path(@button), params: { local_button: { name: " Bedside " } }, as: :json

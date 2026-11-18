@@ -302,9 +302,12 @@ en:
       presses:
         one: 1 press
         other: "%{count} presses"
+      toggle: toggle switch
       gestures:
         single: Press once
         double: Press twice
+        "on": Switched on
+        "off": Switched off
       nothing: Nothing happens yet.
       add_rule: Add a rule
   button_rules:

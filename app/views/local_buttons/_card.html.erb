@@ -11,11 +11,11 @@
     <% end %>
   </div>
   <p class="local-button__meta">
-    <code><%= button.key %></code> · <%= button.client %>
+    <code><%= button.key %></code><% if button.toggle? %> · <%= t(".toggle") %><% end %> · <%= button.client %>
     <% if button.last_pressed_at %>· <%= t(".pressed", ago: time_ago_in_words(button.last_pressed_at)) %> · <%= t(".presses", count: button.presses_count) %><% end %>
   </p>
 
-  <% ButtonRule::GESTURES.each do |gesture| %>
+  <% button.gestures.each do |gesture| %>
     <% rules = button.rules_for(gesture) %>
     <section class="local-button__gesture" aria-labelledby="<%= dom_id(button, gesture) %>">
       <h3 id="<%= dom_id(button, gesture) %>"><%= t(".gestures.#{gesture}") %></h3>

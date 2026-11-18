@@ -2,13 +2,14 @@
 # <room or light>". With nothing to check it always matches, which makes it the "otherwise" at the
 # bottom of a list. ButtonRules:: holds what a rule does: checking, running, moving, starting.
 class ButtonRule < ApplicationRecord
-  SINGLE = "single"
-  DOUBLE = "double"
-  GESTURES = [ SINGLE, DOUBLE ].freeze
-
   ON = "on"
   OFF = "off"
   STATES = [ ON, OFF ].freeze
+
+  SINGLE = "single"
+  DOUBLE = "double"
+  # A toggle reports which way it was flipped, so its gestures read the same as the states.
+  GESTURES = [ SINGLE, DOUBLE, ON, OFF ].freeze
 
   TURN_ON = "turn_on"
   TURN_OFF = "turn_off"

@@ -17,7 +17,7 @@ class Api::Local::ButtonPressesControllerTest < ActionDispatch::IntegrationTest
     press token
 
     assert_response :accepted
-    assert_equal({ "button_id" => "button-1", "gesture" => "single", "rule_id" => nil }, response.parsed_body)
+    assert_equal({ "button_id" => "button-1", "kind" => "button", "gesture" => "single", "rule_id" => nil }, response.parsed_body)
   end
 
   test "saves a button on its first press and counts the presses after" do
@@ -125,6 +125,43 @@ class Api::Local::ButtonPressesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :accepted
     assert_empty hue.writes
+  end
+
+  test "a toggle runs its on rules when switched on and its off rules when switched off" do
+    sync_mirror!
+    button = LocalButton.create!(client: "hall-board", key: "button-1", kind: "toggle")
+    button.rules.create!(gesture: "on", action: "turn_on", target_type: "Hue::Light", target_id: "l2")
+    button.rules.create!(gesture: "off", action: "turn_off", target_type: "Hue::Light", target_id: "l2")
+
+    press token, kind: "toggle", gesture: "on"
+    press token, kind: "toggle", gesture: "off"
+
+    assert_equal [ true, false ], hue.writes.map { |write| write.last.dig(:on, :on) }
+  end
+
+  test "remembers what kind of control the board says it is" do
+    press token, kind: "toggle", gesture: "on"
+
+    assert_equal({ "button_id" => "button-1", "kind" => "toggle", "gesture" => "on", "rule_id" => nil }, response.parsed_body)
+    assert_equal "toggle", LocalButton.find_by!(key: "button-1").kind
+  end
+
+  test "a press without a kind is a button" do
+    press token
+
+    assert_equal "button", LocalButton.find_by!(key: "button-1").kind
+  end
+
+  test "refuses a gesture that doesn't fit the kind" do
+    press token, gesture: "on"
+    assert_response :unprocessable_entity
+
+    press token, kind: "toggle", gesture: "double"
+    assert_response :unprocessable_entity
+
+    press token, kind: "dial", gesture: "single"
+    assert_response :unprocessable_entity
+    assert_not LocalButton.exists?
   end
 
   test "refuses a gesture it doesn't know, without counting the press" do
